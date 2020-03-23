@@ -49,7 +49,6 @@ export default function CampusMap() {
   useEffect(() => {
     askPermission();
     getLocation();
-    console.log("-------------------", location);
   }, []);
 
   // useEffect(() => {
@@ -60,27 +59,24 @@ export default function CampusMap() {
   useEffect(() => {
     db.collection("ParkingLots").onSnapshot(querySnapshot => {
       const ParkingLots = [];
+      const parkings = [];
       querySnapshot.forEach(doc => {
         ParkingLots.push({ id: doc.id, ...doc.data() });
         db.collection("ParkingLots")
           .doc(doc.id)
           .collection("Parkings")
           .onSnapshot(querySnapshot => {
-            const parkings = [];
             querySnapshot.forEach(docP => {
               parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
             });
-            console.log(" Current parkings: ", parkings);
             setParkings([...parkings]);
           });
       });
-      console.log(" Current ParkingLots: ", ParkingLots);
       setParkingLots([...ParkingLots]);
     });
   }, []);
 
   const markerClick = parking => {
-    console.log("Marker was clicked");
     setModalVisible(true);
     setParking(parking);
   };

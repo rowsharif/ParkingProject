@@ -1,3 +1,8 @@
+// bugfix for firebase 7.11.0
+import { decode, encode } from "base-64";
+global.btoa = global.btoa || encode;
+global.atob = global.atob || decode;
+
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
@@ -17,6 +22,8 @@ import AppNavigator from "./navigation/AppNavigator";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "./db";
+//import simulate from "./simulator";
+
 import { YellowBox } from "react-native";
 import _ from "lodash";
 
@@ -40,17 +47,27 @@ export default function App(props) {
 
   const handleRegister = async () => {
     await firebase.auth().createUserWithEmailAndPassword(email, password);
+
+    const response = await fetch(
+      `https://us-central1-messages1-c16bc.cloudfunctions.net/initUser?uid=${
+        firebase.auth().currentUser.uid
+      }`
+    );
+    updateUserLogin();
+  };
+
+  const handleLogin = async () => {
+    await firebase.auth().signInWithEmailAndPassword(email, password);
+    updateUserLogin();
+  };
+
+  const updateUserLogin = () => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .set({
-        displayName: email,
-        photoURL:
-          "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+        id: firebase.auth().currentUser.uid,
+        lastLogin: new Date()
       });
-  };
-
-  const handleLogin = () => {
-    firebase.auth().signInWithEmailAndPassword(email, password);
   };
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
@@ -82,7 +99,6 @@ export default function App(props) {
       </View>
     );
   } else {
-    console.log("user", user);
     return (
       <View style={styles.container}>
         {Platform.OS === "ios" && <StatusBar barStyle="default" />}

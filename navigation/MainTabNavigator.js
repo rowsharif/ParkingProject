@@ -2,12 +2,18 @@ import React from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-
+import {
+  FontAwesome,
+  AntDesign,
+  MaterialCommunityIcons,
+  Feather
+} from "@expo/vector-icons";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
-import LinksScreen from "../screens/LinksScreen";
-import SettingsScreen from "../screens/SettingsScreen";
-import FindMyFriends from "../screens/FindMyFriends";
+import AboutScreen from "../screens/AboutScreen";
+import NewsletterScreen from "../screens/NewsletterScreen";
+import CampusMap from "../screens/CampusMap";
+import MyProfileScreen from "../screens/MyProfileScreen";
 
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -21,88 +27,119 @@ const HomeStack = createStackNavigator(
   config
 );
 
-const FindMyFriendsStack = createStackNavigator(
-  {
-    FindMyFriends: FindMyFriends
-  },
-  config
-);
-
 HomeStack.navigationOptions = {
   tabBarLabel: "Home",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <MaterialCommunityIcons
       focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-information-circle"
-      }
-    />
-  )
-};
-
-FindMyFriendsStack.navigationOptions = {
-  tabBarLabel: "FindMyFriends",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-information-circle"
-      }
+      name="home-outline"
+      size={31}
+      color="white"
     />
   )
 };
 
 HomeStack.path = "";
-FindMyFriendsStack.path = "";
 
-const LinksStack = createStackNavigator(
+const AboutStack = createStackNavigator(
   {
-    Links: LinksScreen
+    About: AboutScreen
   },
   config
 );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: "Links",
+AboutStack.navigationOptions = {
+  tabBarLabel: "About",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
+    <Feather focused={focused} name="info" size={28} color="white" />
   )
 };
 
-LinksStack.path = "";
+AboutStack.path = "";
 
-const SettingsStack = createStackNavigator(
+const NewsletterStack = createStackNavigator(
   {
-    Settings: SettingsScreen
+    Newsletter: NewsletterScreen
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: "Settings",
+NewsletterStack.navigationOptions = {
+  tabBarLabel: "Newsletter",
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-options" : "md-options"}
-    />
+    <FontAwesome focused={focused} name="newspaper-o" size={27} color="white" />
   )
 };
 
-SettingsStack.path = "";
+NewsletterStack.path = "";
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
-  FindMyFriendsStack
-});
+const CampusMapStack = createStackNavigator(
+  {
+    CampusMap: CampusMap
+  },
+  config
+);
+
+CampusMapStack.navigationOptions = {
+  tabBarLabel: "CampusMap",
+  tabBarIcon: ({ focused }) => (
+    <FontAwesome focused={focused} name="map-o" size={26} color="white" />
+  )
+};
+
+CampusMapStack.path = "";
+
+const MyProfileStack = createStackNavigator(
+  {
+    MyProfile: MyProfileScreen
+  },
+  config
+);
+
+MyProfileStack.navigationOptions = {
+  tabBarLabel: "MyProfile",
+  tabBarIcon: ({ focused }) => (
+    <AntDesign focused={focused} name="profile" size={28} color="white" />
+  )
+};
+
+MyProfileStack.path = "";
+
+const tabNavigator = createBottomTabNavigator(
+  {
+    HomeStack,
+    CampusMapStack,
+    MyProfileStack,
+    AboutStack,
+    NewsletterStack
+  },
+  {
+    //tabBarPosition: "top",
+    swipeEnabled: true,
+    animationEnabled: true,
+    activeColor: "white",
+    inactiveColor: "gray",
+    barStyle: { backgroundColor: "#1d2966" },
+    tabBarOptions: {
+      activeTintColor: "white",
+      inactiveTintColor: "gray",
+      style: {
+        backgroundColor: "#1d2966",
+        paddingTop: 4
+      },
+      //lablePosition:"beside-icon",
+      lableStyle: {
+        textAlign: "center",
+        fontSize: 19,
+        fontWeight: "bold"
+      },
+      indicatorStyle: {
+        borderBottomColor: "white",
+        borderBottomWidth: 70
+      }
+    }
+  }
+);
 
 tabNavigator.path = "";
 

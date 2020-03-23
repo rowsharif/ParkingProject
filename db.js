@@ -3,14 +3,14 @@ import "firebase/firestore";
 
 // Initialize Cloud Firestore through Firebase
 firebase.initializeApp({
-  apiKey: "AIzaSyA1ZEKJo_IT5uHhKzjIrusTDI_EyqQVRhg",
-  authDomain: "messages-ed8ae.firebaseapp.com",
-  databaseURL: "https://messages-ed8ae.firebaseio.com",
-  projectId: "messages-ed8ae",
-  storageBucket: "messages-ed8ae.appspot.com",
-  messagingSenderId: "38568676566",
-  appId: "1:38568676566:web:44f7a7b8a1470d5ab80d77",
-  measurementId: "G-7LTKDNHMLW"
+    apiKey: "AIzaSyAGdN936LVkCtuPTtr6v5FL9mEtrxzB82U",
+    authDomain: "parkingapp-a7028.firebaseapp.com",
+    databaseURL: "https://parkingapp-a7028.firebaseio.com",
+    projectId: "parkingapp-a7028",
+    storageBucket: "parkingapp-a7028.appspot.com",
+    messagingSenderId: "726593097057",
+    appId: "1:726593097057:web:80d600fa9617ab85354920",
+    measurementId: "G-GRDX81Q2X1"
 });
 
 export default firebase.firestore();

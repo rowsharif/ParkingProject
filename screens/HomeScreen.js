@@ -21,14 +21,16 @@ import db from "../db.js";
 import Message from "./Message.js";
 
 export default function HomeScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = React.useState("");
   const [text, setText] = React.useState("");
   const [id, setId] = React.useState("");
 
-  const [Cars, setCars] = React.useState("");
+  const [Cars, setCars] = React.useState([]);
+  const [Car, setCar] = React.useState({});
   const [PlateNumber, setPlateNumber] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState({});
 
   useEffect(() => {
     db.collection("messages").onSnapshot(querySnapshot => {
@@ -53,21 +55,22 @@ export default function HomeScreen() {
         console.log(" Current Cars: ", Cars);
         setCars([...Cars]);
       });
+    setCurrentUser(firebase.auth().currentUser);
   }, []);
 
   const addCar = async () => {
     let car = db
       .collection("users")
-      .doc(firebase.auth().currentUser.uid)
+      .doc(currentUser.uid)
       .collection("Cars")
-      .add({ PlateNumber });
+      .add({ PlateNumber, current: false });
     setCars([...Cars, { car }]);
     setPlateNumber("");
   };
 
   const deleteCar = async car => {
     db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
+      .doc(currentUser.uid)
       .collection("Cars")
       .doc(car.id)
       .delete();
@@ -75,7 +78,7 @@ export default function HomeScreen() {
   };
 
   const handleSend = async () => {
-    const from = firebase.auth().currentUser.uid;
+    const from = currentUser.uid;
     if (id) {
       db.collection("messages")
         .doc(id)
@@ -103,6 +106,20 @@ export default function HomeScreen() {
     firebase.auth().signOut();
   };
 
+  const handleCar = c => {
+    c.current = true;
+    Cars.map(car => {
+      if (car.id === c.id) {
+        car.current = true;
+      } else {
+        car.current = false;
+      }
+    });
+    console.log("Cars", Cars);
+    setModalVisible(false);
+    setCar(c);
+  };
+
   return (
     <View style={styles.container}>
       {/* <ScrollView
@@ -127,7 +144,27 @@ export default function HomeScreen() {
         value={text}
       />
       <Button title="Send" onPress={handleSend} /> */}
-      <Button title="Logout" onPress={handleLogout} />
+      <View>
+        <Text
+          style={{
+            paddingTop: 10,
+            fontSize: 18,
+            fontWeight: "700"
+          }}
+        >
+          Welcom {currentUser.displayName}
+        </Text>
+        <Text style={{ fontSize: 17 }}>Car: {Car.PlateNumber}</Text>
+        <TouchableOpacity
+          style={[styles.button, { display: "flex" }]}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>Change</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Button title="Logout" onPress={handleLogout} />
+      </View>
       <View style={{ marginTop: 0 }}>
         <Modal
           animationType="fade"
@@ -159,7 +196,13 @@ export default function HomeScreen() {
               {Cars.length > 0 &&
                 Cars.map((car, i) => (
                   <View key={car.id}>
-                    <Text>{car.PlateNumber}</Text>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => handleCar(car)}
+                      key={car.id}
+                    >
+                      <Text style={styles.buttonText}>{car.PlateNumber}</Text>
+                    </TouchableOpacity>
                     <Button title="X" onPress={() => deleteCar(car)} />
                   </View>
                 ))}
@@ -268,6 +311,19 @@ function handleHelpPress() {
 }
 
 const styles = StyleSheet.create({
+  buttonText: {
+    textAlign: "center",
+    fontSize: 18
+  },
+  button: {
+    borderWidth: 1,
+    textAlign: "center",
+    borderColor: "blue",
+    backgroundColor: "#d6fffc",
+    width: "80%",
+    margin: "1%",
+    alignSelf: "center"
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff"

@@ -137,13 +137,12 @@ export default function CampusMap() {
         }}
         mapType="satellite"
         minZoomLevel={18}
-        maxZoomLevel={20}
         moveOnMarkerPress={false}
       >
         {parkings &&
           parkings.map(parking => (
             <MapView.Marker
-              key={parking.id}
+              key={parking.id + parking.fk}
               coordinate={{
                 latitude: parking.latitude,
                 longitude: parking.longitude
@@ -172,6 +171,7 @@ export default function CampusMap() {
           onRequestClose={() => {
             Alert.alert("Modal has been closed.");
           }}
+          key={parking.id}
         >
           <View style={{ marginTop: 22 }}>
             <View

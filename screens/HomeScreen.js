@@ -32,16 +32,16 @@ export default function HomeScreen() {
   const [PlateNumber, setPlateNumber] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState({});
 
-  useEffect(() => {
-    db.collection("messages").onSnapshot(querySnapshot => {
-      const messages = [];
-      querySnapshot.forEach(doc => {
-        messages.push({ id: doc.id, ...doc.data() });
-      });
-      console.log(" Current messages: ", messages);
-      setMessages([...messages]);
-    });
-  }, []);
+  // useEffect(() => {
+  //   db.collection("messages").onSnapshot(querySnapshot => {
+  //     const messages = [];
+  //     querySnapshot.forEach(doc => {
+  //       messages.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     console.log(" Current messages: ", messages);
+  //     setMessages([...messages]);
+  //   });
+  // }, []);
 
   useEffect(() => {
     db.collection("users")
@@ -207,7 +207,7 @@ export default function HomeScreen() {
                   </View>
                 ))}
               {Cars.length < 2 && (
-                <View style={{ paddingTop: "40%" }}>
+                <View style={{ paddingTop: "30%" }}>
                   <Text>Add a Car</Text>
                   <TextInput
                     style={{ height: 40, borderColor: "gray", borderWidth: 1 }}

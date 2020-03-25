@@ -39,6 +39,7 @@ export default ({ message, handleEdit }) => {
       </Text>
       <Button title="Edit" onPress={() => handleEdit(message)} />
       <Button title="X" onPress={() => handleDelete(message)} />
+      
     </View>
   );
 };

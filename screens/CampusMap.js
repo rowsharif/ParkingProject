@@ -28,6 +28,10 @@ export default function CampusMap() {
   const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState([]);
+  const [car, setCar] = useState([]);
+  //  serverless function
+  const handleParkings = firebase.functions().httpsCallable("handleParkings");
+
   const [location, setLocation] = useState({
     coords: {
       latitude: 25.360766,
@@ -49,6 +53,19 @@ export default function CampusMap() {
   useEffect(() => {
     askPermission();
     getLocation();
+  }, []);
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Cars")
+      .onSnapshot(querySnapshot => {
+        const Cars = [];
+        querySnapshot.forEach(doc => {
+          Cars.push({ id: doc.id, ...doc.data() });
+        });
+        setCar(Cars.filter(c => c.current === true)[0]);
+      });
   }, []);
 
   // useEffect(() => {
@@ -83,47 +100,27 @@ export default function CampusMap() {
     setModalVisible(true);
     setParking(parking);
   };
-  const Park = () => {
+  const Park = async () => {
     let temp = parking;
     temp.status = 2;
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Parkings")
-      .doc(temp.id)
-      .update(temp);
+    const response2 = await handleParkings(temp);
+    console.log("handleParkings response", response2);
     setModalVisible(false);
   };
 
-  const Reserve = () => {
+  const Reserve = async () => {
     let temp = parking;
     temp.status = 1;
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Parkings")
-      .doc(temp.id)
-      .update(temp);
+    const response2 = await handleParkings(temp);
+    console.log("handleParkings response", response2);
     setModalVisible(false);
   };
 
-  const CancleReservation = () => {
+  const Leave = async () => {
     let temp = parking;
     temp.status = 0;
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Parkings")
-      .doc(temp.id)
-      .update(temp);
-    setModalVisible(false);
-  };
-
-  const Leave = () => {
-    let temp = parking;
-    temp.status = 0;
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Parkings")
-      .doc(temp.id)
-      .update(temp);
+    const response2 = await handleParkings(temp);
+    console.log("handleParkings response", response2);
     setModalVisible(false);
   };
 
@@ -200,7 +197,7 @@ export default function CampusMap() {
                   <TouchableHighlight
                     style={styles.button}
                     onPress={() => {
-                      CancleReservation();
+                      Leave();
                     }}
                   >
                     <Text>Cancel Reservation</Text>

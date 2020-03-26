@@ -111,10 +111,21 @@ export default function HomeScreen() {
     Cars.map(car => {
       if (car.id === c.id) {
         car.current = true;
+        db.collection("users")
+          .doc(currentUser.uid)
+          .collection("Cars")
+          .doc(car.id)
+          .set(car);
       } else {
         car.current = false;
+        db.collection("users")
+          .doc(currentUser.uid)
+          .collection("Cars")
+          .doc(car.id)
+          .set(car);
       }
     });
+
     console.log("Cars", Cars);
     setModalVisible(false);
     setCar(c);

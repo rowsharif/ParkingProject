@@ -18,15 +18,27 @@ const DELAY = 10;
 
 // an array to be filled from db
 // - change to suit your own db schema and simulation needs
-const messages = [];
+const Parkings = [];
 
 const init = async () => {
   // do once only, not a listener
-  const querySnapshot = await db.collection("messages").get();
-  querySnapshot.forEach(doc => {
-    messages.push({ id: doc.id, ...doc.data() });
-  });
-  console.log("done init: ", messages);
+  const querySnapshot = await db
+    .collection("ParkingLots")
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        db.collection("ParkingLots")
+          .doc(doc.id)
+          .collection("Parkings")
+          .get()
+          .then(querySnapshot => {
+            querySnapshot.forEach(docP => {
+              parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+            });
+          });
+      });
+    });
+  console.log("done init: ", Parkings);
 };
 
 const simulate = async () => {
@@ -36,33 +48,25 @@ const simulate = async () => {
   // simulate something (e.g. db update) every DELAY seconds
   setInterval(async () => {
     // select a random item
-    const i = Math.floor(Math.random() * messages.length);
+    const i = Math.floor(Math.random() * Parkings.length);
 
     // change it somehow
     // - must modify local copy of db data
     //   to avoid reloading from db
-    const rnd = Math.random();
-    let choice = "";
+    const rnd = Math.floor(Math.random() * 3);
 
-    // - use percentages to decide what to do
-    // - change to suit your own needs
-    if (rnd < 0.3333) {
-      choice = " ;)";
-    } else if (rnd < 0.6666) {
-      choice = " :(";
-    } else {
-      choice = " :/";
-    }
-    messages[i].text += choice;
+    Parkings[i].status = rnd;
 
     // update the db
-    const { id, ...message } = messages[i];
+    const { fk, id, ...Parking } = Parkings[i];
     await db
-      .collection("messages")
+      .collection("ParkingLots")
+      .doc(fk)
+      .collection("Parkings")
       .doc(id)
-      .set(message);
+      .set(Parking);
 
-    console.log("simulated with item[", i, "]: ", message.text);
+    console.log("simulated with item[", i, "]: ", Parking);
   }, DELAY * 1000);
 };
 

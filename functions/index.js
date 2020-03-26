@@ -73,3 +73,13 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
   response.send("All done ");
 });
+
+// 2
+exports.handleParkings = functions.https.onCall(async (data, context) => {
+  console.log("handleParkings data", data);
+  db.collection("ParkingLots")
+    .doc(data.fk)
+    .collection("Parkings")
+    .doc(data.id)
+    .update(data);
+});

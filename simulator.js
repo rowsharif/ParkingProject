@@ -22,22 +22,33 @@ const Parkings = [];
 
 const init = async () => {
   // do once only, not a listener
+  // const querySnapshot = await db
+  //   .collection("ParkingLots")
+  //   .get()
+  //   .then(querySnapshot => {
+  //     querySnapshot.forEach(doc => {
+  //       db.collection("ParkingLots")
+  //         .doc(doc.id)
+  //         .collection("Parkings")
+  //         .get()
+  //         .then(querySnapshot => {
+  //           querySnapshot.forEach(docP => {
+  //             parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+  //           });
+  //         });
+  //     });
+  //   });
   const querySnapshot = await db
     .collection("ParkingLots")
+    .doc("ocDYzihFqnXEERAIgL5b")
+    .collection("Parkings")
     .get()
     .then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-        db.collection("ParkingLots")
-          .doc(doc.id)
-          .collection("Parkings")
-          .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(docP => {
-              parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
-            });
-          });
+      querySnapshot.forEach(docP => {
+        parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
       });
     });
+
   console.log("done init: ", Parkings);
 };
 

@@ -57,23 +57,26 @@ export default function CampusMap() {
   // }, [location]);
 
   useEffect(() => {
-    db.collection("ParkingLots").onSnapshot(querySnapshot => {
-      const ParkingLots = [];
-      const parkings = [];
-      querySnapshot.forEach(doc => {
-        ParkingLots.push({ id: doc.id, ...doc.data() });
-        db.collection("ParkingLots")
-          .doc(doc.id)
-          .collection("Parkings")
-          .onSnapshot(querySnapshot => {
-            querySnapshot.forEach(docP => {
-              parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+    db.collection("ParkingLots")
+      .get()
+      .then(querySnapshot => {
+        const ParkingLots = [];
+        const parkings = [];
+        querySnapshot.forEach(doc => {
+          ParkingLots.push({ id: doc.id, ...doc.data() });
+          db.collection("ParkingLots")
+            .doc(doc.id)
+            .collection("Parkings")
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(docP => {
+                parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+              });
+              setParkings([...parkings]);
             });
-            setParkings([...parkings]);
-          });
+        });
+        setParkingLots([...ParkingLots]);
       });
-      setParkingLots([...ParkingLots]);
-    });
   }, []);
 
   const markerClick = parking => {

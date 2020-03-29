@@ -2,7 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import {
   FontAwesome,
   AntDesign,
@@ -107,7 +107,7 @@ MyProfileStack.navigationOptions = {
 MyProfileStack.path = "";
 
 // const tabNavigator = createBottomTabNavigator(
-const tabNavigator = createMaterialBottomTabNavigator (
+const tabNavigator = createMaterialBottomTabNavigator(
   {
     HomeStack,
     CampusMapStack,

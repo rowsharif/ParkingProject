@@ -49,7 +49,7 @@ export default function App(props) {
     await firebase.auth().createUserWithEmailAndPassword(email, password);
 
     const response = await fetch(
-      `https://us-central1-messages1-c16bc.cloudfunctions.net/initUser?uid=${
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/initUser?uid=${
         firebase.auth().currentUser.uid
       }`
     );

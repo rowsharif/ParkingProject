@@ -45,13 +45,14 @@ const bot = async message => {
 };
 
 // 3
-exports.updateUser = functions.https.onCall(async (data, context) => {
-  console.log("updateUser data", data);
-  const result = await admin.auth().updateUser(data.uid, {
-    displayName: data.displayName,
-    photoURL: data.photoURL
+exports.updateUser = functions.https.onRequest(async (request, response) => {
+  console.log("updateUser data", request.query.data);
+  const result = await admin.auth().updateUser(request.query.data.uid, {
+    displayName: request.query.data.displayName,
+    photoURL: request.query.data.photoURL
   });
   console.log("after set", result);
+  response.send("All done ");
 });
 
 // 4
@@ -76,10 +77,102 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
-  console.log("handleParkings data", data);
+  console.log("handleParkings data", data.car.fk);
+  // temp,
+  // car,
+  // promotion
+  // ServicesToAdd,
+  //crew,
+  // operation
+  // hours
+  let total = 0;
+
+  let car = data.car;
+
+  if (data.operation === "Park") {
+    //add History
+    const history = await db.collection("History").add({
+      CarId: car.id,
+      ParkingId: data.temp.id,
+      DateTime: new Date(),
+      Duration: {},
+      TotalAmount: {}
+    });
+    let sta = [];
+    if (data.car.Parking.status === 1) {
+      sta = car.Parking.ServicesToAdd;
+    } else {
+      sta = data.ServicesToAdd;
+      car.Parking["ServicesToAdd"] = sta;
+    }
+    total = sta.reduce(
+      (previousScore, currentScore, index) =>
+        previousScore + currentScore.price,
+      0
+    );
+    //add UserServices
+    sta.map(Service => {
+      return db
+        .collection("ParkingLots")
+        .doc(data.temp.fk)
+        .collection("Crew")
+        .doc("Z8brDTwQDAlONebjoFXD")
+        .collection("UserServices")
+        .add({
+          CarId: car.id,
+          ServiceId: Service.id,
+          ParkingId: data.temp.id,
+          DateTime: new Date(),
+          EmployeeId: {}
+        });
+    });
+    car.Parking = data.temp;
+    // save for later
+    car.Parking["DateTime"] = new Date();
+    car.Parking["HistoryId"] = history.id;
+    car.Parking["TotalAmount"] = total;
+  } else if (data.operation === "Reserve") {
+    car.Parking = data.temp;
+    // save for later
+    car.Parking["ServicesToAdd"] = data.ServicesToAdd;
+  } else if (data.operation === "CancelReservation") {
+    car.Parking = {};
+  } else {
+    //Leave
+
+    let pTotal =
+      data.hours * car.Parking.amountperhour + car.Parking.TotalAmount;
+    let totalAmount =
+      data.promotion && data.promotion.promotionPercent
+        ? pTotal - pTotal * data.promotion.promotionPercent
+        : pTotal;
+    //add Payment (Services,Promotion, Parking AmountPerHour)
+    db.collection("Payment").add({
+      CarId: car.id,
+      ParkingId: data.temp.id,
+      ServicesIds: car.Parking.ServicesToAdd,
+      TotalAmount: totalAmount,
+      Duration: data.hours
+    });
+    //update History
+    let h = car.Parking.HistoryId;
+    h.TotalAmount = totalAmount;
+    h.Duration = data.hours;
+    db.collection("History")
+      .doc(car.Parking.HistoryId)
+      .update(h);
+    car.Parking = {};
+  }
+
   db.collection("ParkingLots")
-    .doc(data.fk)
+    .doc(data.temp.fk)
     .collection("Parkings")
-    .doc(data.id)
-    .update(data);
+    .doc(data.temp.id)
+    .update(data.temp);
+
+  db.collection("users")
+    .doc(car.fk)
+    .collection("Cars")
+    .doc(car.id)
+    .update(car);
 });

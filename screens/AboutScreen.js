@@ -65,7 +65,7 @@ AboutScreen.navigationOptions = {
     </View>
   ),
   headerStyle: {
-    backgroundColor: "#1d5c66",
+    backgroundColor: "#276b9c",
     height: 44
   },
   headerTintColor: "#fff",

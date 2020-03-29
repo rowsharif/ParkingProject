@@ -63,7 +63,7 @@ export default function HomeScreen() {
       .collection("users")
       .doc(currentUser.uid)
       .collection("Cars")
-      .add({ PlateNumber, current: false });
+      .add({ PlateNumber, current: false, Parking: {} });
     setCars([...Cars, { car }]);
     setPlateNumber("");
   };
@@ -165,7 +165,7 @@ export default function HomeScreen() {
         >
           Welcom {currentUser.displayName}
         </Text>
-        <Text style={{ fontSize: 17 }}>Car: {Car.PlateNumber}</Text>
+        <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
         <TouchableOpacity
           style={[styles.button, { display: "flex" }]}
           onPress={() => setModalVisible(true)}
@@ -204,13 +204,13 @@ export default function HomeScreen() {
               >
                 Which car are you driving?
               </Text>
-              {Cars.length > 0 &&
+              {Cars &&
+                Cars.length > 0 &&
                 Cars.map((car, i) => (
                   <View key={car.id}>
                     <TouchableOpacity
                       style={styles.button}
                       onPress={() => handleCar(car)}
-                      key={car.id}
                     >
                       <Text style={styles.buttonText}>{car.PlateNumber}</Text>
                     </TouchableOpacity>
@@ -277,7 +277,7 @@ HomeScreen.navigationOptions = {
     </View>
   ),
   headerStyle: {
-    backgroundColor: "#1d5c66",
+    backgroundColor: "#276b9c",
     height: 44
   },
   headerTintColor: "#fff",

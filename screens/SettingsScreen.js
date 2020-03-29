@@ -46,12 +46,15 @@ export default function SettingsScreen() {
       .ref()
       .child(firebase.auth().currentUser.uid)
       .getDownloadURL();
-    const updateUser = firebase.functions().httpsCallable("updateUser");
-    const response2 = await updateUser({
-      uid: firebase.auth().currentUser.uid,
-      displayName,
-      photoURL: url
-    });
+
+    const response2 = await fetch(
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?data=${{
+        uid: firebase.auth().currentUser.uid,
+        displayName,
+        photoURL: url
+      }}`
+    );
+
     console.log("updateUser response", response2);
     console.log("new displayName", firebase.auth().currentUser.displayName);
     setPhotoURL(url);

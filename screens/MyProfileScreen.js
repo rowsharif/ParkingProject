@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Text, TextInput, Button } from "react-native";
+import { StyleSheet, View, Image, Text, TextInput, Button, ImageBackground } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -46,12 +46,19 @@ export default function MyProfileScreen() {
       .ref()
       .child(firebase.auth().currentUser.uid)
       .getDownloadURL();
-    const updateUser = firebase.functions().httpsCallable("updateUser");
-    const response2 = await updateUser({
-      uid: firebase.auth().currentUser.uid,
-      displayName,
-      photoURL: url
-    });
+    // const updateUser = firebase.functions().httpsCallable("updateUser");
+    // const response2 = await updateUser({
+    //   uid: firebase.auth().currentUser.uid,
+    //   displayName,
+    //   photoURL: url
+    // });
+    const response2 = await fetch(
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?data=${{
+        uid: firebase.auth().currentUser.uid,
+        displayName,
+        photoURL: url
+      }}`
+    );
     console.log("updateUser response", response2);
     console.log("new displayName", firebase.auth().currentUser.displayName);
     setPhotoURL(url);
@@ -73,7 +80,9 @@ export default function MyProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
+    <View  style={styles.container}>      
+       <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>  
+    {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
       <TextInput
         style={{
           height: 40,
@@ -90,7 +99,9 @@ export default function MyProfileScreen() {
       )}
       <Button title="Pick Image" onPress={handlePickImage} />
       <Button title="Save" onPress={handleSave} />
-    </ScrollView>
+    {/* </ScrollView> */}
+    </ImageBackground>      
+    </View>
   );
 }
 

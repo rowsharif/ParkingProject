@@ -8,7 +8,9 @@ export default function NewsletterScreen() {
     <View style={styles.container}>      
        <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
           <ScrollView>
-
+            <Text>
+              hihihihih
+            </Text>
           </ScrollView>
        </ImageBackground>      
     </View>

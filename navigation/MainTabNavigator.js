@@ -146,4 +146,3 @@ const tabNavigator = createMaterialBottomTabNavigator(
 tabNavigator.path = "";
 
 export default tabNavigator;
-

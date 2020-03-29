@@ -45,13 +45,14 @@ const bot = async message => {
 };
 
 // 3
-exports.updateUser = functions.https.onCall(async (data, context) => {
-  console.log("updateUser data", data);
-  const result = await admin.auth().updateUser(data.uid, {
-    displayName: data.displayName,
-    photoURL: data.photoURL
+exports.updateUser = functions.https.onRequest(async (request, response) => {
+  console.log("updateUser data", request.query.data);
+  const result = await admin.auth().updateUser(request.query.data.uid, {
+    displayName: request.query.data.displayName,
+    photoURL: request.query.data.photoURL
   });
   console.log("after set", result);
+  response.send("All done ");
 });
 
 // 4

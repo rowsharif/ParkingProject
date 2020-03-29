@@ -8,9 +8,7 @@ export default function NewsletterScreen() {
     <View style={styles.container}>      
        <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
           <ScrollView>
-            <Text>
-              hihihihih
-            </Text>
+            
           </ScrollView>
        </ImageBackground>      
     </View>
@@ -24,8 +22,7 @@ NewsletterScreen.navigationOptions = {
         flex:2,
         flexDirection: "row"
       }}
-    >
-    
+    >    
       <Text
         style={{
           flex: 2,
@@ -73,8 +70,5 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     backgroundColor: "#fff"
   },
-  backgroundImage: {
-    flex:1,
-    resizeMode: 'cover',
-  }
+  
 });

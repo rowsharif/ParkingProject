@@ -3,15 +3,16 @@ import { StyleSheet, View, Image, Text, TextInput, Button } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
+import "firebase/functions";
 import db from "../db";
 import * as ImagePicker from "expo-image-picker";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function SettingsScreen() {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const [location, setLocation] = useState("");
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -22,53 +23,38 @@ export default function SettingsScreen() {
     askPermission();
   }, []);
 
-  const handleSet = async () => {
-    const snap = await db
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get();
-    snap.data().displayName && setDisplayName(snap.data().displayName);
-    snap.data().photoURL && setPhotoURL(snap.data().photoURL);
-    snap.data().location && setLocation(snap.data().location);
+  const handleSet = () => {
+    const user = firebase.auth().currentUser;
+    setDisplayName(user.displayName);
+    setPhotoURL(user.photoURL);
   };
 
   useEffect(() => {
-    // setDisplayName(firebase.auth().currentUser.displayName);
-    // setPhotoURL(firebase.auth().currentUser.photoURL);
     handleSet();
   }, []);
 
   const handleSave = async () => {
-    // - use firebase storage
-    if (uri !== "") {
-      const response = await fetch(uri);
-      console.log("fetch result", JSON.stringify(response));
-
-      const blob = await response.blob();
-      //console.log("blob result", JSON.stringify(blob));
-
-      // - upload selected image to default bucket, naming with uid
-      const putResult = await firebase
-        .storage()
-        .ref()
-        .child(firebase.auth().currentUser.uid)
-        .put(blob);
-      //console.log("put result", JSON.stringify(putResult));
-      // - get url and set photoURL
-
-      const url = await firebase
-        .storage()
-        .ref()
-        .child(firebase.auth().currentUser.uid)
-        .getDownloadURL();
-      console.log("download url", url);
-
-      setPhotoURL(url);
-    }
-
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .set({ displayName, photoURL, location });
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const putResult = await firebase
+      .storage()
+      .ref()
+      .child(firebase.auth().currentUser.uid)
+      .put(blob);
+    const url = await firebase
+      .storage()
+      .ref()
+      .child(firebase.auth().currentUser.uid)
+      .getDownloadURL();
+    const updateUser = firebase.functions().httpsCallable("updateUser");
+    const response2 = await updateUser({
+      uid: firebase.auth().currentUser.uid,
+      displayName,
+      photoURL: url
+    });
+    console.log("updateUser response", response2);
+    console.log("new displayName", firebase.auth().currentUser.displayName);
+    setPhotoURL(url);
   };
 
   const handlePickImage = async () => {
@@ -87,7 +73,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
       <TextInput
         style={{
           height: 40,
@@ -104,7 +90,7 @@ export default function SettingsScreen() {
       )}
       <Button title="Pick Image" onPress={handlePickImage} />
       <Button title="Save" onPress={handleSave} />
-    </View>
+    </ScrollView>
   );
 }
 

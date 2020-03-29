@@ -95,7 +95,52 @@ export default function MyProfileScreen() {
 }
 
 MyProfileScreen.navigationOptions = {
-  title: "MyProfile"
+  headerTitle: (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row"
+      }}
+    >
+      <Text
+        style={{
+          flex: 1,
+          paddingTop: 10,
+          fontSize: 18,
+          fontWeight: "700",
+          color: "white",
+          textAlign: "center"
+        }}
+      >
+        MyProfile
+      </Text>
+      <View
+        style={{
+          flex: 2
+        }}
+      ></View>
+
+      <View style={{ alignSelf: "center", flex: 2 }}>
+        <Image
+          resizeMode="cover"
+          style={{
+            width: 120,
+            height: 50,
+            resizeMode: "contain"
+          }}
+          source={require("../assets/images/logo.png")}
+        />
+      </View>
+    </View>
+  ),
+  headerStyle: {
+    backgroundColor: "#276b9c",
+    height: 44
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold"
+  }
 };
 
 const styles = StyleSheet.create({

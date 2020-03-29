@@ -194,11 +194,13 @@ export default function HomeScreen() {
               style={{
                 marginTop: 22,
                 backgroundColor: "white",
-                padding: "5%",
+                
                 width: "100%",
                 height: "98%"
               }}
             >
+            <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
+              <View style={{padding:10}}>
               <Text
                 style={{
                   paddingTop: 10,
@@ -233,8 +235,10 @@ export default function HomeScreen() {
                   <Button title="Add" onPress={addCar} />
                 </View>
               )}
+              </View>
+              </ImageBackground>
             </View>
-          </View>
+          </View>          
         </Modal>
       </View>
       </ImageBackground>

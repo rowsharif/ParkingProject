@@ -27,19 +27,17 @@ export default ({ message, handleEdit }) => {
   const user = firebase.auth().currentUser;
   return (
     <View style={{ paddingTop: 50, flexDirection: "row" }}>
-      {
-        user.photoURL &&
+      {user.photoURL && (
         <Image
           style={{ width: 50, height: 50 }}
           source={{ uri: user.photoURL }}
         />
-      }
+      )}
       <Text style={styles.getStartedText}>
         {user.displayName} - {message.to} - {message.text}
       </Text>
       <Button title="Edit" onPress={() => handleEdit(message)} />
       <Button title="X" onPress={() => handleDelete(message)} />
-      
     </View>
   );
 };

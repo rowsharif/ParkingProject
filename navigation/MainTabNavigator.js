@@ -2,6 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import {
   FontAwesome,
   AntDesign,
@@ -33,7 +34,7 @@ HomeStack.navigationOptions = {
     <MaterialCommunityIcons
       focused={focused}
       name="home-outline"
-      size={31}
+      size={25}
       color="white"
     />
   )
@@ -51,7 +52,7 @@ const AboutStack = createStackNavigator(
 AboutStack.navigationOptions = {
   tabBarLabel: "About",
   tabBarIcon: ({ focused }) => (
-    <Feather focused={focused} name="info" size={28} color="white" />
+    <Feather focused={focused} name="info" size={25} color="white" />
   )
 };
 
@@ -67,7 +68,7 @@ const NewsletterStack = createStackNavigator(
 NewsletterStack.navigationOptions = {
   tabBarLabel: "Newsletter",
   tabBarIcon: ({ focused }) => (
-    <FontAwesome focused={focused} name="newspaper-o" size={27} color="white" />
+    <FontAwesome focused={focused} name="newspaper-o" size={22} color="white" />
   )
 };
 
@@ -83,7 +84,7 @@ const CampusMapStack = createStackNavigator(
 CampusMapStack.navigationOptions = {
   tabBarLabel: "CampusMap",
   tabBarIcon: ({ focused }) => (
-    <FontAwesome focused={focused} name="map-o" size={26} color="white" />
+    <FontAwesome focused={focused} name="map-o" size={20} color="white" />
   )
 };
 
@@ -97,15 +98,16 @@ const MyProfileStack = createStackNavigator(
 );
 
 MyProfileStack.navigationOptions = {
-  tabBarLabel: "MyProfile",
+  tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
-    <AntDesign focused={focused} name="profile" size={28} color="white" />
+    <AntDesign focused={focused} name="profile" size={25} color="white" />
   )
 };
 
 MyProfileStack.path = "";
 
-const tabNavigator = createBottomTabNavigator(
+// const tabNavigator = createBottomTabNavigator(
+const tabNavigator = createMaterialBottomTabNavigator(
   {
     HomeStack,
     CampusMapStack,
@@ -119,12 +121,12 @@ const tabNavigator = createBottomTabNavigator(
     animationEnabled: true,
     activeColor: "white",
     inactiveColor: "gray",
-    barStyle: { backgroundColor: "#1d2966" },
+    barStyle: { backgroundColor: "#276b9c" },
     tabBarOptions: {
       activeTintColor: "white",
       inactiveTintColor: "gray",
       style: {
-        backgroundColor: "#1d2966",
+        backgroundColor: "#276b9c",
         paddingTop: 4
       },
       //lablePosition:"beside-icon",

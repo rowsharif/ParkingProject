@@ -18,10 +18,10 @@ const DELAY = 10;
 
 // an array to be filled from db
 // - change to suit your own db schema and simulation needs
-const Parkings = [];
+let Parkings = [];
 
 const init = async () => {
-  // do once only, not a listener
+  // // do once only, not a listener
   // const querySnapshot = await db
   //   .collection("ParkingLots")
   //   .get()
@@ -30,22 +30,27 @@ const init = async () => {
   //       db.collection("ParkingLots")
   //         .doc(doc.id)
   //         .collection("Parkings")
-  //         .get()
-  //         .then(querySnapshot => {
+  //         .onSnapshot(querySnapshot => {
+  //           Parkings = Parkings.filter(p => p.fk !== doc.id);
   //           querySnapshot.forEach(docP => {
-  //             parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+  //             Parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
   //           });
   //         });
   //     });
   //   });
+
   const querySnapshot = await db
     .collection("ParkingLots")
-    .doc("ocDYzihFqnXEERAIgL5b")
+    .doc("kECljqmSifLwfkpX6qPy")
     .collection("Parkings")
-    .get()
-    .then(querySnapshot => {
+    .onSnapshot(querySnapshot => {
+      Parkings = [];
       querySnapshot.forEach(docP => {
-        parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+        Parkings.push({
+          fk: "kECljqmSifLwfkpX6qPy",
+          id: docP.id,
+          ...docP.data()
+        });
       });
     });
 
@@ -64,7 +69,7 @@ const simulate = async () => {
     // change it somehow
     // - must modify local copy of db data
     //   to avoid reloading from db
-    const rnd = Math.floor(Math.random() * 3);
+    const rnd = Math.floor(Math.random() * 2);
 
     Parkings[i].status = rnd;
 
@@ -77,7 +82,7 @@ const simulate = async () => {
       .doc(id)
       .set(Parking);
 
-    console.log("simulated with item[", i, "]: ", Parking);
+    console.log("simulated with item[", i, "]:id: ", id, "Parking", Parking);
   }, DELAY * 1000);
 };
 

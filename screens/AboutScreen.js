@@ -10,18 +10,17 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ImageBackground
 } from "react-native";
 
 export default function AboutScreen() {
   return (
-    <ScrollView style={styles.container}>
-      {/**
-       * Go ahead and delete ExpoLinksView and replace it with your content;
-       * we just wanted to provide you with some helpful links.
-       */}
-      <ExpoLinksView />
-    </ScrollView>
+    <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
+          <ScrollView>
+              <Text>Hello from the other side!</Text>
+          </ScrollView>
+    </ImageBackground>      
   );
 }
 

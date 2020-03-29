@@ -10,7 +10,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Modal
+  Modal,
+  ImageBackground
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -132,7 +133,10 @@ export default function HomeScreen() {
   };
 
   return (
+    
+                
     <View style={styles.container}>
+      <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
       {/* <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -163,7 +167,7 @@ export default function HomeScreen() {
             fontWeight: "700"
           }}
         >
-          Welcom {currentUser.displayName}
+          Welcome {currentUser.displayName}
         </Text>
         <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
         <TouchableOpacity
@@ -233,7 +237,9 @@ export default function HomeScreen() {
           </View>
         </Modal>
       </View>
+      </ImageBackground>
     </View>
+    
   );
 }
 

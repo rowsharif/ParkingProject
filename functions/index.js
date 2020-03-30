@@ -71,7 +71,6 @@ exports.updateUser = functions.https.onRequest(async (request, response) => {
     phoneNumber: request.query.phoneNumber,
     photoURL: request.query.photoURL
   });
-  console.log("after set", result);
   response.send("All done ");
 });
 

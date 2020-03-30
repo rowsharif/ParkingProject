@@ -128,7 +128,6 @@ const UserProfile =(props)=> {
         onChangeText={setemail}
         placeholder="Email"
         value={email}
-        editable={false}
       />
        <TextInput
         style={{

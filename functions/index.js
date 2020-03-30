@@ -31,12 +31,13 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
 });
 
 /////////add services
-exports.sendservices = functions.https.onCall(async (data, context) => {
+exports.handleservices = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
-
-  db.collection("Services").add(data);
+if(data.operation ==="add"){
+  db.collection("Services").add(data.service);
+}
 });
 
 const bot = async message => {

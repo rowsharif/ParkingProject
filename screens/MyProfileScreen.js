@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Text, TextInput, Button, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TextInput,
+  Button,
+  ImageBackground
+} from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -53,11 +61,10 @@ export default function MyProfileScreen() {
     //   photoURL: url
     // });
     const response2 = await fetch(
-      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?data=${{
-        uid: firebase.auth().currentUser.uid,
-        displayName,
-        photoURL: url
-      }}`
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${
+        firebase.auth().currentUser.uid
+      }
+      &displayName=${displayName}&photoURL=${photoURL}`
     );
     console.log("updateUser response", response2);
     console.log("new displayName", firebase.auth().currentUser.displayName);
@@ -80,27 +87,33 @@ export default function MyProfileScreen() {
   };
 
   return (
-    <View  style={styles.container}>      
-       <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>  
-    {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          fontSize: 24
-        }}
-        onChangeText={setDisplayName}
-        placeholder="Display Name"
-        value={displayName}
-      />
-      {photoURL !== "" && (
-        <Image style={{ width: 100, height: 100 }} source={{ uri: photoURL }} />
-      )}
-      <Button title="Pick Image" onPress={handlePickImage} />
-      <Button title="Save" onPress={handleSave} />
-    {/* </ScrollView> */}
-    </ImageBackground>      
+    <View style={styles.container}>
+      <ImageBackground
+        source={require("../assets/images/bg11.jpeg")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24
+          }}
+          onChangeText={setDisplayName}
+          placeholder="Display Name"
+          value={displayName}
+        />
+        {photoURL !== "" && (
+          <Image
+            style={{ width: 100, height: 100 }}
+            source={{ uri: photoURL }}
+          />
+        )}
+        <Button title="Pick Image" onPress={handlePickImage} />
+        <Button title="Save" onPress={handleSave} />
+        {/* </ScrollView> */}
+      </ImageBackground>
     </View>
   );
 }

@@ -29,13 +29,15 @@ export default function CampusMap() {
   const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState([]);
-  const [car, setCar] = useState([]);
+  const [car, setCar] = useState({});
   const [promotion, setPromotion] = useState({});
   const [Promotions, setPromotions] = useState([]);
   const [code, setCode] = useState("");
   const [promotionValid, setPromotionValid] = useState("");
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
+  const [crew, setCrew] = useState();
+
   //  serverless function
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
@@ -66,6 +68,22 @@ export default function CampusMap() {
   }, []);
 
   useEffect(() => {
+    let crew = {};
+    parking &&
+      parking.fk &&
+      db
+        .collection("ParkingLots")
+        .doc(parking.fk)
+        .collection("Crew")
+        .onSnapshot(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            crew = { id: doc.id, ...doc.data() };
+          });
+          setCrew(crew);
+        });
+  }, [parking]);
+
+  useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cars")
@@ -79,6 +97,7 @@ export default function CampusMap() {
           });
         });
         setCar(Cars.filter(c => c.current === true)[0]);
+        setPromotionValid(" ");
         console.log("My car ------", Cars.filter(c => c.current === true)[0]);
       });
   }, []);
@@ -101,7 +120,7 @@ export default function CampusMap() {
       setHours(hours);
     }
 
-    setTotal(totalAmount);
+    setTotal(Math.floor(totalAmount));
   }, [promotionValid]);
 
   useEffect(() => {
@@ -176,19 +195,9 @@ export default function CampusMap() {
     setParking(parking);
   };
 
-  const Park = async () => {
+  const handleCarParking = async (i, o) => {
     let temp = parking;
-    temp.status = 2;
-    let crew = {};
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Crew")
-      .onSnapshot(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          crew = { id: doc.id, ...doc.data() };
-        });
-      });
-
+    temp.status = i;
     const response2 = await handleParkings({
       temp,
       car,
@@ -196,59 +205,14 @@ export default function CampusMap() {
       promotion,
       crew,
       hours,
-      operation: "Park"
-    });
-
-    setModalVisible(false);
-  };
-
-  const Reserve = async () => {
-    let temp = parking;
-    temp.status = 1;
-    let crew = {};
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Crew")
-      .onSnapshot(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          crew = { id: doc.id, ...doc.data() };
-        });
-      });
-
-    const response2 = await handleParkings({
-      temp,
-      car,
-      ServicesToAdd,
-      promotion,
-      crew,
-      hours,
-      operation: "Reserve"
-    });
-
-    setModalVisible(false);
-  };
-
-  const Leave = async i => {
-    let temp = parking;
-    temp.status = 0;
-    let crew = {};
-    db.collection("ParkingLots")
-      .doc(temp.fk)
-      .collection("Crew")
-      .onSnapshot(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          crew = { id: doc.id, ...doc.data() };
-        });
-      });
-
-    const response2 = await handleParkings({
-      temp,
-      car,
-      ServicesToAdd,
-      promotion,
-      crew,
-      hours,
-      operation: i ? "Leave" : "CancelReservation"
+      operation:
+        i === 0
+          ? o
+            ? "Leave"
+            : "CancelReservation"
+          : i === 1
+          ? "Reserve"
+          : "Park"
     });
 
     setModalVisible(false);
@@ -344,37 +308,48 @@ export default function CampusMap() {
               style={{
                 marginTop: 22,
                 backgroundColor: "#3c78a3",
-                margin: "20%",
+                margin: "15%",
                 padding: "5%",
+                // paddingTop: "1%",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 5,
-                minHeight:150
-              }}
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 0,
+                    margin: "25%",
+                    minHeight: 300
+                  },
+                  android: {
+                    minHeight:
+                    200,
+
+                  }
+              })}}
             >
-              <Text>{parking.id}</Text>
+              {/* <Text>{parking.id}</Text> */}
 
               {parking.status === 1
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View>
+                    <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonGreen}
                         onPress={() => {
-                          Park();
+                          handleCarParking(2, true);
                         }}
                       >
                         <Text>Park</Text>
                       </TouchableHighlight>
 
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonRed}
                         onPress={() => {
-                          Leave(false);
+                          handleCarParking(0, false);
                         }}
                       >
-                        <Text>Cancel Reservation</Text>
+                        <Text style={{textAlign:"center"}}>Cancel Reservation</Text>
                       </TouchableHighlight>
                     </View>
                   )
@@ -390,7 +365,8 @@ export default function CampusMap() {
                           borderWidth: 1,
                           width:"90%",
                           textAlign:"center",
-                          marginTop:"5%"
+                          marginTop:"5%",
+                          backgroundColor:"white"
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -404,11 +380,11 @@ export default function CampusMap() {
                       ) : (
                         <Text></Text>
                       )}
-                      <Text>{total}</Text>
+                      <Text>Total: {total} QR</Text>
                       <TouchableHighlight
                         style={styles.buttonPay}
                         onPress={() => {
-                          Leave(true);
+                          handleCarParking(0, true);
                         }}
                       >
                         <Text>Pay & Leave</Text>
@@ -421,13 +397,13 @@ export default function CampusMap() {
                       {Services && 
                           <Text style={{textAlign:"center"}}>Add Services: </Text>
                           }
-                      <View style={{alignItems:"flex-start"}}>                        
+                      <View style={{alignItems:"center"}}>                        
                       {Services &&
                         Services.map(Service => (
                           <CheckBox
                             center
                             title={
-                              <Text style={{width: "85%"}}>
+                              <Text style={{width: "90%"}}>
                                 {Service.name}
                                 <Text>: {Service.price} QR</Text>
                               </Text>
@@ -447,7 +423,7 @@ export default function CampusMap() {
                       <TouchableHighlight
                         style={styles.buttonGreen}
                         onPress={() => {
-                          Park();
+                          handleCarParking(2, true);
                         }}
                       >
                         <Text>Park</Text>
@@ -455,7 +431,7 @@ export default function CampusMap() {
                       <TouchableHighlight
                         style={styles.buttonYellow}
                         onPress={() => {
-                          Reserve();
+                          handleCarParking(1, true);
                         }}
                       >
                         <Text>Reserve</Text>
@@ -523,7 +499,7 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",
-    width: "43%",
+    width: "45%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -533,7 +509,7 @@ const styles = StyleSheet.create({
     },
     buttonYellow: {
       backgroundColor: "#d1cd56",
-      width: "43%",
+      width: "45%",
       height: 50,
       justifyContent: "center",
       alignItems: "center",
@@ -541,9 +517,19 @@ const styles = StyleSheet.create({
       padding: 2,
       borderRadius: 5
       },
+      buttonRed: {
+        backgroundColor: "#eb5a50",
+        width: "45%",
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 5,
+        padding: 2,
+        borderRadius: 5
+        },
     buttonPay: {
         backgroundColor: "#5dba68",
-        width: "90%",
+        width: "95%",
         height: 30,
         justifyContent: "center",
         alignItems: "center",
@@ -552,12 +538,12 @@ const styles = StyleSheet.create({
         borderRadius: 5
         },
   buttonHide: {
-    width: "90%",
+    width: "95%",
     height: 30,
     backgroundColor: "#b5b5b0",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5
+    borderRadius: 5,    
     },
   markerClick: {
     backgroundColor: "white",

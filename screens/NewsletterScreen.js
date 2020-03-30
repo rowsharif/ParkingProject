@@ -7,7 +7,18 @@ export default function NewsletterScreen() {
   return (
     <View style={styles.container}>      
        <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
-          <ScrollView>
+          <ScrollView >  
+          <View>       
+            <View style={{backgroundColor:"gray", width:"90%", height:"90%", margin:"5%", flexDirection:"row", minHeight: 150, justifyContent:"center", alignItems:"center", borderRadius:5}}>
+                <View style={{backgroundColor:"red", width:"10%", height:"10%"}}>
+                <Image source={require("../assets/images/green.png")} resizeMode="center" style={{width:20, height: 20}}/>
+                </View>
+                <View>
+                  <Text>Content</Text>
+                </View>  
+              </View>                                
+            </View> 
+            
             
           </ScrollView>
        </ImageBackground>      
@@ -30,14 +41,15 @@ NewsletterScreen.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "left",
+          paddingLeft: "3%"
         }}
       >
         Newsletter
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 1
         }}
       ></View>
 
@@ -70,5 +82,15 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     backgroundColor: "#fff"
   },
+  newsletter: {          
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor: "gray",
+    flexDirection: 'row'
+  },
+  nImage: {
+    width: "20%",
+    height: "20%"
+  }  
   
 });

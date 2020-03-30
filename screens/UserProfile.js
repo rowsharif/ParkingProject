@@ -49,6 +49,46 @@ const UserProfile = props => {
   }, []);
 
   const handleSave = async () => {
+    // if (uri !== photoURL) {
+    //   const response = await fetch(uri);
+    //   const blob = await response.blob();
+    //   const putResult = await firebase
+    //     .storage()
+    //     .ref()
+    //     .child(firebase.auth().currentUser.uid)
+    //     .put(blob);
+    //   const url = await firebase
+    //     .storage()
+    //     .ref()
+    //     .child(firebase.auth().currentUser.uid)
+    //     .getDownloadURL();
+    //   setUri(url);
+    //   setPhotoURL(url);
+    // }
+
+    // const updateUser = firebase.functions().httpsCallable("updateUser");
+    // const response2 = await updateUser({
+    //   uid: firebase.auth().currentUser.uid,
+    //   displayName,
+    //   photoURL: url
+    // });
+    const updateUser = firebase.functions().httpsCallable("updateUser");
+    const response2 = await updateUser({
+      uid,
+      displayName,
+      photoURL: uri,
+      email,
+      phoneNumber
+    });
+    // const response2 = await fetch(
+    //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
+    // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
+    // );
+    console.log("uuuuuuuuu", uid);
+    // console.log("new displayName", firebase.auth().currentUser.displayName);
+  };
+
+  const handleUpload = async () => {
     if (uri !== photoURL) {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -65,19 +105,6 @@ const UserProfile = props => {
       setUri(url);
       setPhotoURL(url);
     }
-
-    // const updateUser = firebase.functions().httpsCallable("updateUser");
-    // const response2 = await updateUser({
-    //   uid: firebase.auth().currentUser.uid,
-    //   displayName,
-    //   photoURL: url
-    // });
-    const response2 = await fetch(
-      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
-    &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
-    );
-    console.log("uuuuuuuuu", uid);
-    // console.log("new displayName", firebase.auth().currentUser.displayName);
   };
 
   const handlePickImage = async () => {
@@ -153,6 +180,9 @@ const UserProfile = props => {
 
         <View style={{ margin: "2%" }}>
           <Button title="Pick Image" onPress={handlePickImage} />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button title="Upload img" onPress={handleUpload} />
         </View>
         <View style={{ margin: "2%" }}>
           <Button title="Save" onPress={handleSave} />

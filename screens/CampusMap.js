@@ -303,24 +303,39 @@ export default function CampusMap() {
           }}
           key={parking.id}
         >
-          <View style={{ marginTop: 22 }}>
+          <View style={{ marginTop: 22}}>
             <View
               style={{
                 marginTop: 22,
-                backgroundColor: "white",
-                margin: "20%",
-                padding: "5%"
-              }}
+                backgroundColor: "#3c78a3",
+                margin: "15%",
+                padding: "5%",
+                // paddingTop: "1%",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 0,
+                    margin: "25%",
+                    minHeight: 300
+                  },
+                  android: {
+                    minHeight:
+                    200,
+
+                  }
+              })}}
             >
-              <Text>{parking.id}</Text>
+              {/* <Text>{parking.id}</Text> */}
 
               {parking.status === 1
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View>
+                    <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonGreen}
                         onPress={() => {
                           handleCarParking(2, true);
                         }}
@@ -329,12 +344,12 @@ export default function CampusMap() {
                       </TouchableHighlight>
 
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonRed}
                         onPress={() => {
                           handleCarParking(0, false);
                         }}
                       >
-                        <Text>Cancel Reservation</Text>
+                        <Text style={{textAlign:"center"}}>Cancel Reservation</Text>
                       </TouchableHighlight>
                     </View>
                   )
@@ -342,12 +357,16 @@ export default function CampusMap() {
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View>
+                    <View style={{ alignItems: "center", justifyContent:"center", width:"100%"}}>
                       <TextInput
                         style={{
                           height: 40,
                           borderColor: "gray",
-                          borderWidth: 1
+                          borderWidth: 1,
+                          width:"90%",
+                          textAlign:"center",
+                          marginTop:"5%",
+                          backgroundColor:"white"
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -361,9 +380,9 @@ export default function CampusMap() {
                       ) : (
                         <Text></Text>
                       )}
-                      <Text>{total}</Text>
+                      <Text>Total: {total} QR</Text>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonPay}
                         onPress={() => {
                           handleCarParking(0, true);
                         }}
@@ -375,12 +394,16 @@ export default function CampusMap() {
                 : car.Parking &&
                   !car.Parking.id && (
                     <View>
+                      {Services && 
+                          <Text style={{textAlign:"center"}}>Add Services: </Text>
+                          }
+                      <View style={{alignItems:"center"}}>                        
                       {Services &&
                         Services.map(Service => (
                           <CheckBox
                             center
                             title={
-                              <Text>
+                              <Text style={{width: "90%"}}>
                                 {Service.name}
                                 <Text>: {Service.price} QR</Text>
                               </Text>
@@ -395,8 +418,10 @@ export default function CampusMap() {
                             onPress={() => handleServicesToAdd(Service)}
                           />
                         ))}
+                        </View>
+                      <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonGreen}
                         onPress={() => {
                           handleCarParking(2, true);
                         }}
@@ -404,24 +429,26 @@ export default function CampusMap() {
                         <Text>Park</Text>
                       </TouchableHighlight>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonYellow}
                         onPress={() => {
                           handleCarParking(1, true);
                         }}
                       >
                         <Text>Reserve</Text>
                       </TouchableHighlight>
+                      </View>
                     </View>
                   )}
-
+              <View style={{width:"100%", alignItems:"center", justifyContent:"center"}}>              
               <TouchableHighlight
                 style={styles.buttonHide}
                 onPress={() => {
                   setModalVisible(!modalVisible);
                 }}
               >
-                <Text>X</Text>
+                <Text style={{textAlign:"center"}}>Cancel</Text>
               </TouchableHighlight>
+              </View>
             </View>
           </View>
         </Modal>
@@ -470,13 +497,54 @@ function handleHelpPress() {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#d6fffc"
-  },
+  buttonGreen: {
+    backgroundColor: "#5dba68",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+    },
+    buttonYellow: {
+      backgroundColor: "#d1cd56",
+      width: "45%",
+      height: 50,
+      justifyContent: "center",
+      alignItems: "center",
+      margin: 5,
+      padding: 2,
+      borderRadius: 5
+      },
+      buttonRed: {
+        backgroundColor: "#eb5a50",
+        width: "45%",
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 5,
+        padding: 2,
+        borderRadius: 5
+        },
+    buttonPay: {
+        backgroundColor: "#5dba68",
+        width: "95%",
+        height: 30,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 5,
+        padding: 2,
+        borderRadius: 5
+        },
   buttonHide: {
-    width: "7%",
-    backgroundColor: "red"
-  },
+    width: "95%",
+    height: 30,
+    backgroundColor: "#b5b5b0",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,    
+    },
   markerClick: {
     backgroundColor: "white",
     width: 150,

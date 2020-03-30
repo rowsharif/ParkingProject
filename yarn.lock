@@ -6188,10 +6188,10 @@ react-native-web@~0.11.7:
     stacktrace-parser "^0.1.3"
     whatwg-fetch "^3.0.0"
 
-react-navigation-material-bottom-tabs@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-2.2.6.tgz#52f9d8a4cf630d5dece91513e7526c8be79c4eb5"
-  integrity sha512-ooufeZVVbYRFKu/MFT0lv+WK16xLc+y/zSi+DxUgEHpEL/XzjiVFsJ2Ycp7sR5vnrFE8mXWABsOAhzzB1tNrNw==
+react-navigation-material-bottom-tabs@^2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-2.2.8.tgz#bdba4bec1e31b02a059833649ee54e7af03ece1b"
+  integrity sha512-RTMYWvzk3F9DdWHcqF7xtPnYkB2WXVTb1TIIzZ3iNrRTiXOWzGp406t9b6k1gC08Itxo+ZvbUr19shvW3Rlo/w==
 
 react-navigation-stack@~1.10.3:
   version "1.10.3"

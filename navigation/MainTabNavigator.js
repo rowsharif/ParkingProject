@@ -98,7 +98,7 @@ const MyProfileStack = createStackNavigator(
 );
 
 MyProfileStack.navigationOptions = {
-  tabBarLabel: "Profile",
+  tabBarLabel: "User Profile",
   tabBarIcon: ({ focused }) => (
     <AntDesign focused={focused} name="profile" size={25} color="white" />
   )

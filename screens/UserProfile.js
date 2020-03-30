@@ -95,11 +95,7 @@ const UserProfile = props => {
     }
   };
 
-  const handleCreate = async () => {};
-
-  const handleDelete = async () => {};
-
-  const handleUpdate = async () => {};
+ 
   return (
     <View style={styles.container}>
       <ImageBackground

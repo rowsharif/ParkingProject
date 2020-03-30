@@ -83,23 +83,12 @@ const UserProfile =(props)=> {
 
     if (!result.cancelled) {
       console.log("not cancelled", result.uri);
-      setPhotoURL(result.uri)
+      //setPhotoURL(result.uri)
       setUri(result.uri);
      
     }
   };
 
-  const handleCreate=async()=>{
-
-  }
-
-  const handleDelete= async() =>{
-
-  }
-
-  const handleUpdate=async()=>{
-    
-  }
   return (
     <View  style={styles.container}>      
        <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>  

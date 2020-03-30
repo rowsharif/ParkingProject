@@ -30,21 +30,23 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
   db.collection("messages").add(data);
 });
 
-/////////add services
-exports.sendservices = functions.https.onCall(async (data, context) => {
+/////////handle services
+exports.handleServices = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
-  if (data.text === "") {
-    console.log("empty service");
-    return;
+  if (data.operation === "add") {
+    db.collection("Services").add(data.service);
+  } else if (data.operation === "delete") {
+    db.collection("Services")
+      .doc(data.service.id)
+      .delete();
+  } else {
+    db.collection("Services")
+      .doc(data.service.id)
+      .update(data.service);
   }
-  data = await bot(data);
-  db.collection("Services").add(data);
 });
-
-
-
 
 const bot = async message => {
   const user = await admin.auth().getUser(message.from);
@@ -62,15 +64,13 @@ const bot = async message => {
 
 // 3
 exports.updateUser = functions.https.onRequest(async (request, response) => {
-  console.log("updateUser data", request.query.data);
+  console.log("updateUser data", request.query.uid);
   const result = await admin.auth().updateUser(request.query.uid, {
     displayName: request.query.displayName,
     email: request.query.email,
     phoneNumber: request.query.phoneNumber,
-    photoURL: request.query.photoURL,
-    
+    photoURL: request.query.photoURL
   });
-  console.log("after set", result);
   response.send("All done ");
 });
 
@@ -96,7 +96,7 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
-  console.log("handleParkings data", data.car.fk);
+  console.log("handleParkings data", data.crew.name);
   // temp,
   // car,
   // promotion
@@ -107,7 +107,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
   let total = 0;
 
   let car = data.car;
-
+  let sta = [];
   if (data.operation === "Park") {
     //add History
     const history = await db.collection("History").add({
@@ -117,12 +117,11 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       Duration: {},
       TotalAmount: {}
     });
-    let sta = [];
+
     if (data.car.Parking.status === 1) {
       sta = car.Parking.ServicesToAdd;
     } else {
       sta = data.ServicesToAdd;
-      car.Parking["ServicesToAdd"] = sta;
     }
     total = sta.reduce(
       (previousScore, currentScore, index) =>
@@ -135,7 +134,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
         .collection("ParkingLots")
         .doc(data.temp.fk)
         .collection("Crew")
-        .doc("Z8brDTwQDAlONebjoFXD")
+        .doc(data.crew.id)
         .collection("UserServices")
         .add({
           CarId: car.id,
@@ -150,6 +149,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     car.Parking["DateTime"] = new Date();
     car.Parking["HistoryId"] = history.id;
     car.Parking["TotalAmount"] = total;
+    car.Parking["ServicesToAdd"] = sta;
   } else if (data.operation === "Reserve") {
     car.Parking = data.temp;
     // save for later
@@ -162,27 +162,35 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     let pTotal =
       data.hours * car.Parking.amountperhour + car.Parking.TotalAmount;
     let totalAmount =
-      data.promotion && data.promotion.promotionPercent
-        ? pTotal - pTotal * data.promotion.promotionPercent
+      data.promotion && data.promotion.percent
+        ? pTotal - pTotal * data.promotion.percent
         : pTotal;
+    totalAmount = Math.floor(totalAmount);
     //add Payment (Services,Promotion, Parking AmountPerHour)
     db.collection("Payment").add({
       CarId: car.id,
       ParkingId: data.temp.id,
-      ServicesIds: car.Parking.ServicesToAdd,
+      ServicesIds: data.car.Parking.ServicesToAdd,
       TotalAmount: totalAmount,
       Duration: data.hours
     });
-/////////////////////////////////add services
+    /////////////////////////////////add services
     db.collection("Services").add({
-     name:data.name,
-     price:data.price
+      name: data.name,
+      price: data.price
     });
 
-
-
     //update History
-    let h = car.Parking.HistoryId;
+    let h = {};
+    let dHistory = db
+      .collection("History")
+      .doc(car.Parking.HistoryId)
+      .get(snapshot => {
+        snapshot.forEach(doc => {
+          h = doc.data();
+        });
+      });
+    h.id = car.Parking.HistoryId;
     h.TotalAmount = totalAmount;
     h.Duration = data.hours;
     db.collection("History")

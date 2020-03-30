@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Text, TextInput, Button, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TextInput,
+  Button,
+  ImageBackground
+} from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -8,14 +16,14 @@ import db from "../db";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 
-const UserProfile =(props)=> {
+const UserProfile = props => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("");
   const [email, setemail] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const[uid,setuid]=useState()
+  const [uid, setuid] = useState();
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -23,7 +31,7 @@ const UserProfile =(props)=> {
   };
 
   useEffect(() => {
-    setuid(firebase.auth().currentUser.uid)
+    setuid(firebase.auth().currentUser.uid);
     askPermission();
   }, []);
 
@@ -33,6 +41,7 @@ const UserProfile =(props)=> {
     setphoneNumber(user.phoneNumber);
     setemail(user.email);
     setPhotoURL(user.photoURL);
+    setUri(user.photoURL);
   };
 
   useEffect(() => {
@@ -40,18 +49,23 @@ const UserProfile =(props)=> {
   }, []);
 
   const handleSave = async () => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const putResult = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .put(blob);
-    const url = await firebase
-      .storage()
-      .ref()
-      .child(firebase.auth().currentUser.uid)
-      .getDownloadURL();
+    if (uri !== photoURL) {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const putResult = await firebase
+        .storage()
+        .ref()
+        .child(firebase.auth().currentUser.uid)
+        .put(blob);
+      const url = await firebase
+        .storage()
+        .ref()
+        .child(firebase.auth().currentUser.uid)
+        .getDownloadURL();
+      setUri(url);
+      setPhotoURL(url);
+    }
+
     // const updateUser = firebase.functions().httpsCallable("updateUser");
     // const response2 = await updateUser({
     //   uid: firebase.auth().currentUser.uid,
@@ -59,17 +73,12 @@ const UserProfile =(props)=> {
     //   photoURL: url
     // });
     const response2 = await fetch(
-      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${
-        uid
-    }
-    &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`,
-    
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
+    &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     );
     console.log("updateUser response", response2.phoneNumber);
-    console.log("uuuuuuuuu",uid)
+    console.log("uuuuuuuuu", uid);
     // console.log("new displayName", firebase.auth().currentUser.displayName);
-     setPhotoURL(uri);
-   
   };
 
   const handlePickImage = async () => {
@@ -83,80 +92,96 @@ const UserProfile =(props)=> {
 
     if (!result.cancelled) {
       console.log("not cancelled", result.uri);
-      setPhotoURL(result.uri)
       setUri(result.uri);
-     
     }
   };
 
-  const handleCreate=async()=>{
+  const handleCreate = async () => {};
 
-  }
+  const handleDelete = async () => {};
 
-  const handleDelete= async() =>{
-
-  }
-
-  const handleUpdate=async()=>{
-    
-  }
+  const handleUpdate = async () => {};
   return (
-    <View  style={styles.container}>      
-       <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>  
-    {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          fontSize: 24,
-          margin:"2%" 
-        }}
-        onChangeText={setDisplayName}
-        placeholder="Display Name"
-        value={displayName}
-      />
-       <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          fontSize: 24,
-          margin:"2%" ,
-          backgroundColor:"#cccccc"
-        }}
-        onChangeText={setemail}
-        placeholder="Email"
-        value={email}
-        editable={false}
-      />
-       <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          fontSize: 24,margin:"2%" 
-        }}
-        onChangeText={setphoneNumber}
-        placeholder="Phone number"
-        value={phoneNumber}
-      />
-      {photoURL !== "" && (
-        <Image style={{ width: 100, height: 100, margin:"2%" }} source={{ uri: photoURL }} />
-      )}
-      
-      <View style={{margin:"2%" }}><Button title="Pick Image" onPress={handlePickImage} /></View>
-      <View style={{margin:"2%" }}><Button title="Save" onPress={handleSave} /></View>
-      <View style={{margin:"2%" }}><Button title="Create User" onPress={() => props.navigation.navigate("CreateUser")} /></View>
-      <View style={{margin:"2%" }}><Button title="Update User" onPress={() => props.navigation.navigate("UpdateUser")}/></View>
-      <View style={{margin:"2%" }}><Button title="Delete User" onPress={() => props.navigation.navigate("DeleteUser")}/></View>
+    <View style={styles.container}>
+      <ImageBackground
+        source={require("../assets/images/bg11.jpeg")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%"
+          }}
+          onChangeText={setDisplayName}
+          placeholder="Display Name"
+          value={displayName}
+        />
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%",
+            backgroundColor: "#cccccc"
+          }}
+          onChangeText={setemail}
+          placeholder="Email"
+          value={email}
+        />
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%"
+          }}
+          onChangeText={setphoneNumber}
+          placeholder="Phone number"
+          value={phoneNumber}
+        />
+        {photoURL !== "" && (
+          <Image
+            style={{ width: 100, height: 100, margin: "2%" }}
+            source={{ uri: photoURL }}
+          />
+        )}
 
+        <View style={{ margin: "2%" }}>
+          <Button title="Pick Image" onPress={handlePickImage} />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button title="Save" onPress={handleSave} />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="Create User"
+            onPress={() => props.navigation.navigate("CreateUser")}
+          />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="Update User"
+            onPress={() => props.navigation.navigate("UpdateUser")}
+          />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="Delete User"
+            onPress={() => props.navigation.navigate("DeleteUser")}
+          />
+        </View>
 
-    {/* </ScrollView> */}
-    </ImageBackground>      
+        {/* </ScrollView> */}
+      </ImageBackground>
     </View>
   );
-}
+};
 
 UserProfile.navigationOptions = {
   headerTitle: (
@@ -219,8 +244,8 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: "center"
   },
-  button:{
-    margin:"5%"
+  button: {
+    margin: "5%"
   },
   contentContainer: {
     paddingTop: 30

@@ -63,15 +63,14 @@ const bot = async message => {
 };
 
 // 3
-exports.updateUser = functions.https.onRequest(async (request, response) => {
-  console.log("updateUser data", request.query.uid);
-  const result = await admin.auth().updateUser(request.query.uid, {
-    displayName: request.query.displayName,
-    email: request.query.email,
-    phoneNumber: request.query.phoneNumber,
-    photoURL: request.query.photoURL
+exports.updateUser = functions.https.onCall(async (data, context) => {
+  console.log("updateUser data", data.uid);
+  const result = await admin.auth().updateUser(data.uid, {
+    displayName: data.displayName,
+    email: data.email,
+    phoneNumber: data.phoneNumber,
+    photoURL: data.photoURL
   });
-  response.send("All done ");
 });
 
 // 4
@@ -174,12 +173,6 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       TotalAmount: totalAmount,
       Duration: data.hours
     });
-    /////////////////////////////////add services
-    db.collection("Services").add({
-      name: data.name,
-      price: data.price
-    });
-
     //update History
     let h = {};
     let dHistory = db

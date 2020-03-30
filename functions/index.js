@@ -30,17 +30,22 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
   db.collection("messages").add(data);
 });
 
-/////////add services
-exports.sendservices = functions.https.onCall(async (data, context) => {
+/////////handle services
+exports.handleServices = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
-  if (data.text === "") {
-    console.log("empty service");
-    return;
+  if (data.operation === "add") {
+    db.collection("Services").add(data.service);
+  } else if (data.operation === "delete") {
+    db.collection("Services")
+      .doc(data.service.id)
+      .delete();
+  } else {
+    db.collection("Services")
+      .doc(data.service.id)
+      .update(data.service);
   }
-  data = await bot(data);
-  db.collection("Services").add(data);
 });
 
 const bot = async message => {

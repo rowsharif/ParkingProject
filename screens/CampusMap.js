@@ -344,23 +344,34 @@ export default function CampusMap() {
               style={{
                 marginTop: 22,
                 backgroundColor: "#3c78a3",
-                margin: "20%",
+                margin: "15%",
                 padding: "5%",
+                // paddingTop: "1%",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 5,
-                minHeight:150
-              }}
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 0,
+                    margin: "25%",
+                    minHeight: 300
+                  },
+                  android: {
+                    minHeight:
+                    200,
+
+                  }
+              })}}
             >
-              <Text>{parking.id}</Text>
+              {/* <Text>{parking.id}</Text> */}
 
               {parking.status === 1
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View>
+                    <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonGreen}
                         onPress={() => {
                           Park();
                         }}
@@ -369,12 +380,12 @@ export default function CampusMap() {
                       </TouchableHighlight>
 
                       <TouchableHighlight
-                        style={styles.button}
+                        style={styles.buttonRed}
                         onPress={() => {
                           Leave(false);
                         }}
                       >
-                        <Text>Cancel Reservation</Text>
+                        <Text style={{textAlign:"center"}}>Cancel Reservation</Text>
                       </TouchableHighlight>
                     </View>
                   )
@@ -390,7 +401,8 @@ export default function CampusMap() {
                           borderWidth: 1,
                           width:"90%",
                           textAlign:"center",
-                          marginTop:"5%"
+                          marginTop:"5%",
+                          backgroundColor:"white"
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -404,7 +416,7 @@ export default function CampusMap() {
                       ) : (
                         <Text></Text>
                       )}
-                      <Text>{total}</Text>
+                      <Text>Total: {total} QR</Text>
                       <TouchableHighlight
                         style={styles.buttonPay}
                         onPress={() => {
@@ -421,13 +433,13 @@ export default function CampusMap() {
                       {Services && 
                           <Text style={{textAlign:"center"}}>Add Services: </Text>
                           }
-                      <View style={{alignItems:"flex-start"}}>                        
+                      <View style={{alignItems:"center"}}>                        
                       {Services &&
                         Services.map(Service => (
                           <CheckBox
                             center
                             title={
-                              <Text style={{width: "85%"}}>
+                              <Text style={{width: "90%"}}>
                                 {Service.name}
                                 <Text>: {Service.price} QR</Text>
                               </Text>
@@ -523,7 +535,7 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",
-    width: "43%",
+    width: "45%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -533,7 +545,7 @@ const styles = StyleSheet.create({
     },
     buttonYellow: {
       backgroundColor: "#d1cd56",
-      width: "43%",
+      width: "45%",
       height: 50,
       justifyContent: "center",
       alignItems: "center",
@@ -541,9 +553,19 @@ const styles = StyleSheet.create({
       padding: 2,
       borderRadius: 5
       },
+      buttonRed: {
+        backgroundColor: "#eb5a50",
+        width: "45%",
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 5,
+        padding: 2,
+        borderRadius: 5
+        },
     buttonPay: {
         backgroundColor: "#5dba68",
-        width: "90%",
+        width: "95%",
         height: 30,
         justifyContent: "center",
         alignItems: "center",
@@ -552,12 +574,12 @@ const styles = StyleSheet.create({
         borderRadius: 5
         },
   buttonHide: {
-    width: "90%",
+    width: "95%",
     height: 30,
     backgroundColor: "#b5b5b0",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5
+    borderRadius: 5,    
     },
   markerClick: {
     backgroundColor: "white",

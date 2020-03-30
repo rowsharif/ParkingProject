@@ -109,25 +109,26 @@ MyProfileScreen.navigationOptions = {
   headerTitle: (
     <View
       style={{
-        flex: 1,
+        flex: 2,
         flexDirection: "row"
       }}
     >
       <Text
         style={{
-          flex: 1,
+          flex: 2,
           paddingTop: 10,
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "left",
+          paddingLeft: "3%"
         }}
       >
         MyProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 1
         }}
       ></View>
 

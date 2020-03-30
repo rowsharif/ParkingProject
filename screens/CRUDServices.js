@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const [id, setId] = React.useState("");
 
   useEffect(() => {
-    db.collection("services").onSnapshot(querySnapshot => {
+    db.collection("Services").onSnapshot(querySnapshot => {
       const services = [];
       querySnapshot.forEach(doc => {
         services.push({ id: doc.id, ...doc.data() });
@@ -58,11 +58,11 @@ export default function HomeScreen() {
     setPrice(service.price);
     setId(service.id);
   };
-  const handleDelete = service => {
-      const response2 = await handleServices({
-        service: service,
-        operation: "delete"
-      });
+  const handleDelete = async service => {
+    const response2 = await handleServices({
+      service: service,
+      operation: "delete"
+    });
   };
   return (
     <View style={styles.container}>
@@ -73,25 +73,25 @@ export default function HomeScreen() {
       >
         {services.map((service, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
-          <Text style={styles.getStartedText}>
-            {service.name} - {service.price}
-          </Text>
-          <Button title="Edit" onPress={() => handleEdit(service)} />
-          <Button title="X" onPress={() => handleDelete(service)} />
-        </View>
+            <Text style={styles.getStartedText}>
+              {service.name} - {service.price}
+            </Text>
+            <Button title="Edit" onPress={() => handleEdit(service)} />
+            <Button title="X" onPress={() => handleDelete(service)} />
+          </View>
         ))}
       </ScrollView>
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setTo}
-        placeholder="To"
-        value={to}
+        onChangeText={setName}
+        placeholder="Name"
+        value={name}
       />
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setText}
-        placeholder="Text"
-        value={text}
+        onChangeText={setPrice}
+        placeholder="Price"
+        value={price}
       />
       <Button title="Send" onPress={handleSend} />
     </View>

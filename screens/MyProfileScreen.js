@@ -19,6 +19,7 @@ import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import DeleteUser from "./DeleteUser";
+import CRUDServices from "./CRUDServices";
 
 const StackNavigator = createStackNavigator(
   {
@@ -26,7 +27,7 @@ const StackNavigator = createStackNavigator(
       screen: UserProfile
     },
     CreateUser: {
-      screen: CreateUser
+      screen: CRUDServices
     },
     UpdateUser: {
       screen: UpdateUser

@@ -35,11 +35,7 @@ exports.sendservices = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
-  if (data.text === "") {
-    console.log("empty service");
-    return;
-  }
-  data = await bot(data);
+
   db.collection("Services").add(data);
 });
 

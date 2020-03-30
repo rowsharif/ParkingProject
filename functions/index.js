@@ -30,6 +30,22 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
   db.collection("messages").add(data);
 });
 
+/////////add services
+exports.sendservices = functions.https.onCall(async (data, context) => {
+  console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.text === "") {
+    console.log("empty service");
+    return;
+  }
+  data = await bot(data);
+  db.collection("Services").add(data);
+});
+
+
+
+
 const bot = async message => {
   const user = await admin.auth().getUser(message.from);
   // do something based on the message
@@ -47,9 +63,12 @@ const bot = async message => {
 // 3
 exports.updateUser = functions.https.onRequest(async (request, response) => {
   console.log("updateUser data", request.query.data);
-  const result = await admin.auth().updateUser(request.query.data.uid, {
-    displayName: request.query.data.displayName,
-    photoURL: request.query.data.photoURL
+  const result = await admin.auth().updateUser(request.query.uid, {
+    displayName: request.query.displayName,
+    email: request.query.email,
+    phoneNumber: request.query.phoneNumber,
+    photoURL: request.query.photoURL,
+    
   });
   console.log("after set", result);
   response.send("All done ");
@@ -57,10 +76,10 @@ exports.updateUser = functions.https.onRequest(async (request, response) => {
 
 // 4
 exports.initUser = functions.https.onRequest(async (request, response) => {
-  console.log("request", request.query.uid);
+  console.log("request", request.query.data.uid);
 
-  const result = await admin.auth().updateUser(request.query.uid, {
-    displayName: "lksdjflsdjf",
+  const result = await admin.auth().updateUser(request.query.data.uid, {
+    displayName: "Unknown",
     photoURL:
       "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
   });
@@ -154,6 +173,14 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       TotalAmount: totalAmount,
       Duration: data.hours
     });
+/////////////////////////////////add services
+    db.collection("Services").add({
+     name:data.name,
+     price:data.price
+    });
+
+
+
     //update History
     let h = car.Parking.HistoryId;
     h.TotalAmount = totalAmount;

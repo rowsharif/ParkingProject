@@ -18,6 +18,7 @@ import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+import { Avatar } from 'react-native-elements';
 
 import Message from "./Message.js";
 
@@ -201,7 +202,20 @@ export default function HomeScreen() {
             >
             <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
               <View style={{padding:10}}>
-              <Text
+             
+         <View>
+                    <Avatar
+  rounded
+  source={{
+    uri:
+      currentUser.photoURL
+  }}
+/>
+</View>
+<Text>Email: {currentUser.email}</Text>
+<Text>Phone number: {currentUser.phoneNumber}</Text>
+<Text>Display Name:{currentUser.displayName}</Text>
+ <Text
                 style={{
                   paddingTop: 10,
                   fontSize: 18,
@@ -209,7 +223,8 @@ export default function HomeScreen() {
                 }}
               >
                 Which car are you driving?
-              </Text>
+              </Text> 
+              
               {Cars &&
                 Cars.length > 0 &&
                 Cars.map((car, i) => (

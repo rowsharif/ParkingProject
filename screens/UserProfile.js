@@ -76,7 +76,6 @@ const UserProfile = props => {
       `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     );
-    console.log("updateUser response", response2.phoneNumber);
     console.log("uuuuuuuuu", uid);
     // console.log("new displayName", firebase.auth().currentUser.displayName);
   };

@@ -18,7 +18,7 @@ import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-import { Avatar } from 'react-native-elements';
+import { Avatar } from "react-native-elements";
 
 import Message from "./Message.js";
 
@@ -134,11 +134,12 @@ export default function HomeScreen() {
   };
 
   return (
-    
-                
     <View style={styles.container}>
-      <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
-      {/* <ScrollView
+      <ImageBackground
+        source={require("../assets/images/bg11.jpeg")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="always"
@@ -147,7 +148,7 @@ export default function HomeScreen() {
           <Message key={i} message={message} handleEdit={handleEdit} />
         ))}
       </ScrollView> */}
-      {/* <TextInput
+        {/* <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setTo}
         placeholder="To"
@@ -160,105 +161,113 @@ export default function HomeScreen() {
         value={text}
       />
       <Button title="Send" onPress={handleSend} /> */}
-      <View>
-        <Text
-          style={{
-            paddingTop: 10,
-            fontSize: 18,
-            fontWeight: "700"
-          }}
-        >
-          Welcome {currentUser.displayName}
-        </Text>
-        <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
-        <TouchableOpacity
-          style={[styles.button, { display: "flex" }]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>Change</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <Button title="Logout" onPress={handleLogout} />
-      </View>
-      <View style={{ marginTop: 0 }}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-          }}
-        >
-          <View style={{ marginTop: 22 }}>
-            <View
-              style={{
-                marginTop: 22,
-                backgroundColor: "white",
-                
-                width: "100%",
-                height: "98%"
-              }}
-            >
-            <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
-              <View style={{padding:10}}>
-             
-         <View>
-                    <Avatar
-  rounded
-  source={{
-    uri:
-      currentUser.photoURL
-  }}
-/>
-</View>
-<Text>Email: {currentUser.email}</Text>
-<Text>Phone number: {currentUser.phoneNumber}</Text>
-<Text>Display Name:{currentUser.displayName}</Text>
- <Text
+        <View>
+          <Text
+            style={{
+              paddingTop: 10,
+              fontSize: 18,
+              fontWeight: "700"
+            }}
+          >
+            Welcome {currentUser.displayName}
+          </Text>
+          <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
+          <TouchableOpacity
+            style={[styles.button, { display: "flex" }]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.buttonText}>Change</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <Button title="Logout" onPress={handleLogout} />
+        </View>
+        <View style={{ marginTop: 0 }}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={{ marginTop: 22 }}>
+              <View
                 style={{
-                  paddingTop: 10,
-                  fontSize: 18,
-                  fontWeight: "700"
+                  marginTop: 22,
+                  backgroundColor: "white",
+
+                  width: "100%",
+                  height: "98%"
                 }}
               >
-                Which car are you driving?
-              </Text> 
-              
-              {Cars &&
-                Cars.length > 0 &&
-                Cars.map((car, i) => (
-                  <View key={car.id}>
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={() => handleCar(car)}
+                <ImageBackground
+                  source={require("../assets/images/bg11.jpeg")}
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <View style={{ padding: 10 }}>
+                    <View>
+                      <Avatar
+                        rounded
+                        source={{
+                          uri: currentUser.photoURL
+                            ? currentUser.photoURL
+                            : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                        }}
+                      />
+                    </View>
+                    <Text>Email: {currentUser.email}</Text>
+                    <Text>Phone number: {currentUser.phoneNumber}</Text>
+                    <Text>Display Name:{currentUser.displayName}</Text>
+                    <Text
+                      style={{
+                        paddingTop: 10,
+                        fontSize: 18,
+                        fontWeight: "700"
+                      }}
                     >
-                      <Text style={styles.buttonText}>{car.PlateNumber}</Text>
-                    </TouchableOpacity>
-                    <Button title="X" onPress={() => deleteCar(car)} />
+                      Which car are you driving?
+                    </Text>
+
+                    {Cars &&
+                      Cars.length > 0 &&
+                      Cars.map((car, i) => (
+                        <View key={car.id}>
+                          <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => handleCar(car)}
+                          >
+                            <Text style={styles.buttonText}>
+                              {car.PlateNumber}
+                            </Text>
+                          </TouchableOpacity>
+                          <Button title="X" onPress={() => deleteCar(car)} />
+                        </View>
+                      ))}
+                    {Cars.length < 2 && (
+                      <View style={{ paddingTop: "30%" }}>
+                        <Text>Add a Car</Text>
+                        <TextInput
+                          style={{
+                            height: 40,
+                            borderColor: "gray",
+                            borderWidth: 1
+                          }}
+                          onChangeText={setPlateNumber}
+                          placeholder=" PlateNumber"
+                          value={PlateNumber}
+                        />
+                        <Button title="Add" onPress={addCar} />
+                      </View>
+                    )}
                   </View>
-                ))}
-              {Cars.length < 2 && (
-                <View style={{ paddingTop: "30%" }}>
-                  <Text>Add a Car</Text>
-                  <TextInput
-                    style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                    onChangeText={setPlateNumber}
-                    placeholder=" PlateNumber"
-                    value={PlateNumber}
-                  />
-                  <Button title="Add" onPress={addCar} />
-                </View>
-              )}
+                </ImageBackground>
               </View>
-              </ImageBackground>
             </View>
-          </View>          
-        </Modal>
-      </View>
+          </Modal>
+        </View>
       </ImageBackground>
     </View>
-    
   );
 }
 

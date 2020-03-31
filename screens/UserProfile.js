@@ -19,7 +19,7 @@ import { ScrollView } from "react-native-gesture-handler";
 const UserProfile = props => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
@@ -78,7 +78,7 @@ const UserProfile = props => {
       displayName,
       photoURL: uri,
       email,
-      phoneNumber
+      phoneNumber: phoneNumber
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
@@ -174,7 +174,11 @@ const UserProfile = props => {
         {photoURL !== "" && (
           <Image
             style={{ width: 100, height: 100, margin: "2%" }}
-            source={{ uri: photoURL }}
+            source={{
+              uri: photoURL
+                ? photoURL
+                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+            }}
           />
         )}
 

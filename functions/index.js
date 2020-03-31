@@ -64,7 +64,7 @@ const bot = async message => {
 
 // 3
 exports.updateUser = functions.https.onCall(async (data, context) => {
-  console.log("updateUser data", data.uid);
+  console.log("updateUser data", data.phoneNumber);
   const result = await admin.auth().updateUser(data.uid, {
     displayName: data.displayName,
     email: data.email,

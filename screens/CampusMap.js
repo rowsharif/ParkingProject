@@ -292,6 +292,7 @@ export default function CampusMap() {
               />
             </MapView.Marker>
           ))}
+          
       </MapView>
       <View style={{ marginTop: 22 }}>
         <Modal

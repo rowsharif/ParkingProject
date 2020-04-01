@@ -19,12 +19,12 @@ import { ScrollView } from "react-native-gesture-handler";
 const UserProfile = props => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
-
+  const user = firebase.auth().currentUser;
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
@@ -78,13 +78,13 @@ const UserProfile = props => {
       displayName,
       photoURL: uri,
       email,
-      phoneNumber
+      phoneNumber:phoneNumber
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     // );
-    console.log("uuuuuuuuu", uid);
+    console.log("uuuuuuuuu", phoneNumber);
     // console.log("new displayName", firebase.auth().currentUser.displayName);
   };
 
@@ -149,7 +149,6 @@ const UserProfile = props => {
             borderWidth: 1,
             fontSize: 24,
             margin: "2%",
-            backgroundColor: "#cccccc"
           }}
           onChangeText={setemail}
           placeholder="Email"
@@ -186,22 +185,22 @@ const UserProfile = props => {
         <View style={{ margin: "2%" }}>
           <Button
             title="Create User"
-            onPress={() => props.navigation.navigate("CreateUser")}
+            onPress={() => props.navigation.navigate("CRUDServices")}
           />
         </View>
         <View style={{ margin: "2%" }}>
           <Button
-            title="Update User"
-            onPress={() => props.navigation.navigate("UpdateUser")}
+            title="User history"
+            onPress={() => props.navigation.navigate("CRUDHistory")}
           />
         </View>
+       
         <View style={{ margin: "2%" }}>
           <Button
-            title="Delete User"
-            onPress={() => props.navigation.navigate("DeleteUser")}
+            title="My Profile"
+            onPress={() => props.navigation.navigate("CRUDMyProfile")}
           />
         </View>
-
         {/* </ScrollView> */}
       </ImageBackground>
     </View>

@@ -48,6 +48,11 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
+
+
+
+
+
 const bot = async message => {
   const user = await admin.auth().getUser(message.from);
   // do something based on the message

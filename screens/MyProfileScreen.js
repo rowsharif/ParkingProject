@@ -18,22 +18,26 @@ import { createStackNavigator } from "react-navigation-stack";
 import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
-import DeleteUser from "./DeleteUser";
+import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
+import CRUDMyProfile from "./CRUDMyProfile";
 
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
       screen: UserProfile
     },
-    CreateUser: {
+    CRUDServices: {
       screen: CRUDServices
     },
     UpdateUser: {
       screen: UpdateUser
     },
-    DeleteUser: {
-      screen: DeleteUser
+    CRUDHistory: {
+      screen: CRUDHistory
+    },
+    CRUDMyProfile:{
+      screen:CRUDMyProfile
     }
   },
   {

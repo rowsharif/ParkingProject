@@ -170,6 +170,18 @@ export default function HomeScreen() {
         >
           Welcome {currentUser.displayName}
         </Text>
+        <View>
+                    <Avatar
+  rounded
+  source={{
+    uri:
+      currentUser.photoURL
+  }}
+/>
+</View>
+<Text>Email: {currentUser.email}</Text>
+<Text>Phone number: {currentUser.phoneNumber}</Text>
+<Text>Display Name:{currentUser.displayName}</Text>
         <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
         <TouchableOpacity
           style={[styles.button, { display: "flex" }]}
@@ -203,18 +215,7 @@ export default function HomeScreen() {
             <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
               <View style={{padding:10}}>
              
-         <View>
-                    <Avatar
-  rounded
-  source={{
-    uri:
-      currentUser.photoURL
-  }}
-/>
-</View>
-<Text>Email: {currentUser.email}</Text>
-<Text>Phone number: {currentUser.phoneNumber}</Text>
-<Text>Display Name:{currentUser.displayName}</Text>
+        
  <Text
                 style={{
                   paddingTop: 10,

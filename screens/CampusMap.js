@@ -26,6 +26,7 @@ import { CheckBox } from "react-native-elements";
 
 export default function CampusMap() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
   const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState([]);
@@ -38,6 +39,10 @@ export default function CampusMap() {
   const [hours, setHours] = useState(0);
   const [crew, setCrew] = useState();
 
+  const setModalvisible = x => {
+    setModalVisible(x);
+    setPromotionValid("");
+  };
   //  serverless function
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
@@ -191,7 +196,7 @@ export default function CampusMap() {
   }, []);
 
   const markerClick = parking => {
-    setModalVisible(true);
+    setModalvisible(true);
     setParking(parking);
   };
 
@@ -256,6 +261,7 @@ export default function CampusMap() {
         mapType="satellite"
         minZoomLevel={18}
         moveOnMarkerPress={false}
+        onPress={()=> setModalVisible2(true)}
       >
         {parkings &&
           parkings.map(parking => (
@@ -292,8 +298,33 @@ export default function CampusMap() {
               />
             </MapView.Marker>
           ))}
+        <MapView.Marker
+          coordinate={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+          }}
+          pinColor="green"
+          title="You are here"
+        />
       </MapView>
-      <View style={{ marginTop: 22 }}>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+          }}
+          key={parking.id}
+        >
+            <View style={{ marginTop: 22 }}>
+              <View style={{ margin: "20%", backgroundColor: "gray", height:100 }}>
+                <Text onPress={()=> setModalVisible2(false)}>Close</Text>
+              </View>
+            </View>
+        </Modal>
+      </View>
+      <View style={{ marginTop: 22 }}>        
         <Modal
           animationType="fade"
           transparent={true}
@@ -303,7 +334,7 @@ export default function CampusMap() {
           }}
           key={parking.id}
         >
-          <View style={{ marginTop: 22}}>
+          <View style={{ marginTop: 22 }}>
             <View
               style={{
                 marginTop: 22,
@@ -321,19 +352,32 @@ export default function CampusMap() {
                     minHeight: 300
                   },
                   android: {
-                    minHeight:
-                    200,
-
+                    minHeight: 200
                   }
-              })}}
+                })
+              }}
             >
-              {/* <Text>{parking.id}</Text> */}
+              <Text>
+                This Parking is{" "}
+                {parking.status === 0
+                  ? "Empty"
+                  : parking.status === 1
+                  ? "Reserved"
+                  : "Full"}
+              </Text>
 
               {parking.status === 1
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%"
+                      }}
+                    >
                       <TouchableHighlight
                         style={styles.buttonGreen}
                         onPress={() => {
@@ -349,7 +393,9 @@ export default function CampusMap() {
                           handleCarParking(0, false);
                         }}
                       >
-                        <Text style={{textAlign:"center"}}>Cancel Reservation</Text>
+                        <Text style={{ textAlign: "center" }}>
+                          Cancel Reservation
+                        </Text>
                       </TouchableHighlight>
                     </View>
                   )
@@ -357,16 +403,22 @@ export default function CampusMap() {
                 ? car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
-                    <View style={{ alignItems: "center", justifyContent:"center", width:"100%"}}>
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%"
+                      }}
+                    >
                       <TextInput
                         style={{
                           height: 40,
                           borderColor: "gray",
                           borderWidth: 1,
-                          width:"90%",
-                          textAlign:"center",
-                          marginTop:"5%",
-                          backgroundColor:"white"
+                          width: "90%",
+                          textAlign: "center",
+                          marginTop: "5%",
+                          backgroundColor: "white"
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -394,60 +446,75 @@ export default function CampusMap() {
                 : car.Parking &&
                   !car.Parking.id && (
                     <View>
-                      {Services && 
-                          <Text style={{textAlign:"center"}}>Add Services: </Text>
-                          }
-                      <View style={{alignItems:"center"}}>                        
-                      {Services &&
-                        Services.map(Service => (
-                          <CheckBox
-                            center
-                            title={
-                              <Text style={{width: "90%"}}>
-                                {Service.name}
-                                <Text>: {Service.price} QR</Text>
-                              </Text>
-                            }
-                            key={Service.id}
-                            checkedIcon="dot-circle-o"
-                            uncheckedIcon="circle-o"
-                            checked={
-                              ServicesToAdd.filter(s => s.id === Service.id)
-                                .length !== 0
-                            }
-                            onPress={() => handleServicesToAdd(Service)}
-                          />
-                        ))}
-                        </View>
-                      <View style={{flexDirection:"row", alignItems: "center", justifyContent:"center", width:"100%"}}>
-                      <TouchableHighlight
-                        style={styles.buttonGreen}
-                        onPress={() => {
-                          handleCarParking(2, true);
+                      {Services && (
+                        <Text style={{ textAlign: "center" }}>
+                          Add Services:{" "}
+                        </Text>
+                      )}
+                      <View style={{ alignItems: "center" }}>
+                        {Services &&
+                          Services.map(Service => (
+                            <CheckBox
+                              center
+                              title={
+                                <Text style={{ width: "90%" }}>
+                                  {Service.name}
+                                  <Text>: {Service.price} QR</Text>
+                                </Text>
+                              }
+                              key={Service.id}
+                              checkedIcon="dot-circle-o"
+                              uncheckedIcon="circle-o"
+                              checked={
+                                ServicesToAdd.filter(s => s.id === Service.id)
+                                  .length !== 0
+                              }
+                              onPress={() => handleServicesToAdd(Service)}
+                            />
+                          ))}
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%"
                         }}
                       >
-                        <Text>Park</Text>
-                      </TouchableHighlight>
-                      <TouchableHighlight
-                        style={styles.buttonYellow}
-                        onPress={() => {
-                          handleCarParking(1, true);
-                        }}
-                      >
-                        <Text>Reserve</Text>
-                      </TouchableHighlight>
+                        <TouchableHighlight
+                          style={styles.buttonGreen}
+                          onPress={() => {
+                            handleCarParking(2, true);
+                          }}
+                        >
+                          <Text>Park</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                          style={styles.buttonYellow}
+                          onPress={() => {
+                            handleCarParking(1, true);
+                          }}
+                        >
+                          <Text>Reserve</Text>
+                        </TouchableHighlight>
                       </View>
                     </View>
                   )}
-              <View style={{width:"100%", alignItems:"center", justifyContent:"center"}}>              
-              <TouchableHighlight
-                style={styles.buttonHide}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
+              <View
+                style={{
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
-                <Text style={{textAlign:"center"}}>Cancel</Text>
-              </TouchableHighlight>
+                <TouchableHighlight
+                  style={styles.buttonHide}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <Text style={{ textAlign: "center" }}>Cancel</Text>
+                </TouchableHighlight>
               </View>
             </View>
           </View>
@@ -506,45 +573,45 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 2,
     borderRadius: 5
-    },
-    buttonYellow: {
-      backgroundColor: "#d1cd56",
-      width: "45%",
-      height: 50,
-      justifyContent: "center",
-      alignItems: "center",
-      margin: 5,
-      padding: 2,
-      borderRadius: 5
-      },
-      buttonRed: {
-        backgroundColor: "#eb5a50",
-        width: "45%",
-        height: 50,
-        justifyContent: "center",
-        alignItems: "center",
-        margin: 5,
-        padding: 2,
-        borderRadius: 5
-        },
-    buttonPay: {
-        backgroundColor: "#5dba68",
-        width: "95%",
-        height: 30,
-        justifyContent: "center",
-        alignItems: "center",
-        margin: 5,
-        padding: 2,
-        borderRadius: 5
-        },
+  },
+  buttonYellow: {
+    backgroundColor: "#d1cd56",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
+  buttonRed: {
+    backgroundColor: "#eb5a50",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
+  buttonPay: {
+    backgroundColor: "#5dba68",
+    width: "95%",
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
   buttonHide: {
     width: "95%",
     height: 30,
     backgroundColor: "#b5b5b0",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5,    
-    },
+    borderRadius: 5
+  },
   markerClick: {
     backgroundColor: "white",
     width: 150,

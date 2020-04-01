@@ -169,7 +169,11 @@ const UserProfile = props => {
         {photoURL !== "" && (
           <Image
             style={{ width: 100, height: 100, margin: "2%" }}
-            source={{ uri: photoURL }}
+            source={{
+              uri: photoURL
+                ? photoURL
+                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+            }}
           />
         )}
 

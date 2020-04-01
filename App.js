@@ -61,13 +61,35 @@ export default function App(props) {
     updateUserLogin();
   };
 
-  const updateUserLogin = () => {
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .set({
-        id: firebase.auth().currentUser.uid,
-        lastLogin: new Date()
-      });
+  const updateUserLogin = async () => {
+    try {
+      let user = {};
+      const result = await db
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            user = doc.data();
+          });
+        });
+      db.collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .set({
+          id: firebase.auth().currentUser.uid,
+          lastLogin: new Date(),
+          role: user.role,
+          eid: user.eid
+        });
+    } catch {
+      db.collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .set({
+          id: firebase.auth().currentUser.uid,
+          lastLogin: new Date(),
+          role: "student"
+        });
+    }
   };
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {

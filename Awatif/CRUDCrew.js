@@ -9,67 +9,67 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,Picker
+  View
 } from "react-native";
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-const handleServices = firebase.functions().httpsCallable("handleServices");
+const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
 const CRUDServices = (props) => {
-  const [services, setServices] = useState([]);
-  const [price, setPrice] = React.useState(0);
+  const [crew, setCrew] = useState([]);
+  const[parking,setParking]=useState([]);
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
 
   useEffect(() => {
-    db.collection("Services").onSnapshot(querySnapshot => {
-      const services = [];
+    db.collection("ParkingLots").doc().collection("Crew").get().then(querySnapshot => {
+      const crew = [];
       querySnapshot.forEach(doc => {
-        services.push({ id: doc.id, ...doc.data() });
+        crew.push({ id: doc.id, ...doc.data() });
       });
-      console.log(" Current services: ", services);
-      setServices([...services]);
+      console.log(" Current services: ", crew);
+      setCrew([...crew]);
     });
   }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleServices({
-        service: { id, name, price },
+      const response2 = await handleCrew({
+        crew: { id, name},
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handleServices({
-        service: { name, price },
+      const response2 = await handleCrew({
+        crew: { name },
         operation: "add"
       });
     }
     setName("");
-    setPrice("");
+   
     setId("");
   };
 
-  const handleEdit = service => {
-    setName(service.name);
-    setPrice(service.price);
-    setId(service.id);
+  const handleEdit = crew => {
+    setName(crew.name);
+   
+    setId(crew.id);
   };
-  const handleDelete = async service => {
-    const response2 = await handleServices({
-      service: service,
+  const handleDelete = async crew => {
+    const response2 = await handleCrew({
+        crew: crew,
       operation: "delete"
     });
   };
   return (
     <View style={styles.container}>
      
-        {services.map((service, i) => (
+        {crew.map((crew, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {service.name} - {service.price}
+              {crew.name} - 
             </Text>
             <Button title="Edit" onPress={() => handleEdit(service)} />
             <Button title="X" onPress={() => handleDelete(service)} />
@@ -81,40 +81,7 @@ const CRUDServices = (props) => {
         placeholder="Name"
         value={name}
       />
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setPrice}
-        placeholder="Price"
-        value={price}
-      />
-
-
-      
-
-
-    <Picker
-          style={styles.picker} 
-          selectedValue={name}
-          // onValueChange={(itemValue) => setName(itemValue)}
-          mode="dialog"
-        >
-
-
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
-            
-              {services.map((service, i) => (
-              <Text style={styles.getStartedText}>
-              <Picker.Item label={service.name}  value={service.name}  /> 
-
-               </Text>
-               ))}
-           
-                  </View>
-           
-           
     
-         
-        </Picker>  
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 
@@ -178,14 +145,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: "center",
       
-    },
-    picker: {
-      width: 200,
-      backgroundColor: '#FFF0E0',
-      borderColor: 'black',
-      borderWidth: 1,
-    },
-    pickerItem: {
-      color: 'red'
     },
 }); 

@@ -23,6 +23,7 @@ import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import { CheckBox } from "react-native-elements";
+import { Notifications } from 'expo';
 
 export default function CampusMap() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -219,8 +220,43 @@ export default function CampusMap() {
           ? "Reserve"
           : "Park"
     });
-
     setModalVisible(false);
+    handleLocalNotification(i, o);
+  };
+  const handleLocalNotification = (i, o) => {
+    let title = "";
+    let body = "";
+
+    let localNotification = {
+      title:null,
+      body:null,
+      ios: {
+        sound:true, 
+        _displayInForeground: true
+      },
+      android: {
+        icon:"https://med.virginia.edu/cme/wp-content/uploads/sites/262/2015/10/free-vector-parking-available-sign-clip-art_116878_Parking_Available_Sign_clip_art_hight.png", 
+        color:"#276b9c",
+        vibrate: true
+      },
+    };
+    if(i === 2 && o === true){
+      title = "Parked!";
+      body = `You have successfully parked your car! (Plate No. ${car.PlateNumber})`;
+    } else if (i === 1 && o === true){
+      title = "Reserved!";
+      body = `The parking space is reserved for your car! (Plate No. ${car.PlateNumber})`;
+    } else if (i === 0 && o === false){
+      title = "Reservation Cancelled!";
+      body = `The reservation is cancelled for your car! (Plate No. ${car.PlateNumber})`;
+    } else {
+      title = `Thank You ${firebase.auth().currentUser.displayName}!`;
+      body = `Thank you for parking, see you soon! (Plate No. ${car.PlateNumber})`;
+    }
+
+    localNotification.title = title;
+    localNotification.body = body;
+    Notifications.presentLocalNotificationAsync(localNotification);
   };
 
   const handleServicesToAdd = Service => {
@@ -261,7 +297,7 @@ export default function CampusMap() {
         mapType="satellite"
         minZoomLevel={18}
         moveOnMarkerPress={false}
-        onPress={()=> setModalVisible2(true)}
+        // onPress={()=> setModalVisible2(true)}
       >
         {parkings &&
           parkings.map(parking => (

@@ -169,7 +169,7 @@ export default function HomeScreen() {
             fontWeight: "700"
           }}
         >
-          Welcome {currentUser.displayName}
+          Welcome {currentUser.displayName}!
         </Text>
         <View>
                     <Avatar

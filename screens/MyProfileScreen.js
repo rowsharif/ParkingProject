@@ -20,6 +20,9 @@ import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import DeleteUser from "./DeleteUser";
 import CRUDServices from "./CRUDServices";
+import CRUDParkings from "./CRUDParkings";
+import CRUDParkingLots from "./CRUDParkingLots";
+import CRUDNearestBuildings from "./CRUDNearestBuildings";
 
 const StackNavigator = createStackNavigator(
   {
@@ -29,6 +32,16 @@ const StackNavigator = createStackNavigator(
     CreateUser: {
       screen: CRUDServices
     },
+    CRUDParkings: {
+      screen: CRUDParkings
+    },
+     CRUDParkingLots: {
+      screen: CRUDParkingLots
+     },
+     CRUDNearestBuildings:{
+       screen:CRUDNearestBuildings
+     },
+     
     UpdateUser: {
       screen: UpdateUser
     },

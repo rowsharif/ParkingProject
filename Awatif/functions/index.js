@@ -48,40 +48,6 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
-/////////handle parking
-// exports.handleParkings = functions.https.onCall(async (data, context) => {
-//   console.log("parking data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings").add(data.Parking);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .delete();
-//   } else {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .doc(data.parking.id)
-//       .update(data.parking);
-//   }
-// });
-
-///////handle parking LOT
-// exports.handleParkingLot = functions.https.onCall(async (data, context) => {
-//   console.log("handleParkingLot data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingLots").add(data.parkingLot);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .delete();
-//   } else {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .update(data.parkingLot);
-//   }
-// });
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed

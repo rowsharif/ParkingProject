@@ -18,7 +18,7 @@ import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-import { Avatar } from 'react-native-elements';
+import { Avatar } from "react-native-elements";
 
 import Message from "./Message.js";
 
@@ -134,11 +134,12 @@ export default function HomeScreen() {
   };
 
   return (
-    
-                
     <View style={styles.container}>
-      <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
-      {/* <ScrollView
+      <ImageBackground
+        source={require("../assets/images/bg11.jpeg")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="always"
@@ -147,7 +148,7 @@ export default function HomeScreen() {
           <Message key={i} message={message} handleEdit={handleEdit} />
         ))}
       </ScrollView> */}
-      {/* <TextInput
+        {/* <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setTo}
         placeholder="To"
@@ -168,8 +169,20 @@ export default function HomeScreen() {
             fontWeight: "700"
           }}
         >
-          Welcome {currentUser.displayName}
+          Welcome {currentUser.displayName}!
         </Text>
+        <View>
+                    <Avatar
+  rounded
+  source={{
+    uri:
+      currentUser.photoURL
+  }}
+/>
+</View>
+<Text>Email: {currentUser.email}</Text>
+<Text>Phone number: {currentUser.phoneNumber}</Text>
+<Text>Display Name:{currentUser.displayName}</Text>
         <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
         <TouchableOpacity
           style={[styles.button, { display: "flex" }]}
@@ -203,62 +216,60 @@ export default function HomeScreen() {
             <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
               <View style={{padding:10}}>
              
-         <View>
-                    <Avatar
-  rounded
-  source={{
-    uri:
-      currentUser.photoURL
-  }}
-/>
-</View>
-<Text>Email: {currentUser.email}</Text>
-<Text>Phone number: {currentUser.phoneNumber}</Text>
-<Text>Display Name:{currentUser.displayName}</Text>
- <Text
-                style={{
-                  paddingTop: 10,
-                  fontSize: 18,
-                  fontWeight: "700"
-                }}
-              >
-                Which car are you driving?
-              </Text> 
-              
-              {Cars &&
-                Cars.length > 0 &&
-                Cars.map((car, i) => (
-                  <View key={car.id}>
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={() => handleCar(car)}
+        
+       
+                  <View style={{ padding: 10 }}>
+                    
+                    <Text
+                      style={{
+                        paddingTop: 10,
+                        fontSize: 18,
+                        fontWeight: "700"
+                      }}
                     >
-                      <Text style={styles.buttonText}>{car.PlateNumber}</Text>
-                    </TouchableOpacity>
-                    <Button title="X" onPress={() => deleteCar(car)} />
+                      Which car are you driving?
+                    </Text>
+
+                    {Cars &&
+                      Cars.length > 0 &&
+                      Cars.map((car, i) => (
+                        <View key={car.id}>
+                          <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => handleCar(car)}
+                          >
+                            <Text style={styles.buttonText}>
+                              {car.PlateNumber}
+                            </Text>
+                          </TouchableOpacity>
+                          <Button title="X" onPress={() => deleteCar(car)} />
+                        </View>
+                      ))}
+                    {Cars.length < 2 && (
+                      <View style={{ paddingTop: "30%" }}>
+                        <Text>Add a Car</Text>
+                        <TextInput
+                          style={{
+                            height: 40,
+                            borderColor: "gray",
+                            borderWidth: 1
+                          }}
+                          onChangeText={setPlateNumber}
+                          placeholder=" PlateNumber"
+                          value={PlateNumber}
+                        />
+                        <Button title="Add" onPress={addCar} />
+                      </View>
+                    )}
                   </View>
-                ))}
-              {Cars.length < 2 && (
-                <View style={{ paddingTop: "30%" }}>
-                  <Text>Add a Car</Text>
-                  <TextInput
-                    style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                    onChangeText={setPlateNumber}
-                    placeholder=" PlateNumber"
-                    value={PlateNumber}
-                  />
-                  <Button title="Add" onPress={addCar} />
-                </View>
-              )}
+                  </View>
+                </ImageBackground>
               </View>
-              </ImageBackground>
             </View>
-          </View>          
-        </Modal>
-      </View>
+          </Modal>
+        </View>
       </ImageBackground>
     </View>
-    
   );
 }
 

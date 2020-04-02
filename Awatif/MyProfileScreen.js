@@ -20,10 +20,6 @@ import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
-import CRUDParkings from "./CRUDParkings";
-import CRUDParkingLots from "./CRUDParkingLots";
-import CRUDNearestBuildings from "./CRUDNearestBuildings";
-
 import CRUDMyProfile from "./CRUDMyProfile";
 import  CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
@@ -36,16 +32,6 @@ const StackNavigator = createStackNavigator(
     CRUDServices: {
       screen: CRUDServices
     },
-    CRUDParkings: {
-      screen: CRUDParkings
-    },
-     CRUDParkingLots: {
-      screen: CRUDParkingLots
-     },
-     CRUDNearestBuildings:{
-       screen:CRUDNearestBuildings
-     },
-     
     UpdateUser: {
       screen: UpdateUser
     },

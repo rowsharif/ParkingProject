@@ -32,7 +32,6 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
 
 /////////handle services
 exports.handleServices = functions.https.onCall(async (data, context) => {
-  console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -49,7 +48,6 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
 });
 
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
-  console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -66,7 +64,6 @@ exports.handlePromotion = functions.https.onCall(async (data, context) => {
 });
 
 exports.handleCrew=functions.https.onCall(async(data,context)=>{
-  console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -84,7 +81,6 @@ exports.handleCrew=functions.https.onCall(async(data,context)=>{
 
 
 exports.handleEmployee=functions.https.onCall(async(data,context)=>{
-  console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {

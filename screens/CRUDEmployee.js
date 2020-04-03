@@ -19,19 +19,24 @@ import db from "../db.js";
 import { createNativeWrapper } from "react-native-gesture-handler";
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
-const CRUDEmployee = props => {
+const CRUDEmployees = props => {
   const [employees, setEmployees] = useState([]);
-  const [Crews, setCrews] = useState([]);
+  const [crews, setCrews] = useState([]);
+  const [crew, setCrew] = useState([]);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
   const [parking, setParking] = useState([]);
   const [type, setType] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [id, setId] = React.useState("");
-  const [uid, setuid] = useState();
-  const [crew, setCrew] = useState([]);
+  const [fkp, setFkp] = useState();
+  const [fk, setFk] = useState();
 
- 
+  useEffect(() => {
+    askPermission();
+  }, []);
 
   useEffect(() => {
     db.collection("ParkingLots")
@@ -61,6 +66,7 @@ const CRUDEmployee = props => {
                     allEmployees = allEmployees.filter(p => p.fk !== docP.id);
                     querySnapshot.forEach(docE => {
                       nemployees.push({
+                        fkp: doc.id,
                         fk: docP.id,
                         crewName: docP.name,
                         id: docE.id,
@@ -80,26 +86,39 @@ const CRUDEmployee = props => {
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleEmployee({
-        employee: { id, type },
-        operation: "update"
-      });
+      if (crew.id === fk) {
+        const response2 = await handleEmployee({
+          employee: { id, type, name, identifier, fk, fkp },
+          operation: "update"
+        });
+      } else {
+        const response2 = await handleEmployee({
+          employee: { id, type, name, identifier, fk, fkp },
+          operation: "delete"
+        });
+        const response2 = await handleEmployee({
+          employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
+          operation: "add"
+        });
+      }
     } else {
       // call serverless function instead
       const response2 = await handleEmployee({
-        employee: { type },
+        employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
         operation: "add"
       });
     }
     setType("");
 
     setId("");
-   
   };
 
   const handleEdit = employee => {
     setType(employee.type);
-
+    setName(employee.name);
+    setIdentifier(employee.identifier);
+    setFk(employee.fk);
+    setFkp(employee.fkp);
     setId(employee.id);
   };
   const handleDelete = async employee => {
@@ -109,59 +128,88 @@ const CRUDEmployee = props => {
     });
   };
   return (
-    <ScrollView style={styles.container}>
-      
-      {employees.map((employee, i) => (
-        <View style={{ paddingTop: 50, flexDirection: "row" }}>
-          <Text style={styles.getStartedText}>
-            {employee.type} - crew Name:{employee.crewName}
-          </Text>
-          <Button title="Edit" onPress={() => handleEdit(employee)} />
-          <Button title="X" onPress={() => handleDelete(employee)} />
-        </View>
-      ))}
-      {/* <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setName}
-        placeholder="Name"
-        value={name}
-      /> */}
-
-      <Picker
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        selectedValue={crew}
-        onValueChange={itemValue => setCrew([...crew])}
-      >
-        {Crews.map((crew, i) => (
+    <ScrollView>
+      <View style={styles.container}>
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%"
+          }}
+          onChangeText={setDisplayName}
+          placeholder="Display Name"
+          value={displayName}
+        />
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%"
+          }}
+          onChangeText={setemail}
+          placeholder="Email"
+          value={email}
+        />
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "gray",
+            borderWidth: 1,
+            fontSize: 24,
+            margin: "2%"
+          }}
+          onChangeText={setphoneNumber}
+          placeholder="Phone number"
+          value={phoneNumber}
+        />
+        {employees.map((employee, i) => (
+          <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              <Picker.Item label={crew.name} value={crew.name} />
+              {employee.name} - {employee.type} - crew Name:{employee.crewName}
             </Text>
-          
+            <Button title="Edit" onPress={() => handleEdit(employee)} />
+            <Button title="X" onPress={() => handleDelete(employee)} />
+          </View>
         ))}
-      </Picker>
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          fontSize: 24,
-          margin: "2%"
-        }}
-        onChangeText={setType}
-        placeholder="Type"
-        value={type}
-      />
-      <Button title="Send" onPress={handleSend} />
-      <Button
-        color="green"
-        title="Back"
-        onPress={() => props.navigation.goBack()}
-      ></Button>
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setType}
+          placeholder="Name"
+          value={type}
+        />
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setName}
+          placeholder="Name"
+          value={name}
+        />
+
+        <Picker
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+          selectedValue={crew}
+          onValueChange={itemValue => setCrew(itemValue)}
+        >
+          {crews.map((crew, i) => (
+            <Picker.Item label={crew.name} value={crew.name} />
+          ))}
+        </Picker>
+
+        <Button title="Send" onPress={handleSend} />
+        <Button
+          color="green"
+          title="Back"
+          onPress={() => props.navigation.goBack()}
+        ></Button>
+      </View>
     </ScrollView>
   );
 };
-CRUDEmployee.navigationOptions = {
+CRUDEmployees.navigationOptions = {
   headerTitle: (
     <View
       style={{
@@ -209,14 +257,14 @@ CRUDEmployee.navigationOptions = {
     fontWeight: "bold"
   }
 };
-export default CRUDEmployee;
+export default CRUDEmployees;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    // alignItems: "center",
-    // justifyContent: "center"
+    alignItems: "center",
+    justifyContent: "center"
   },
   picker: {
     width: 200,

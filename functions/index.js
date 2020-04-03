@@ -48,40 +48,6 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
-/////////handle parking
-// exports.handleParkings = functions.https.onCall(async (data, context) => {
-//   console.log("parking data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings").add(data.Parking);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .delete();
-//   } else {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .doc(data.parking.id)
-//       .update(data.parking);
-//   }
-// });
-
-///////handle parking LOT
-// exports.handleParkingLot = functions.https.onCall(async (data, context) => {
-//   console.log("handleParkingLot data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingLots").add(data.parkingLot);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .delete();
-//   } else {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .update(data.parkingLot);
-//   }
-// });
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
@@ -99,36 +65,57 @@ exports.handlePromotion = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.handleCrew=functions.https.onCall(async(data,context)=>{
+exports.handleCrew = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").add(data.crew.id);
+    db.collection("ParkingLots")
+      .doc(data.temp.fk)
+      .collection("Crew")
+      .add(data.crew.id);
   } else if (data.operation === "delete") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew")
+    db.collection("ParkingLots")
+      .doc(data.temp.fk)
+      .collection("Crew")
       .doc(data.crew.id)
       .delete();
   } else {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew")
+    db.collection("ParkingLots")
+      .doc(data.temp.fk)
+      .collection("Crew")
       .doc(data.crew.id)
       .update(data.crew);
   }
 });
 
-
-exports.handleEmployee=functions.https.onCall(async(data,context)=>{
+exports.handleEmployee = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").add(data.crew.id);
+    db.collection("ParkingLots")
+      .doc(data.employee.fkp)
+      .collection("Crew")
+      .doc(data.employee.fk)
+      .collection("Employee")
+      .add(employee);
   } else if (data.operation === "delete") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
+    db.collection("ParkingLots")
+      .doc(data.employee.fk)
+      .collection("Crew")
+      .doc(data.employee.fkp)
+      .collection("Employee")
+      .doc(data.employee.id)
       .delete();
   } else {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
-      .update(data.crew);
+    db.collection("ParkingLots")
+      .doc(data.employee.fk)
+      .collection("Crew")
+      .doc(data.employee.fkp)
+      .collection("Employee")
+      .doc(data.employee.id)
+      .update(data.employee);
   }
 });
 
@@ -149,8 +136,6 @@ exports.handleNewsletter = functions.https.onCall(async (data, context) => {
       .update(data.newsletter);
   }
 });
-
-
 
 const bot = async message => {
   const user = await admin.auth().getUser(message.from);

@@ -151,9 +151,10 @@ export default function CampusMap() {
     });
   }, []);
 
-  useEffect(() => {
-    getLocation();
-  }, [location]);
+  // useEffect(() => {
+  //   //direction
+  //   console.log("-------------------", location);
+  // }, [location]);
 
   useEffect(() => {
     // db.collection("ParkingLots")

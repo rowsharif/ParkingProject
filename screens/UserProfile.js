@@ -128,7 +128,7 @@ const UserProfile = props => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-         {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always">  */}
+        {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
         <TextInput
           style={{
             height: 40,
@@ -185,28 +185,6 @@ const UserProfile = props => {
         <View style={{ margin: "2%" }}>
           <Button title="Save" onPress={handleSave} />
         </View>
-           <View style={{ margin: "2%" }}>
-          <Button
-            title="handle parking"
-            onPress={() => props.navigation.navigate("CRUDParkings")}
-          />
-
-        </View>
-         <View style={{ margin: "2%" }}>
-          <Button
-            title="handle parking Lot"
-            onPress={() => props.navigation.navigate("CRUDParkingLots")}
-          />
-          
-        </View> 
-        
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="handle neartestbuilding"
-            onPress={() => props.navigation.navigate("CRUDNearestBuildings")}
-          />
-          
-        </View>
         <View style={{ margin: "2%" }}>
           <Button
             title="Create User"
@@ -240,9 +218,7 @@ const UserProfile = props => {
             onPress={() => props.navigation.navigate("CRUDCrew")}
           />
         </View>
-     
 
-         {/* </ScrollView> */}
         <View style={{ margin: "2%" }}>
           <Button
             title="Employee"

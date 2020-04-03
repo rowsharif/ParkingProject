@@ -78,7 +78,7 @@ const UserProfile = props => {
       displayName,
       photoURL: uri,
       email,
-      phoneNumber:phoneNumber
+      phoneNumber: phoneNumber
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
@@ -122,7 +122,6 @@ const UserProfile = props => {
     }
   };
 
- 
   return (
     <ScrollView style={styles.container}>
       <ImageBackground
@@ -148,7 +147,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%",
+            margin: "2%"
           }}
           onChangeText={setemail}
           placeholder="Email"
@@ -198,7 +197,7 @@ const UserProfile = props => {
             onPress={() => props.navigation.navigate("CRUDHistory")}
           />
         </View>
-       
+
         <View style={{ margin: "2%" }}>
           <Button
             title="My Profile"
@@ -228,7 +227,7 @@ const UserProfile = props => {
         </View>
         {/* </ScrollView> */}
       </ImageBackground>
-      </ScrollView>
+    </ScrollView>
   );
 };
 
@@ -296,9 +295,7 @@ const styles = StyleSheet.create({
   button: {
     margin: "5%"
   },
-  contentContainer: {
-    paddingTop: 30
-  },
+  contentContainer: {},
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,

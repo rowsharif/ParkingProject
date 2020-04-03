@@ -21,7 +21,7 @@ import UpdateUser from "./UpdateUser";
 import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
 import CRUDMyProfile from "./CRUDMyProfile";
-import  CRUDPromotion from "./CRUDPromotion";
+import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
 const StackNavigator = createStackNavigator(
@@ -38,17 +38,17 @@ const StackNavigator = createStackNavigator(
     CRUDHistory: {
       screen: CRUDHistory
     },
-    CRUDMyProfile:{
-      screen:CRUDMyProfile
+    CRUDMyProfile: {
+      screen: CRUDMyProfile
     },
-    CRUDPromotion:{
-      screen:CRUDPromotion
+    CRUDPromotion: {
+      screen: CRUDPromotion
     },
-    CRUDCrew:{
-      screen:CRUDCrew
+    CRUDCrew: {
+      screen: CRUDCrew
     },
-    CRUDEmployee:{
-      screen:CRUDEmployee
+    CRUDEmployee: {
+      screen: CRUDEmployee
     }
   },
   {

@@ -89,10 +89,6 @@ const CRUDServices = (props) => {
       />
 
 
-      
-
-
-    
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 

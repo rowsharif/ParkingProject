@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, View, Image, Text, Modal, TextInput, Button, ImageBackground, SafeAreaView, FlatList } from "react-native";
-import { ExpoLinksView } from "@expo/samples";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import db from "../db.js";
 import {
@@ -105,66 +104,7 @@ export default function NewsletterScreen() {
             )
               
             }            
-            {/* <TouchableOpacity onPress={()=>setModalVisible(!modalVisible)} style={{backgroundColor:"#c7c7c7", height:150, borderRadius: 10, marginTop:"1%",
-                ...Platform.select({
-                  ios: {
-                    paddingTop:"2%",
-                    padding:"3%"
-                  },
-                  android: {
-                    paddingTop:"2%",
-                    padding:"7%"
-
-                  }
-              })}} >
-                <Text style={{textAlign:"center", fontWeight:"bold",}}>Header</Text>
-                <View style={{ height: "100%", flexDirection:"row", marginTop:5}}>
-                <Image source={require("../assets/images/green.png")} resizeMode="contain" style={{width:100, height: 100}}/>
-                  
-                  <Text style={{width:"67%", height: 100, marginLeft:8}}>ContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentContentContentContentContentContentContentContentContentContentContent</Text>
-                  
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>setModalVisible(!modalVisible)} style={{backgroundColor:"#c7c7c7", height:150, borderRadius: 10, marginTop:"1%",
-                ...Platform.select({
-                  ios: {
-                    paddingTop:"2%",
-                    padding:"3%"
-                  },
-                  android: {
-                    paddingTop:"2%",
-                    padding:"7%"
-
-                  }
-              })}} >
-                <Text style={{textAlign:"center", fontWeight:"bold",}}>Header</Text>
-                <View style={{ height: "100%", flexDirection:"row", marginTop:5}}>
-                <Image source={require("../assets/images/green.png")} resizeMode="contain" style={{width:100, height: 100}}/>
-                  
-                  <Text style={{width:"67%", height: 100, marginLeft:8}}>ContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentContentContentContentContentContentContentContentContentContentContent</Text>
-                  
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>setModalVisible(!modalVisible)} style={{backgroundColor:"#c7c7c7", height:150, borderRadius: 10, marginTop:"1%",
-                ...Platform.select({
-                  ios: {
-                    paddingTop:"2%",
-                    padding:"3%"
-                  },
-                  android: {
-                    paddingTop:"2%",
-                    padding:"7%"
-
-                  }
-              })}} >
-                <Text style={{textAlign:"center", fontWeight:"bold",}}>Header</Text>
-                <View style={{ height: "100%", flexDirection:"row", marginTop:5}}>
-                <Image source={require("../assets/images/green.png")} resizeMode="contain" style={{width:100, height: 100}}/>
-                  
-                  <Text style={{width:"67%", height: 100, marginLeft:8}}>ContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentConteContentContentContentContentContentContentContentContentContentContentContentContentContentContent</Text>
-                  
-                </View>
-            </TouchableOpacity> */}
+            
             
             
             
@@ -172,15 +112,6 @@ export default function NewsletterScreen() {
             <View style={{minHeight:100}}>
 
             </View>
-
-            {/* <View style={{backgroundColor:"gray", width:"90%", height:"90%", margin:"5%", flexDirection:"row", minHeight: 150, justifyContent:"center", alignItems:"center", borderRadius:5}}>
-                <View style={{backgroundColor:"red", width:"10%", height:"10%"}}>
-                <Image source={require("../assets/images/green.png")} resizeMode="center" style={{width:20, height: 20}}/>
-                </View>
-                <View>
-                  <Text>Content</Text>
-                </View>  
-            </View>                                               */}
           </View> 
             
             

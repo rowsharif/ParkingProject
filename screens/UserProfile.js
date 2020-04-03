@@ -128,7 +128,7 @@ const UserProfile = props => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-        {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
+         {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always">  */}
         <TextInput
           style={{
             height: 40,
@@ -185,6 +185,28 @@ const UserProfile = props => {
         <View style={{ margin: "2%" }}>
           <Button title="Save" onPress={handleSave} />
         </View>
+           <View style={{ margin: "2%" }}>
+          <Button
+            title="handle parking"
+            onPress={() => props.navigation.navigate("CRUDParkings")}
+          />
+
+        </View>
+         <View style={{ margin: "2%" }}>
+          <Button
+            title="handle parking Lot"
+            onPress={() => props.navigation.navigate("CRUDParkingLots")}
+          />
+          
+        </View> 
+        
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="handle neartestbuilding"
+            onPress={() => props.navigation.navigate("CRUDNearestBuildings")}
+          />
+          
+        </View>
         <View style={{ margin: "2%" }}>
           <Button
             title="Create User"
@@ -218,11 +240,19 @@ const UserProfile = props => {
             onPress={() => props.navigation.navigate("CRUDCrew")}
           />
         </View>
+     
 
+         {/* </ScrollView> */}
         <View style={{ margin: "2%" }}>
           <Button
             title="Employee"
             onPress={() => props.navigation.navigate("CRUDEmployee")}
+          />
+        </View>
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="Newsletter"
+            onPress={() => props.navigation.navigate("CRUDNewsletter")}
           />
         </View>
         {/* </ScrollView> */}
@@ -235,25 +265,26 @@ UserProfile.navigationOptions = {
   headerTitle: (
     <View
       style={{
-        flex: 1,
+        flex:2,
         flexDirection: "row"
       }}
-    >
+    >    
       <Text
         style={{
-          flex: 1,
+          flex: 2,
           paddingTop: 10,
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "left",
+          paddingLeft: "3%"
         }}
       >
-        MyProfile
+        UserProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 1
         }}
       ></View>
 
@@ -280,6 +311,7 @@ UserProfile.navigationOptions = {
   }
 };
 export default UserProfile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

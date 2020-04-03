@@ -20,10 +20,16 @@ import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
+import CRUDParkings from "./CRUDParkings";
+import CRUDParkingLots from "./CRUDParkingLots";
+import CRUDNearestBuildings from "./CRUDNearestBuildings";
+
 import CRUDMyProfile from "./CRUDMyProfile";
 import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
+import CRUDNewsletter from "./CRUDNewsletter";
+
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
@@ -32,6 +38,16 @@ const StackNavigator = createStackNavigator(
     CRUDServices: {
       screen: CRUDServices
     },
+    CRUDParkings: {
+      screen: CRUDParkings
+    },
+    CRUDParkingLots: {
+      screen: CRUDParkingLots
+    },
+    CRUDNearestBuildings: {
+      screen: CRUDNearestBuildings
+    },
+
     UpdateUser: {
       screen: UpdateUser
     },
@@ -49,6 +65,9 @@ const StackNavigator = createStackNavigator(
     },
     CRUDEmployee: {
       screen: CRUDEmployee
+    },
+    CRUDNewsletter: {
+      screen: CRUDNewsletter
     }
   },
   {
@@ -79,6 +98,7 @@ const AppContainer = createAppContainer(StackNavigator);
 
 const MyProfileScreen = props => {
   return <AppContainer />;
+  // return <CRUDNewsletter />
 };
 export default MyProfileScreen;
 

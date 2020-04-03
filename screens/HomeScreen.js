@@ -161,107 +161,107 @@ export default function HomeScreen() {
         value={text}
       />
       <Button title="Send" onPress={handleSend} /> */}
-      <View>
-        <Text
-          style={{
-            paddingTop: 10,
-            fontSize: 18,
-            fontWeight: "700"
-          }}
-        >
-          Welcome {currentUser.displayName}!
-        </Text>
         <View>
-                    <Avatar
-  rounded
-  source={{
-    uri:
-      currentUser.photoURL
-  }}
-/>
-</View>
-<Text>Email: {currentUser.email}</Text>
-<Text>Phone number: {currentUser.phoneNumber}</Text>
-<Text>Display Name:{currentUser.displayName}</Text>
-        <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
-        <TouchableOpacity
-          style={[styles.button, { display: "flex" }]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>Change</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <Button title="Logout" onPress={handleLogout} />
-      </View>
-      <View style={{ marginTop: 0 }}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-          }}
-        >
-          <View style={{ marginTop: 22 }}>
-            <View
-              style={{
-                marginTop: 22,
-                backgroundColor: "white",
-                
-                width: "100%",
-                height: "98%"
+          <Text
+            style={{
+              paddingTop: 10,
+              fontSize: 18,
+              fontWeight: "700"
+            }}
+          >
+            Welcome {currentUser.displayName}!
+          </Text>
+          <View>
+            <Avatar
+              rounded
+              source={{
+                uri: currentUser.photoURL
+                  ? currentUser.photoURL
+                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
               }}
-            >
-            <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
-              <View style={{padding:10}}>
-             
-        
-       
-                  <View style={{ padding: 10 }}>
-                    
-                    <Text
-                      style={{
-                        paddingTop: 10,
-                        fontSize: 18,
-                        fontWeight: "700"
-                      }}
-                    >
-                      Which car are you driving?
-                    </Text>
+            />
+          </View>
+          <Text>Email: {currentUser.email}</Text>
+          <Text>Phone number: {currentUser.phoneNumber}</Text>
+          <Text>Display Name:{currentUser.displayName}</Text>
+          <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
+          <TouchableOpacity
+            style={[styles.button, { display: "flex" }]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.buttonText}>Change</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <Button title="Logout" onPress={handleLogout} />
+        </View>
+        <View style={{ marginTop: 0 }}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={{ marginTop: 22 }}>
+              <View
+                style={{
+                  marginTop: 22,
+                  backgroundColor: "white",
 
-                    {Cars &&
-                      Cars.length > 0 &&
-                      Cars.map((car, i) => (
-                        <View key={car.id}>
-                          <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => handleCar(car)}
-                          >
-                            <Text style={styles.buttonText}>
-                              {car.PlateNumber}
-                            </Text>
-                          </TouchableOpacity>
-                          <Button title="X" onPress={() => deleteCar(car)} />
+                  width: "100%",
+                  height: "98%"
+                }}
+              >
+                <ImageBackground
+                  source={require("../assets/images/bg11.jpeg")}
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <View style={{ padding: 10 }}>
+                    <View style={{ padding: 10 }}>
+                      <Text
+                        style={{
+                          paddingTop: 10,
+                          fontSize: 18,
+                          fontWeight: "700"
+                        }}
+                      >
+                        Which car are you driving?
+                      </Text>
+
+                      {Cars &&
+                        Cars.length > 0 &&
+                        Cars.map((car, i) => (
+                          <View key={car.id}>
+                            <TouchableOpacity
+                              style={styles.button}
+                              onPress={() => handleCar(car)}
+                            >
+                              <Text style={styles.buttonText}>
+                                {car.PlateNumber}
+                              </Text>
+                            </TouchableOpacity>
+                            <Button title="X" onPress={() => deleteCar(car)} />
+                          </View>
+                        ))}
+                      {Cars.length < 2 && (
+                        <View style={{ paddingTop: "30%" }}>
+                          <Text>Add a Car</Text>
+                          <TextInput
+                            style={{
+                              height: 40,
+                              borderColor: "gray",
+                              borderWidth: 1
+                            }}
+                            onChangeText={setPlateNumber}
+                            placeholder=" PlateNumber"
+                            value={PlateNumber}
+                          />
+                          <Button title="Add" onPress={addCar} />
                         </View>
-                      ))}
-                    {Cars.length < 2 && (
-                      <View style={{ paddingTop: "30%" }}>
-                        <Text>Add a Car</Text>
-                        <TextInput
-                          style={{
-                            height: 40,
-                            borderColor: "gray",
-                            borderWidth: 1
-                          }}
-                          onChangeText={setPlateNumber}
-                          placeholder=" PlateNumber"
-                          value={PlateNumber}
-                        />
-                        <Button title="Add" onPress={addCar} />
-                      </View>
-                    )}
-                  </View>
+                      )}
+                    </View>
                   </View>
                 </ImageBackground>
               </View>

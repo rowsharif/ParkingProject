@@ -40,21 +40,21 @@ const StackNavigator = createStackNavigator(
     CRUDHistory: {
       screen: CRUDHistory
     },
-    CRUDMyProfile:{
-      screen:CRUDMyProfile
+    CRUDMyProfile: {
+      screen: CRUDMyProfile
     },
-    CRUDPromotion:{
-      screen:CRUDPromotion
+    CRUDPromotion: {
+      screen: CRUDPromotion
     },
-    CRUDCrew:{
-      screen:CRUDCrew
+    CRUDCrew: {
+      screen: CRUDCrew
     },
-    CRUDEmployee:{
-      screen:CRUDEmployee
+    CRUDEmployee: {
+      screen: CRUDEmployee
     },
-    CRUDNewsletter:{
-      screen:CRUDNewsletter
-    },
+    CRUDNewsletter: {
+      screen: CRUDNewsletter
+    }
   },
   {
     initialRouteName: "UserProfile",

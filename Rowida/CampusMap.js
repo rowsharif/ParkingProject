@@ -22,13 +22,26 @@ import "firebase/auth";
 import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
+import { CheckBox } from "react-native-elements";
 
 export default function CampusMap() {
   const [modalVisible, setModalVisible] = useState(false);
   const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState([]);
-  const [car, setCar] = useState([]);
+  const [car, setCar] = useState({});
+  const [promotion, setPromotion] = useState({});
+  const [Promotions, setPromotions] = useState([]);
+  const [code, setCode] = useState("");
+  const [promotionValid, setPromotionValid] = useState("");
+  const [total, setTotal] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [crew, setCrew] = useState();
+
+  const setModalvisible = x => {
+    setModalVisible(x);
+    setPromotionValid("");
+  };
   //  serverless function
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
@@ -39,6 +52,8 @@ export default function CampusMap() {
     }
   });
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [Services, setServices] = useState([]);
+  const [ServicesToAdd, setServicesToAdd] = useState([]);
 
   const askPermission = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -53,7 +68,24 @@ export default function CampusMap() {
   useEffect(() => {
     askPermission();
     getLocation();
+    setPromotionValid(" ");
   }, []);
+
+  useEffect(() => {
+    let crew = {};
+    parking &&
+      parking.fk &&
+      db
+        .collection("ParkingLots")
+        .doc(parking.fk)
+        .collection("Crew")
+        .onSnapshot(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            crew = { id: doc.id, ...doc.data() };
+          });
+          setCrew(crew);
+        });
+  }, [parking]);
 
   useEffect(() => {
     db.collection("users")
@@ -62,66 +94,155 @@ export default function CampusMap() {
       .onSnapshot(querySnapshot => {
         const Cars = [];
         querySnapshot.forEach(doc => {
-          Cars.push({ id: doc.id, ...doc.data() });
+          Cars.push({
+            fk: firebase.auth().currentUser.uid,
+            id: doc.id,
+            ...doc.data()
+          });
         });
         setCar(Cars.filter(c => c.current === true)[0]);
+        setPromotionValid(" ");
+        console.log("My car ------", Cars.filter(c => c.current === true)[0]);
       });
   }, []);
 
-  // useEffect(() => {
-  //   //direction
-  //   console.log("-------------------", location);
-  // }, [location]);
+  useEffect(() => {
+    let totalAmount = 0;
+    if (car.Parking && car.Parking.DateTime) {
+      const hours = Math.floor(
+        Math.abs(
+          new Date().getTime() - car.Parking.DateTime.toDate().getTime()
+        ) / 36e5
+      );
+      let pTotal = hours * car.Parking.amountperhour + car.Parking.TotalAmount;
+      if (promotionValid === true) {
+        totalAmount = pTotal - pTotal * promotion.percent;
+      } else {
+        totalAmount = pTotal;
+      }
+      console.log("hours", hours);
+      setHours(hours);
+    }
+
+    setTotal(Math.floor(totalAmount));
+  }, [promotionValid]);
 
   useEffect(() => {
+    db.collection("Services").onSnapshot(querySnapshot => {
+      const Services = [];
+      querySnapshot.forEach(doc => {
+        Services.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current Services: ", Services);
+      setServices([...Services]);
+    });
+  }, []);
+
+  useEffect(() => {
+    db.collection("Promotions").onSnapshot(querySnapshot => {
+      const Promotions = [];
+      querySnapshot.forEach(doc => {
+        Promotions.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current Promotions: ", Promotions);
+      setPromotions([...Promotions]);
+    });
+  }, []);
+
+  useEffect(() => {
+    getLocation();
+  }, [location]);
+
+  useEffect(() => {
+    // db.collection("ParkingLots")
+    //   .get()
+    //   .then(querySnapshot => {
+    //     const ParkingLots = [];
+    //     let allParkings = [];
+    //     querySnapshot.forEach(doc => {
+    //       ParkingLots.push({ id: doc.id, ...doc.data() });
+    //       db.collection("ParkingLots")
+    //         .doc(doc.id)
+    //         .collection("Parkings")
+    //         .onSnapshot(querySnapshot => {
+    //           const nparkings = [];
+    //           allParkings = allParkings.filter(p => p.fk !== doc.id);
+    //           querySnapshot.forEach(docP => {
+    //             nparkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+    //           });
+    //           allParkings = [...allParkings, ...nparkings];
+    //           setParkings([...allParkings]);
+    //         });
+    //     });
+    //     setParkingLots([...ParkingLots]);
+    //   });
+
     db.collection("ParkingLots")
-      .get()
-      .then(querySnapshot => {
-        const ParkingLots = [];
+      .doc("kECljqmSifLwfkpX6qPy")
+      .collection("Parkings")
+      .onSnapshot(querySnapshot => {
         const parkings = [];
-        querySnapshot.forEach(doc => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
-          db.collection("ParkingLots")
-            .doc(doc.id)
-            .collection("Parkings")
-            .get()
-            .then(querySnapshot => {
-              querySnapshot.forEach(docP => {
-                parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
-              });
-              setParkings([...parkings]);
-            });
+        querySnapshot.forEach(docP => {
+          parkings.push({
+            fk: "kECljqmSifLwfkpX6qPy",
+            id: docP.id,
+            ...docP.data()
+          });
         });
-        setParkingLots([...ParkingLots]);
+        setParkings([...parkings]);
       });
   }, []);
 
   const markerClick = parking => {
-    setModalVisible(true);
+    setModalvisible(true);
     setParking(parking);
   };
-  const Park = async () => {
+
+  const handleCarParking = async (i, o) => {
     let temp = parking;
-    temp.status = 2;
-    const response2 = await handleParkings(temp);
-    console.log("handleParkings response", response2);
+    temp.status = i;
+    const response2 = await handleParkings({
+      temp,
+      car,
+      ServicesToAdd,
+      promotion,
+      crew,
+      hours,
+      operation:
+        i === 0
+          ? o
+            ? "Leave"
+            : "CancelReservation"
+          : i === 1
+          ? "Reserve"
+          : "Park"
+    });
+
     setModalVisible(false);
   };
 
-  const Reserve = async () => {
-    let temp = parking;
-    temp.status = 1;
-    const response2 = await handleParkings(temp);
-    console.log("handleParkings response", response2);
-    setModalVisible(false);
+  const handleServicesToAdd = Service => {
+    if (ServicesToAdd.filter(s => s.id === Service.id).length === 0) {
+      setServicesToAdd([...ServicesToAdd, Service]);
+    } else {
+      setServicesToAdd(ServicesToAdd.filter(s => s.id !== Service.id));
+    }
   };
 
-  const Leave = async () => {
-    let temp = parking;
-    temp.status = 0;
-    const response2 = await handleParkings(temp);
-    console.log("handleParkings response", response2);
-    setModalVisible(false);
+  const handlePromotion = code => {
+    if (
+      Promotions.filter(p => p.code === code).length > 0 &&
+      new Date().getTime() <
+        Promotions.filter(p => p.code === code)[0]
+          .endDateTime.toDate()
+          .getTime()
+    ) {
+      setPromotionValid(true);
+      setPromotion(Promotions.filter(p => p.code === code)[0]);
+    } else {
+      setPromotionValid(false);
+      setPromotion({});
+    }
   };
 
   return (
@@ -153,15 +274,35 @@ export default function CampusMap() {
               <Image
                 source={
                   parking.status === 2
-                    ? require("../assets/images/red.png")
+                    ? car.Parking &&
+                      car.Parking.id &&
+                      car.Parking.id === parking.id
+                      ? require("../assets/images/yourCar.jpg")
+                      : require("../assets/images/red.png")
                     : parking.status === 0
                     ? require("../assets/images/green.png")
+                    : car.Parking &&
+                      car.Parking.id &&
+                      car.Parking.id === parking.id
+                    ? require("../assets/images/reserved.jpg")
                     : require("../assets/images/yellow.png")
                 }
-                style={{ width: 18, height: 10 }}
+                style={
+                  car.Parking && car.Parking.id && car.Parking.id === parking.id
+                    ? { width: 45, height: 35 }
+                    : { width: 18, height: 10 }
+                }
               />
             </MapView.Marker>
           ))}
+        <MapView.Marker
+          coordinate={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+          }}
+          pinColor="green"
+          title="You are here"
+        />
       </MapView>
       <View style={{ marginTop: 22 }}>
         <Modal
@@ -177,70 +318,184 @@ export default function CampusMap() {
             <View
               style={{
                 marginTop: 22,
-                backgroundColor: "white",
-                margin: "20%",
-                padding: "5%"
+                backgroundColor: "#3c78a3",
+                margin: "15%",
+                padding: "5%",
+                // paddingTop: "1%",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 0,
+                    margin: "25%",
+                    minHeight: 300
+                  },
+                  android: {
+                    minHeight: 200
+                  }
+                })
               }}
             >
-              <Text>{parking.id}</Text>
+              <Text>
+                This Parking is{" "}
+                {parking.status === 0
+                  ? "Empty"
+                  : parking.status === 1
+                  ? "Reserved"
+                  : "Full"}
+              </Text>
 
-              {parking.status === 1 ? (
-                <View>
-                  <TouchableHighlight
-                    style={styles.button}
-                    onPress={() => {
-                      Park();
-                    }}
-                  >
-                    <Text>Park</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    style={styles.button}
-                    onPress={() => {
-                      Leave();
-                    }}
-                  >
-                    <Text>Cancel Reservation</Text>
-                  </TouchableHighlight>
-                </View>
-              ) : parking.status === 2 ? (
-                <TouchableHighlight
-                  style={styles.button}
-                  onPress={() => {
-                    Leave();
-                  }}
-                >
-                  <Text>Leave</Text>
-                </TouchableHighlight>
-              ) : (
-                <View>
-                  <TouchableHighlight
-                    style={styles.button}
-                    onPress={() => {
-                      Park();
-                    }}
-                  >
-                    <Text>Park</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    style={styles.button}
-                    onPress={() => {
-                      Reserve();
-                    }}
-                  >
-                    <Text>Reserve</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
+              {parking.status === 1
+                ? car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%"
+                      }}
+                    >
+                      <TouchableHighlight
+                        style={styles.buttonGreen}
+                        onPress={() => {
+                          handleCarParking(2, true);
+                        }}
+                      >
+                        <Text>Park</Text>
+                      </TouchableHighlight>
 
-              <TouchableHighlight
-                style={styles.buttonHide}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
+                      <TouchableHighlight
+                        style={styles.buttonRed}
+                        onPress={() => {
+                          handleCarParking(0, false);
+                        }}
+                      >
+                        <Text style={{ textAlign: "center" }}>
+                          Cancel Reservation
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
+                  )
+                : parking.status === 2
+                ? car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id && (
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%"
+                      }}
+                    >
+                      <TextInput
+                        style={{
+                          height: 40,
+                          borderColor: "gray",
+                          borderWidth: 1,
+                          width: "90%",
+                          textAlign: "center",
+                          marginTop: "5%",
+                          backgroundColor: "white"
+                        }}
+                        onChangeText={setCode}
+                        onSubmitEditing={() => handlePromotion(code)}
+                        placeholder="Promotion"
+                        value={code}
+                      />
+                      {promotionValid === true ? (
+                        <Text>The promotion is valid</Text>
+                      ) : promotionValid === false ? (
+                        <Text>The promotion is NOT valid</Text>
+                      ) : (
+                        <Text></Text>
+                      )}
+                      <Text>Total: {total} QR</Text>
+                      <TouchableHighlight
+                        style={styles.buttonPay}
+                        onPress={() => {
+                          handleCarParking(0, true);
+                        }}
+                      >
+                        <Text>Pay & Leave</Text>
+                      </TouchableHighlight>
+                    </View>
+                  )
+                : car.Parking &&
+                  !car.Parking.id && (
+                    <View>
+                      {Services && (
+                        <Text style={{ textAlign: "center" }}>
+                          Add Services:{" "}
+                        </Text>
+                      )}
+                      <View style={{ alignItems: "center" }}>
+                        {Services &&
+                          Services.map(Service => (
+                            <CheckBox
+                              center
+                              title={
+                                <Text style={{ width: "90%" }}>
+                                  {Service.name}
+                                  <Text>: {Service.price} QR</Text>
+                                </Text>
+                              }
+                              key={Service.id}
+                              checkedIcon="dot-circle-o"
+                              uncheckedIcon="circle-o"
+                              checked={
+                                ServicesToAdd.filter(s => s.id === Service.id)
+                                  .length !== 0
+                              }
+                              onPress={() => handleServicesToAdd(Service)}
+                            />
+                          ))}
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%"
+                        }}
+                      >
+                        <TouchableHighlight
+                          style={styles.buttonGreen}
+                          onPress={() => {
+                            handleCarParking(2, true);
+                          }}
+                        >
+                          <Text>Park</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                          style={styles.buttonYellow}
+                          onPress={() => {
+                            handleCarParking(1, true);
+                          }}
+                        >
+                          <Text>Reserve</Text>
+                        </TouchableHighlight>
+                      </View>
+                    </View>
+                  )}
+              <View
+                style={{
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
-                <Text>X</Text>
-              </TouchableHighlight>
+                <TouchableHighlight
+                  style={styles.buttonHide}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <Text style={{ textAlign: "center" }}>Cancel</Text>
+                </TouchableHighlight>
+              </View>
             </View>
           </View>
         </Modal>
@@ -289,12 +544,53 @@ function handleHelpPress() {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#d6fffc"
+  buttonGreen: {
+    backgroundColor: "#5dba68",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
+  buttonYellow: {
+    backgroundColor: "#d1cd56",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
+  buttonRed: {
+    backgroundColor: "#eb5a50",
+    width: "45%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
+  },
+  buttonPay: {
+    backgroundColor: "#5dba68",
+    width: "95%",
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5
   },
   buttonHide: {
-    width: "7%",
-    backgroundColor: "red"
+    width: "95%",
+    height: 30,
+    backgroundColor: "#b5b5b0",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5
   },
   markerClick: {
     backgroundColor: "white",

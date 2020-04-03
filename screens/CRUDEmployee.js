@@ -35,10 +35,6 @@ const CRUDEmployees = props => {
   const [fk, setFk] = useState();
 
   useEffect(() => {
-    askPermission();
-  }, []);
-
-  useEffect(() => {
     db.collection("ParkingLots")
       .get()
       .then(querySnapshot => {
@@ -79,6 +75,7 @@ const CRUDEmployees = props => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
+              console.log("Crews", Crews);
             });
         });
       });
@@ -96,7 +93,7 @@ const CRUDEmployees = props => {
           employee: { id, type, name, identifier, fk, fkp },
           operation: "delete"
         });
-        const response2 = await handleEmployee({
+        const response3 = await handleEmployee({
           employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
           operation: "add"
         });
@@ -109,8 +106,9 @@ const CRUDEmployees = props => {
       });
     }
     setType("");
-
+    setName("");
     setId("");
+    setIdentifier("");
   };
 
   const handleEdit = employee => {
@@ -130,46 +128,11 @@ const CRUDEmployees = props => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setDisplayName}
-          placeholder="Display Name"
-          value={displayName}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setemail}
-          placeholder="Email"
-          value={email}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setphoneNumber}
-          placeholder="Phone number"
-          value={phoneNumber}
-        />
         {employees.map((employee, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {employee.name} - {employee.type} - crew Name:{employee.crewName}
+              {employee.identifier} - {employee.name} - {employee.type} - crew
+              Name:{employee.crewName}
             </Text>
             <Button title="Edit" onPress={() => handleEdit(employee)} />
             <Button title="X" onPress={() => handleDelete(employee)} />
@@ -177,8 +140,14 @@ const CRUDEmployees = props => {
         ))}
         <TextInput
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setIdentifier}
+          placeholder="Identifier"
+          value={identifier}
+        />
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
           onChangeText={setType}
-          placeholder="Name"
+          placeholder="Type"
           value={type}
         />
         <TextInput

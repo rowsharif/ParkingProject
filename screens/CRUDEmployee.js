@@ -34,9 +34,6 @@ const CRUDEmployees = props => {
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
 
-  useEffect(() => {
-    askPermission();
-  }, []);
 
   useEffect(() => {
     db.collection("ParkingLots")
@@ -96,7 +93,7 @@ const CRUDEmployees = props => {
           employee: { id, type, name, identifier, fk, fkp },
           operation: "delete"
         });
-        const response2 = await handleEmployee({
+        const response3 = await handleEmployee({
           employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
           operation: "add"
         });
@@ -130,42 +127,7 @@ const CRUDEmployees = props => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setDisplayName}
-          placeholder="Display Name"
-          value={displayName}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setemail}
-          placeholder="Email"
-          value={email}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setphoneNumber}
-          placeholder="Phone number"
-          value={phoneNumber}
-        />
+      
         {employees.map((employee, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>

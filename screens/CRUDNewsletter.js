@@ -15,80 +15,88 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
+const handleNewsletter = firebase.functions().httpsCallable("handleNewsletter");
 
 const CRUDNewsletter = (props) => {
-  const [promotions, setPromotion] = useState([]);
-  const [code, setCode] = React.useState("");
-  const [percent, setPercent] = React.useState("");
-  const [enddate, setenddate] = React.useState();
-  const [id, setId] = React.useState("");
+  const [newsletter, setNewsletter] = useState([]);
+  const [id, setId] = useState([]);
+  const [header, setHeader] = useState([]);
+  const [body, setBody] = useState([]);
+  const [image, setImage] = useState([]);
+
 
   useEffect(() => {
-    db.collection("Promotions").onSnapshot(querySnapshot => {
-      const promotion = [];
+    db.collection("newsletter").onSnapshot( querySnapshot => {
+      const news = [];
       querySnapshot.forEach(doc => {
-        promotion.push({ id: doc.id, ...doc.data() });
-      });
-      console.log(" Current promotion: ", promotion);
-      setPromotion([...promotion]);
-    });
+        news.push({
+          id: doc.id,
+          ...doc.data()
+        })
+        // console.log("News:---: ", news);
+      })
+      setNewsletter([...news]);
+      // console.log("-------------------",newsletter);
+    }
+    )
   }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handlePromotion({
-        promotion: { id, percent, code },
+      const response2 = await handleNewsletter({
+        newsletter: { id, header, body, image },
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handlePromotion({
-        promotion: { percent, code ,enddate},
+      const response2 = await handleNewsletter({
+        newsletter: { id, header, body, image },
         operation: "add"
       });
     }
-    setPercent("");
-    setCode("");
+    
     setId("");
-    setenddate("")
+    setHeader("");
+    setBody("");
+    setImage("");
   };
 
-  const handleEdit = promotion => {
-    setPercent(promotion.percent);
-    setCode(promotion.code);
-    setId(promotion.id);
-    setenddate(promotion.enddate);
+  const handleEdit = newsletter => {
+    setId(newsletter.id);
+    setHeader(newsletter.header);
+    setBody(newsletter.body);
+    setImage(newsletter.image);
   };
-  const handleDelete = async promotion => {
-    const response2 = await handlePromotion({
-        promotion: promotion,
+
+  const handleDelete = async newsletter => {
+    const response2 = await handleNewsletter({
+      newsletter: newsletter,
       operation: "delete"
     });
   };
   return (
     <View style={styles.container}>
      
-        {promotions.map((promotion, i) => (
+        {newsletter.map((newsletter, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {promotion.percent} - {promotion.code} 
+              Hello NewsletterCRUD
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(promotion)} />
-            <Button title="X" onPress={() => handleDelete(promotion)} />
+            <Button title="Edit" onPress={() => handleEdit(newsletter)} />
+            <Button title="X" onPress={() => handleDelete(newsletter)} />
           </View>
         ))}
       <TextInput
         style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setPercent}
+        // onChangeText={setPercent}
         placeholder="percent"
-        value={percent}
+        value={0}
       />
       <TextInput
         style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setCode}
+        // onChangeText={setCode}
         placeholder="code"
-        value={code}
+        // value={code}
       />
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
@@ -96,7 +104,7 @@ const CRUDNewsletter = (props) => {
     </View>
   );
 };
-CRUDPromotion.navigationOptions = {
+CRUDNewsletter.navigationOptions = {
     headerTitle: (
       <View
         style={{

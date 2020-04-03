@@ -98,6 +98,23 @@ exports.handleEmployee=functions.https.onCall(async(data,context)=>{
   }
 });
 
+/////////handle newsletter
+exports.handleNewsletter = functions.https.onCall(async (data, context) => {
+  console.log("Newsletter data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("newsletter").add(data.newsletter);
+  } else if (data.operation === "delete") {
+    db.collection("newsletter")
+      .doc(data.newsletter.id)
+      .delete();
+  } else {
+    db.collection("newsletter")
+      .doc(data.newsletter.id)
+      .update(data.newsletter);
+  }
+});
 
 
 

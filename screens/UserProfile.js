@@ -226,6 +226,12 @@ const UserProfile = props => {
             onPress={() => props.navigation.navigate("CRUDEmployee")}
           />
         </View>
+        <View style={{ margin: "2%" }}>
+          <Button
+            title="Newsletter"
+            onPress={() => props.navigation.navigate("CRUDNewsletter")}
+          />
+        </View>
         {/* </ScrollView> */}
       </ImageBackground>
       </ScrollView>
@@ -236,25 +242,26 @@ UserProfile.navigationOptions = {
   headerTitle: (
     <View
       style={{
-        flex: 1,
+        flex:2,
         flexDirection: "row"
       }}
-    >
+    >    
       <Text
         style={{
-          flex: 1,
+          flex: 2,
           paddingTop: 10,
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "left",
+          paddingLeft: "3%"
         }}
       >
-        MyProfile
+        UserProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 1
         }}
       ></View>
 
@@ -281,6 +288,7 @@ UserProfile.navigationOptions = {
   }
 };
 export default UserProfile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

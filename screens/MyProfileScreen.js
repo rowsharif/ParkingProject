@@ -21,9 +21,11 @@ import UpdateUser from "./UpdateUser";
 import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
 import CRUDMyProfile from "./CRUDMyProfile";
-import  CRUDPromotion from "./CRUDPromotion";
+import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
+import CRUDNewsletter from "./CRUDNewsletter";
+
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
@@ -49,7 +51,10 @@ const StackNavigator = createStackNavigator(
     },
     CRUDEmployee:{
       screen:CRUDEmployee
-    }
+    },
+    CRUDNewsletter:{
+      screen:CRUDNewsletter
+    },
   },
   {
     initialRouteName: "UserProfile",
@@ -79,6 +84,7 @@ const AppContainer = createAppContainer(StackNavigator);
 
 const MyProfileScreen = props => {
   return <AppContainer />;
+  // return <CRUDNewsletter />
 };
 export default MyProfileScreen;
 

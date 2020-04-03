@@ -90,31 +90,7 @@ const CRUDServices = (props) => {
 
 
       
-
-
-    <Picker
-          style={styles.picker} 
-          selectedValue={name}
-          // onValueChange={(itemValue) => setName(itemValue)}
-          mode="dialog"
-        >
-
-
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
-            
-              {services.map((service, i) => (
-              <Text style={styles.getStartedText}>
-              <Picker.Item label={service.name}  value={service.name}  /> 
-
-               </Text>
-               ))}
-           
-                  </View>
-           
-           
-    
          
-        </Picker>  
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 

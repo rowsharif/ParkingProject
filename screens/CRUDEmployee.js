@@ -34,7 +34,6 @@ const CRUDEmployees = props => {
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
 
-
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -76,6 +75,7 @@ const CRUDEmployees = props => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
+              console.log("Crews", crews);
             });
         });
       });
@@ -106,8 +106,9 @@ const CRUDEmployees = props => {
       });
     }
     setType("");
-
+    setName("");
     setId("");
+    setIdentifier("");
   };
 
   const handleEdit = employee => {
@@ -131,7 +132,8 @@ const CRUDEmployees = props => {
         {employees.map((employee, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {employee.name} - {employee.type} - crew Name:{employee.crewName}
+              {employee.identifier} - {employee.name} - {employee.type} - crew
+              Name:{employee.crewName}
             </Text>
             <Button title="Edit" onPress={() => handleEdit(employee)} />
             <Button title="X" onPress={() => handleDelete(employee)} />
@@ -139,8 +141,14 @@ const CRUDEmployees = props => {
         ))}
         <TextInput
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setIdentifier}
+          placeholder="Identifier"
+          value={identifier}
+        />
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
           onChangeText={setType}
-          placeholder="Name"
+          placeholder="Type"
           value={type}
         />
         <TextInput

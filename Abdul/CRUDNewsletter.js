@@ -9,95 +9,94 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,Picker
+  View
 } from "react-native";
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-const handleServices = firebase.functions().httpsCallable("handleServices");
+const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
 
-const CRUDServices = (props) => {
-  const [services, setServices] = useState([]);
-  const [price, setPrice] = React.useState(0);
-  const [name, setName] = React.useState("");
+const CRUDNewsletter = (props) => {
+  const [promotions, setPromotion] = useState([]);
+  const [code, setCode] = React.useState("");
+  const [percent, setPercent] = React.useState("");
+  const [enddate, setenddate] = React.useState();
   const [id, setId] = React.useState("");
 
   useEffect(() => {
-    db.collection("Services").onSnapshot(querySnapshot => {
-      const services = [];
+    db.collection("Promotions").onSnapshot(querySnapshot => {
+      const promotion = [];
       querySnapshot.forEach(doc => {
-        services.push({ id: doc.id, ...doc.data() });
+        promotion.push({ id: doc.id, ...doc.data() });
       });
-      console.log(" Current services: ", services);
-      setServices([...services]);
+      console.log(" Current promotion: ", promotion);
+      setPromotion([...promotion]);
     });
   }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleServices({
-        service: { id, name, price },
+      const response2 = await handlePromotion({
+        promotion: { id, percent, code },
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handleServices({
-        service: { name, price },
+      const response2 = await handlePromotion({
+        promotion: { percent, code ,enddate},
         operation: "add"
       });
     }
-    setName("");
-    setPrice("");
+    setPercent("");
+    setCode("");
     setId("");
+    setenddate("")
   };
 
-  const handleEdit = service => {
-    setName(service.name);
-    setPrice(service.price);
-    setId(service.id);
+  const handleEdit = promotion => {
+    setPercent(promotion.percent);
+    setCode(promotion.code);
+    setId(promotion.id);
+    setenddate(promotion.enddate);
   };
-  const handleDelete = async service => {
-    const response2 = await handleServices({
-      service: service,
+  const handleDelete = async promotion => {
+    const response2 = await handlePromotion({
+        promotion: promotion,
       operation: "delete"
     });
   };
   return (
     <View style={styles.container}>
      
-        {services.map((service, i) => (
+        {promotions.map((promotion, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {service.name} - {service.price}
+              {promotion.percent} - {promotion.code} 
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(service)} />
-            <Button title="X" onPress={() => handleDelete(service)} />
+            <Button title="Edit" onPress={() => handleEdit(promotion)} />
+            <Button title="X" onPress={() => handleDelete(promotion)} />
           </View>
         ))}
       <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setName}
-        placeholder="Name"
-        value={name}
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setPercent}
+        placeholder="percent"
+        value={percent}
       />
       <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setPrice}
-        placeholder="Price"
-        value={price}
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setCode}
+        placeholder="code"
+        value={code}
       />
-
-
-      
-         
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 
     </View>
   );
 };
-CRUDServices.navigationOptions = {
+CRUDPromotion.navigationOptions = {
     headerTitle: (
       <View
         style={{
@@ -115,7 +114,7 @@ CRUDServices.navigationOptions = {
             textAlign: "center"
           }}
         >
-          MyProfile
+          CRUDNewsletter
         </Text>
         <View
           style={{
@@ -145,7 +144,7 @@ CRUDServices.navigationOptions = {
       fontWeight: "bold"
     }
   };
-  export default CRUDServices;
+  export default CRUDNewsletter;
 
 const styles = StyleSheet.create({
     container: {
@@ -154,14 +153,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: "center",
       
-    },
-    picker: {
-      width: 200,
-      backgroundColor: '#FFF0E0',
-      borderColor: 'black',
-      borderWidth: 1,
-    },
-    pickerItem: {
-      color: 'red'
     },
 }); 

@@ -161,64 +161,65 @@ export default function HomeScreen() {
         value={text}
       />
       <Button title="Send" onPress={handleSend} /> */}
+      <View>
+        <Text
+          style={{
+            paddingTop: 10,
+            fontSize: 18,
+            fontWeight: "700"
+          }}
+        >
+          Welcome {currentUser.displayName}!
+        </Text>
         <View>
-          <Text
-            style={{
-              paddingTop: 10,
-              fontSize: 18,
-              fontWeight: "700"
-            }}
-          >
-            Welcome {currentUser.displayName}
-          </Text>
-          <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
-          <TouchableOpacity
-            style={[styles.button, { display: "flex" }]}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.buttonText}>Change</Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <Button title="Logout" onPress={handleLogout} />
-        </View>
-        <View style={{ marginTop: 0 }}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-            }}
-          >
-            <View style={{ marginTop: 22 }}>
-              <View
-                style={{
-                  marginTop: 22,
-                  backgroundColor: "white",
-
-                  width: "100%",
-                  height: "98%"
-                }}
-              >
-                <ImageBackground
-                  source={require("../assets/images/bg11.jpeg")}
-                  style={{ width: "100%", height: "100%" }}
-                >
+                    <Avatar
+  rounded
+  source={{
+    uri:
+      currentUser.photoURL
+  }}
+/>
+</View>
+<Text>Email: {currentUser.email}</Text>
+<Text>Phone number: {currentUser.phoneNumber}</Text>
+<Text>Display Name:{currentUser.displayName}</Text>
+        <Text style={{ fontSize: 17 }}>Car: {Car && Car.PlateNumber}</Text>
+        <TouchableOpacity
+          style={[styles.button, { display: "flex" }]}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>Change</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Button title="Logout" onPress={handleLogout} />
+      </View>
+      <View style={{ marginTop: 0 }}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+          }}
+        >
+          <View style={{ marginTop: 22 }}>
+            <View
+              style={{
+                marginTop: 22,
+                backgroundColor: "white",
+                
+                width: "100%",
+                height: "98%"
+              }}
+            >
+            <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>
+              <View style={{padding:10}}>
+             
+        
+       
                   <View style={{ padding: 10 }}>
-                    <View>
-                      <Avatar
-                        rounded
-                        source={{
-                          uri: currentUser.photoURL
-                            ? currentUser.photoURL
-                            : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
-                        }}
-                      />
-                    </View>
-                    <Text>Email: {currentUser.email}</Text>
-                    <Text>Phone number: {currentUser.phoneNumber}</Text>
-                    <Text>Display Name:{currentUser.displayName}</Text>
+                    
                     <Text
                       style={{
                         paddingTop: 10,
@@ -260,6 +261,7 @@ export default function HomeScreen() {
                         <Button title="Add" onPress={addCar} />
                       </View>
                     )}
+                  </View>
                   </View>
                 </ImageBackground>
               </View>

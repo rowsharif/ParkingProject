@@ -4,12 +4,14 @@ import { StyleSheet, Text, View, Button, ShadowPropTypesIOS,Image } from 'react-
 import { AntDesign, FontAwesome, MaterialIcons, Feather } from "@expo/vector-icons";
 import { TextInput } from 'react-native-paper';
 import db from "../db.js";
-
+import firebase from "firebase/app";
+import "firebase/auth";
 
 const CreateUser = (props) => {
     const [name,setName]=useState("");
-    const [price,setPrice]=useState(0)
+    const [price,setPrice]=useState("")
     const[services,setservices]=useState([])
+    
     // const addCar = async () => {
     //     let servicess = db
     //       .collection("Services")
@@ -21,9 +23,9 @@ const CreateUser = (props) => {
     const handleSend = async () => {
        
           // call serverless function instead
-          const sendservices = firebase.functions().httpsCallable("sendservices");
-          const response2 = await sendservices({ name,price });
-          console.log("sendservices response", response2);
+          const handleservices = firebase.functions().httpsCallable("handleservices");
+          const response2 = await handleservices({name,price});
+        //   console.log("sendservices response", response2);
     
           // db.collection("messages").add({ from, to, text });
         
@@ -31,7 +33,7 @@ const CreateUser = (props) => {
       };
     return (
         <View style={styles.container}>
-            <Text>Good Job</Text>
+            
             <TextInput
         style={{
           height: 40,
@@ -50,9 +52,10 @@ const CreateUser = (props) => {
           borderWidth: 1,
           fontSize: 24,margin:"2%" 
         }}
+        keyboardType='numeric'
         onChangeText={setPrice}
         placeholder="Price"
-        value={price}
+        value={String(price)}
       />     
              <Button title="save" onPress={handleSend}></Button>
             <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ><AntDesign name="back" size={30} color="black" /></Button>

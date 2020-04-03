@@ -53,7 +53,15 @@ export default function NewsletterScreen() {
           key={news.id}
           // onPress={()=>setModalVisible(false)}
         >
-          <View style={{ marginTop:"15%", margin: "5%", backgroundColor: "#c7c7c7", height:"80%", borderRadius: 10}}>
+          <View style={{margin: "5%", backgroundColor: "#c7c7c7", height:"80%", borderRadius: 10, ...Platform.select({
+                ios: {
+                  marginTop:"15%"
+                },
+                android: {
+                  marginTop:"15%"
+                }
+                })}}>
+
             <View style={{alignItems:"flex-end", margin:10}}>
               <FontAwesome  name="close" size={22} color="black" onPress={()=> setModalVisible(false)} />
             </View>

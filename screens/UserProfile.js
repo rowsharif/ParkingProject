@@ -6,7 +6,8 @@ import {
   Text,
   TextInput,
   Button,
-  ImageBackground
+  ImageBackground,
+  ProgressBarAndroid
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -25,6 +26,11 @@ const UserProfile = props => {
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
   const user = firebase.auth().currentUser;
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setshowProgress] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [time, setTime] = useState(5);
+
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
@@ -49,29 +55,6 @@ const UserProfile = props => {
   }, []);
 
   const handleSave = async () => {
-    // if (uri !== photoURL) {
-    //   const response = await fetch(uri);
-    //   const blob = await response.blob();
-    //   const putResult = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .put(blob);
-    //   const url = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .getDownloadURL();
-    //   setUri(url);
-    //   setPhotoURL(url);
-    // }
-
-    // const updateUser = firebase.functions().httpsCallable("updateUser");
-    // const response2 = await updateUser({
-    //   uid: firebase.auth().currentUser.uid,
-    //   displayName,
-    //   photoURL: url
-    // });
     const updateUser = firebase.functions().httpsCallable("updateUser");
     const response2 = await updateUser({
       uid,
@@ -106,6 +89,16 @@ const UserProfile = props => {
       setPhotoURL(url);
     }
   };
+  const timer = async () => {
+    setshowProgress(true);
+    setTime(time - 1);
+    setProgress(progress + 0.3);
+    if (time - 1 <= 0) {
+      await handleUpload();
+      setshowProgress(false);
+      clearTimeout(timeoutId);
+    }
+  };
 
   const handlePickImage = async () => {
     // show camera roll, allow user to select
@@ -120,7 +113,12 @@ const UserProfile = props => {
       console.log("not cancelled", result.uri);
       setUri(result.uri);
     }
+    setProgress(0);
+    setTime(5);
   };
+  useEffect(() => {
+    time > 0 && setTimeoutId(setTimeout(() => timer(), 1000));
+  }, [time]);
 
   return (
     <ScrollView style={styles.container}>
@@ -175,13 +173,24 @@ const UserProfile = props => {
             }}
           />
         )}
+        {showProgress && (
+          <View style={{ margin: "2%" }}>
+            <ProgressBarAndroid
+              styleAttr="Horizontal"
+              indeterminate={false}
+              progress={progress}
+              animating={true}
+              color="blue"
+            />
+          </View>
+        )}
 
         <View style={{ margin: "2%" }}>
           <Button title="Pick Image" onPress={handlePickImage} />
         </View>
-        <View style={{ margin: "2%" }}>
+        {/* <View style={{ margin: "2%" }}>
           <Button title="Upload img" onPress={handleUpload} />
-        </View>
+        </View> */}
         <View style={{ margin: "2%" }}>
           <Button title="Save" onPress={handleSave} />
         </View>
@@ -241,10 +250,10 @@ UserProfile.navigationOptions = {
   headerTitle: (
     <View
       style={{
-        flex:2,
+        flex: 2,
         flexDirection: "row"
       }}
-    >    
+    >
       <Text
         style={{
           flex: 2,

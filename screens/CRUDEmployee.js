@@ -75,7 +75,7 @@ const CRUDEmployees = props => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
-              console.log("Crews", crews);
+              console.log("Crews", allCrews);
             });
         });
       });
@@ -164,7 +164,7 @@ const CRUDEmployees = props => {
           onValueChange={itemValue => setCrew(itemValue)}
         >
           {crews.map((crew, i) => (
-            <Picker.Item label={crew.name} value={crew.name} />
+            <Picker.Item label={crew.name} value={crew} />
           ))}
         </Picker>
 

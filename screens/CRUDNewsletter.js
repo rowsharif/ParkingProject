@@ -9,94 +9,132 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ImageBackground,
+  KeyboardAvoidingView
 } from "react-native";
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
+const handleNewsletter = firebase.functions().httpsCallable("handleNewsletter");
 
 const CRUDNewsletter = (props) => {
-  const [promotions, setPromotion] = useState([]);
-  const [code, setCode] = React.useState("");
-  const [percent, setPercent] = React.useState("");
-  const [enddate, setenddate] = React.useState();
-  const [id, setId] = React.useState("");
+  const [newsletter, setNewsletter] = useState([]);
+  const [id, setId] = useState([]);
+  const [header, setHeader] = useState([]);
+  const [body, setBody] = useState([]);
+  const [image, setImage] = useState([]);
+
 
   useEffect(() => {
-    db.collection("Promotions").onSnapshot(querySnapshot => {
-      const promotion = [];
+    db.collection("newsletter").onSnapshot( querySnapshot => {
+      const news = [];
       querySnapshot.forEach(doc => {
-        promotion.push({ id: doc.id, ...doc.data() });
-      });
-      console.log(" Current promotion: ", promotion);
-      setPromotion([...promotion]);
-    });
+        news.push({
+          id: doc.id,
+          ...doc.data()
+        })
+        // console.log("News:---: ", news);
+      })
+      setNewsletter([...news]);
+      // console.log("-------------------",newsletter);
+    }
+    )
   }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handlePromotion({
-        promotion: { id, percent, code },
+      const response2 = await handleNewsletter({
+        newsletter: { id, header, body, image },
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handlePromotion({
-        promotion: { percent, code ,enddate},
+      const response2 = await handleNewsletter({
+        newsletter: { id, header, body, image },
         operation: "add"
       });
     }
-    setPercent("");
-    setCode("");
+    
     setId("");
-    setenddate("")
+    setHeader("");
+    setBody("");
+    setImage("");
   };
 
-  const handleEdit = promotion => {
-    setPercent(promotion.percent);
-    setCode(promotion.code);
-    setId(promotion.id);
-    setenddate(promotion.enddate);
+  const handleEdit = newsletter => {
+    setId(newsletter.id);
+    setHeader(newsletter.header);
+    setBody(newsletter.body);
+    setImage(newsletter.image);
   };
-  const handleDelete = async promotion => {
-    const response2 = await handlePromotion({
-        promotion: promotion,
+
+  const handleDelete = async newsletter => {
+    const response2 = await handleNewsletter({
+      newsletter: newsletter,
       operation: "delete"
     });
   };
   return (
-    <View style={styles.container}>
+    // <KeyboardAvoidingView style={styles.container} behavior={Platform.Os == "ios" ? "padding" : "height"}>
+
+    <View style={styles.container}>      
+       <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
+        <ScrollView style={{ marginLeft: "5%", marginRight:"5%"}}>
      
-        {promotions.map((promotion, i) => (
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
-            <Text style={styles.getStartedText}>
-              {promotion.percent} - {promotion.code} 
+        {newsletter.map((newsletter, i) => (
+          <View key={newsletter.id} style={{marginLeft:"10%"}}>
+            <View style={{flexDirection: "row", alignItems:"center", }}>
+            <Image source={{uri: newsletter.image}} resizeMode="contain" style={{width:50, height: 50}}/>
+            <Text>
+              {newsletter.header}
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(promotion)} />
-            <Button title="X" onPress={() => handleDelete(promotion)} />
+            </View>
+            
+            <View style={{ paddingTop: 10, flexDirection: "row" }}>
+              <View style={{minWidth:200}}>
+              <Text style={styles.getStartedText}>
+                {newsletter.body}
+              </Text>
+              </View>
+              <Button title="Edit" onPress={() => handleEdit(newsletter)} />
+              <Button title="X" onPress={() => handleDelete(newsletter)} />
+            </View>
           </View>
         ))}
-      <TextInput
-        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setPercent}
-        placeholder="percent"
-        value={percent}
+        <View style={{justifyContent:"center", alignItems:"center"}}>
+        <TextInput
+        style={{margin:5, width:300, height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setHeader}
+        placeholder="Header"
+        value={header}
       />
       <TextInput
         style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setCode}
-        placeholder="code"
-        value={code}
+        onChangeText={setBody}
+        placeholder="Body"
+        value={body}
       />
+      <TextInput
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setImage}
+        placeholder="Image URL"
+        value={image}
+      />
+        </View>
+      
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 
-    </View>
+      </ScrollView>
+      
+      </ImageBackground>      
+     </View>
+    // </KeyboardAvoidingView>
   );
 };
-CRUDPromotion.navigationOptions = {
+CRUDNewsletter.navigationOptions = {
     headerTitle: (
       <View
         style={{

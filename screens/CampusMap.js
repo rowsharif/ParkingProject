@@ -15,6 +15,7 @@ import {
   Dimensions,
   Modal
 } from "react-native";
+import * as Animatable from "react-native-animatable";
 
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
@@ -23,7 +24,15 @@ import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import { CheckBox } from "react-native-elements";
-import { Notifications } from 'expo';
+import { Notifications } from "expo";
+import {
+  Ionicons,
+  FontAwesome,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+  FontAwesome5Brands
+} from "@expo/vector-icons";
 
 export default function CampusMap() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -110,7 +119,7 @@ export default function CampusMap() {
 
   useEffect(() => {
     let totalAmount = 0;
-    if (car.Parking && car.Parking.DateTime) {
+    if (car.Parking && car.Parking.status === 2 && car.Parking.DateTime) {
       const hours = Math.floor(
         Math.abs(
           new Date().getTime() - car.Parking.DateTime.toDate().getTime()
@@ -151,9 +160,10 @@ export default function CampusMap() {
     });
   }, []);
 
-  useEffect(() => {
-    getLocation();
-  }, [location]);
+  // useEffect(() => {
+  //   //direction
+  //   console.log("-------------------", location);
+  // }, [location]);
 
   useEffect(() => {
     // db.collection("ParkingLots")
@@ -227,25 +237,26 @@ export default function CampusMap() {
     let body = "";
 
     let localNotification = {
-      title:null,
-      body:null,
+      title: null,
+      body: null,
       ios: {
-        sound:true, 
+        sound: true,
         _displayInForeground: true
       },
       android: {
-        icon:"https://med.virginia.edu/cme/wp-content/uploads/sites/262/2015/10/free-vector-parking-available-sign-clip-art_116878_Parking_Available_Sign_clip_art_hight.png", 
-        color:"#276b9c",
+        icon:
+          "https://med.virginia.edu/cme/wp-content/uploads/sites/262/2015/10/free-vector-parking-available-sign-clip-art_116878_Parking_Available_Sign_clip_art_hight.png",
+        color: "#276b9c",
         vibrate: true
-      },
+      }
     };
-    if(i === 2 && o === true){
+    if (i === 2 && o === true) {
       title = "Parked!";
       body = `You have successfully parked your car! (Plate No. ${car.PlateNumber})`;
-    } else if (i === 1 && o === true){
+    } else if (i === 1 && o === true) {
       title = "Reserved!";
       body = `The parking space is reserved for your car! (Plate No. ${car.PlateNumber})`;
-    } else if (i === 0 && o === false){
+    } else if (i === 0 && o === false) {
       title = "Reservation Cancelled!";
       body = `The reservation is cancelled for your car! (Plate No. ${car.PlateNumber})`;
     } else {
@@ -309,28 +320,70 @@ export default function CampusMap() {
               pinColor="green"
               onPress={() => markerClick(parking)}
             >
-              <Image
-                source={
-                  parking.status === 2
-                    ? car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id
-                      ? require("../assets/images/yourCar.jpg")
-                      : require("../assets/images/red.png")
-                    : parking.status === 0
-                    ? require("../assets/images/green.png")
-                    : car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id
-                    ? require("../assets/images/reserved.jpg")
-                    : require("../assets/images/yellow.png")
-                }
-                style={
-                  car.Parking && car.Parking.id && car.Parking.id === parking.id
-                    ? { width: 45, height: 35 }
-                    : { width: 18, height: 10 }
-                }
-              />
+              <View
+                style={[
+                  parking.type !== "normal"
+                    ? {
+                        borderColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
+                        borderWidth: 2,
+                        backgroundColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff"
+                      }
+                    : {
+                        borderColor: "black",
+                        borderWidth: 2,
+                        backgroundColor: "white"
+                      }
+                ]}
+              >
+                {parking.status === 2 ? (
+                  car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                    <Animatable.View
+                      animation="rubberBand"
+                      iterationCount="infinite"
+                      direction="alternate"
+                    >
+                      <MaterialCommunityIcons
+                        name="car-brake-parking"
+                        size={20}
+                        color="purple"
+                      />
+                    </Animatable.View>
+                  ) : (
+                    <Image
+                      source={require("../assets/images/red.png")}
+                      style={{ width: 18, height: 10 }}
+                    />
+                  )
+                ) : parking.status === 0 ? (
+                  <Image
+                    source={require("../assets/images/green.png")}
+                    style={{ width: 18, height: 10 }}
+                  />
+                ) : car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                  <Animatable.View
+                    animation="flash"
+                    iterationCount="infinite"
+                    direction="alternate"
+                  >
+                    <MaterialCommunityIcons
+                      name="registered-trademark"
+                      size={20}
+                      color="purple"
+                    />
+                  </Animatable.View>
+                ) : (
+                  <Image
+                    source={require("../assets/images/yellow.png")}
+                    style={{ width: 18, height: 10 }}
+                  />
+                )}
+              </View>
             </MapView.Marker>
           ))}
         <MapView.Marker
@@ -352,14 +405,16 @@ export default function CampusMap() {
           }}
           key={parking.id}
         >
-            <View style={{ marginTop: 22 }}>
-              <View style={{ margin: "20%", backgroundColor: "gray", height:100 }}>
-                <Text onPress={()=> setModalVisible2(false)}>Close</Text>
-              </View>
+          <View style={{ marginTop: 22 }}>
+            <View
+              style={{ margin: "20%", backgroundColor: "gray", height: 100 }}
+            >
+              <Text onPress={() => setModalVisible2(false)}>Close</Text>
             </View>
+          </View>
         </Modal>
       </View>
-      <View style={{ marginTop: 22 }}>        
+      <View style={{ marginTop: 22 }}>
         <Modal
           animationType="fade"
           transparent={true}
@@ -382,9 +437,10 @@ export default function CampusMap() {
                 borderRadius: 5,
                 ...Platform.select({
                   ios: {
-                    paddingTop: 0,
+                    paddingTop: 50,
                     margin: "25%",
-                    minHeight: 300
+                    minHeight: 300,
+                    width: "60%"
                   },
                   android: {
                     minHeight: 200
@@ -413,25 +469,41 @@ export default function CampusMap() {
                         width: "100%"
                       }}
                     >
-                      <TouchableHighlight
-                        style={styles.buttonGreen}
-                        onPress={() => {
-                          handleCarParking(2, true);
-                        }}
+                      <Animatable.View
+                        animation="fadeInLeft"
+                        iterationCount={1}
+                        direction="alternate"
                       >
-                        <Text>Park</Text>
-                      </TouchableHighlight>
+                        <View>
+                          <TouchableHighlight
+                            style={styles.buttonGreen}
+                            onPress={() => {
+                              handleCarParking(2, true);
+                            }}
+                          >
+                            <Text>Park</Text>
+                          </TouchableHighlight>
+                        </View>
+                      </Animatable.View>
 
-                      <TouchableHighlight
-                        style={styles.buttonRed}
-                        onPress={() => {
-                          handleCarParking(0, false);
-                        }}
+                      <Animatable.View
+                        animation="fadeInRight"
+                        iterationCount={1}
+                        direction="alternate"
                       >
-                        <Text style={{ textAlign: "center" }}>
-                          Cancel Reservation
-                        </Text>
-                      </TouchableHighlight>
+                        <View>
+                          <TouchableHighlight
+                            style={styles.buttonRed}
+                            onPress={() => {
+                              handleCarParking(0, false);
+                            }}
+                          >
+                            <Text style={{ textAlign: "center" }}>
+                              Cancel Reservation
+                            </Text>
+                          </TouchableHighlight>
+                        </View>
+                      </Animatable.View>
                     </View>
                   )
                 : parking.status === 2
@@ -468,14 +540,22 @@ export default function CampusMap() {
                         <Text></Text>
                       )}
                       <Text>Total: {total} QR</Text>
-                      <TouchableHighlight
-                        style={styles.buttonPay}
-                        onPress={() => {
-                          handleCarParking(0, true);
-                        }}
+                      <Animatable.View
+                        animation="fadeInDown"
+                        iterationCount={1}
+                        direction="alternate"
                       >
-                        <Text>Pay & Leave</Text>
-                      </TouchableHighlight>
+                        <View>
+                          <TouchableHighlight
+                            style={styles.buttonPay}
+                            onPress={() => {
+                              handleCarParking(0, true);
+                            }}
+                          >
+                            <Text>Pay & Leave</Text>
+                          </TouchableHighlight>
+                        </View>
+                      </Animatable.View>
                     </View>
                   )
                 : car.Parking &&
@@ -516,41 +596,63 @@ export default function CampusMap() {
                           width: "100%"
                         }}
                       >
-                        <TouchableHighlight
-                          style={styles.buttonGreen}
-                          onPress={() => {
-                            handleCarParking(2, true);
-                          }}
+                        <Animatable.View
+                          animation="fadeInLeft"
+                          iterationCount={1}
+                          direction="alternate"
                         >
-                          <Text>Park</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                          style={styles.buttonYellow}
-                          onPress={() => {
-                            handleCarParking(1, true);
-                          }}
+                          <View>
+                            <TouchableHighlight
+                              style={styles.buttonGreen}
+                              onPress={() => {
+                                handleCarParking(2, true);
+                              }}
+                            >
+                              <Text>Park</Text>
+                            </TouchableHighlight>
+                          </View>
+                        </Animatable.View>
+                        <Animatable.View
+                          animation="fadeInRight"
+                          iterationCount={1}
+                          direction="alternate"
                         >
-                          <Text>Reserve</Text>
-                        </TouchableHighlight>
+                          <View>
+                            <TouchableHighlight
+                              style={styles.buttonYellow}
+                              onPress={() => {
+                                handleCarParking(1, true);
+                              }}
+                            >
+                              <Text>Reserve</Text>
+                            </TouchableHighlight>
+                          </View>
+                        </Animatable.View>
                       </View>
                     </View>
                   )}
-              <View
-                style={{
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
+              <Animatable.View
+                animation="fadeInUp"
+                iterationCount={1}
+                direction="alternate"
               >
-                <TouchableHighlight
-                  style={styles.buttonHide}
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
+                <View
+                  style={{
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center"
                   }}
                 >
-                  <Text style={{ textAlign: "center" }}>Cancel</Text>
-                </TouchableHighlight>
-              </View>
+                  <TouchableHighlight
+                    style={styles.buttonHide}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                    }}
+                  >
+                    <Text style={{ textAlign: "center" }}>Cancel </Text>
+                  </TouchableHighlight>
+                </View>
+              </Animatable.View>
             </View>
           </View>
         </Modal>
@@ -601,7 +703,7 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",
-    width: "45%",
+    width: "99%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -611,7 +713,7 @@ const styles = StyleSheet.create({
   },
   buttonYellow: {
     backgroundColor: "#d1cd56",
-    width: "45%",
+    width: "99%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -621,7 +723,7 @@ const styles = StyleSheet.create({
   },
   buttonRed: {
     backgroundColor: "#eb5a50",
-    width: "45%",
+    width: "99%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",

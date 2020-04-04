@@ -20,14 +20,12 @@ import CreateUser from "./CreateUser";
 import UpdateUser from "./UpdateUser";
 import CRUDHistory from "./CRUDHistory";
 import CRUDServices from "./CRUDServices";
-import CRUDParkings from "./CRUDParkings";
-import CRUDParkingLots from "./CRUDParkingLots";
-import CRUDNearestBuildings from "./CRUDNearestBuildings";
-
 import CRUDMyProfile from "./CRUDMyProfile";
-import  CRUDPromotion from "./CRUDPromotion";
+import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
+import CRUDNewsletter from "./CRUDNewsletter";
+
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
@@ -36,33 +34,26 @@ const StackNavigator = createStackNavigator(
     CRUDServices: {
       screen: CRUDServices
     },
-    CRUDParkings: {
-      screen: CRUDParkings
-    },
-     CRUDParkingLots: {
-      screen: CRUDParkingLots
-     },
-     CRUDNearestBuildings:{
-       screen:CRUDNearestBuildings
-     },
-     
     UpdateUser: {
       screen: UpdateUser
     },
     CRUDHistory: {
       screen: CRUDHistory
     },
-    CRUDMyProfile:{
-      screen:CRUDMyProfile
+    CRUDMyProfile: {
+      screen: CRUDMyProfile
     },
-    CRUDPromotion:{
-      screen:CRUDPromotion
+    CRUDPromotion: {
+      screen: CRUDPromotion
     },
-    CRUDCrew:{
-      screen:CRUDCrew
+    CRUDCrew: {
+      screen: CRUDCrew
     },
-    CRUDEmployee:{
-      screen:CRUDEmployee
+    CRUDEmployee: {
+      screen: CRUDEmployee
+    },
+    CRUDNewsletter: {
+      screen: CRUDNewsletter
     }
   },
   {
@@ -73,19 +64,19 @@ const StackNavigator = createStackNavigator(
         height: 44
       },
 
-      activeTintColor: "black",
+      // activeTintColor: "black",
       headerTintColor: "#fff",
       headerTitleStyle: {
         fontWeight: "bold"
       }
     },
-    tabBarOptions: {
-      activeTintColor: "yellow",
-      inactiveTintColor: "black",
-      style: {
-        backgroundColor: "#e6ffe6"
-      }
-    }
+    // tabBarOptions: {
+    //   activeTintColor: "yellow",
+    //   inactiveTintColor: "black",
+    //   style: {
+    //     backgroundColor: "#e6ffe6"
+    //   }
+    // }
   }
 );
 
@@ -93,7 +84,20 @@ const AppContainer = createAppContainer(StackNavigator);
 
 const MyProfileScreen = props => {
   return <AppContainer />;
+  // return <CRUDNewsletter />
 };
+
+// MyProfileScreen.navigationOptions = {
+//   tabBarLabel: "MyProfileScreen222",
+//   tabBarIcon: () => (
+//     <Ionicons name="md-home" size={30} color="blue" />
+//   ),
+//   activeColor: "red",
+//   inactiveColor: "blue",
+//   barStyle: {backgroundColor: "#f2ecb6"}
+  
+// };
+
 export default MyProfileScreen;
 
 const styles = StyleSheet.create({

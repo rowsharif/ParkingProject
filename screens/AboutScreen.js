@@ -1,131 +1,83 @@
-import React, { Component } from "react";
+import React from "react";
+import { ExpoLinksView } from "@expo/samples";
+import { Avatar } from "react-native-elements";
 import {
-  View,
-  Text,
-  Dimensions,
+  Image,
+  Platform,
+  TextInput,
+  Button,
+  ScrollView,
   StyleSheet,
-  Alert,
-  Platform
+  Text,
+  TouchableOpacity,
+  View,
+  ImageBackground
 } from "react-native";
-import { Constants, MapView } from "expo";
 
-// Using a local version here because we need it to import MapView from 'expo'
-import MapViewDirections from "expo";
-
-const { width, height } = Dimensions.get("window");
-const ASPECT_RATIO = width / height;
-const LATITUDE = 37.771707;
-const LONGITUDE = -122.4053769;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-const GOOGLE_MAPS_APIKEY = "AIzaSyCYvMpmVhFc0ydILEuXGJNYNGFnBoKPCL8";
-
-export default class AboutScreen extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      coordinates: [
-        {
-          latitude: 37.3317876,
-          longitude: -122.0054812
-        },
-        {
-          latitude: 37.771707,
-          longitude: -122.4053769
-        }
-      ]
-    };
-
-    this.mapView = null;
-  }
-
-  onMapPress = e => {
-    if (this.state.coordinates.length == 2) {
-      this.setState({
-        coordinates: [e.nativeEvent.coordinate]
-      });
-    } else {
-      this.setState({
-        coordinates: [...this.state.coordinates, e.nativeEvent.coordinate]
-      });
-    }
-  };
-
-  onReady = result => {
-    this.mapView.fitToCoordinates(result.coordinates, {
-      edgePadding: {
-        right: width / 20,
-        bottom: height / 20,
-        left: width / 20,
-        top: height / 20
-      }
-    });
-  };
-
-  onError = errorMessage => {
-    Alert.alert(errorMessage);
-  };
-
-  render() {
-    if (Platform.OS === "android") {
-      return (
-        <View style={styles.container}>
-          <Text>
-            {
-              "For some reason Android crashes here on Expo, so you'll have to test this with iOS … Sorry"
-            }
-          </Text>
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.container}>
-        <MapView
-          initialRegion={{
-            latitude: LATITUDE,
-            longitude: LONGITUDE,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
-          }}
-          style={StyleSheet.absoluteFill}
-          ref={c => (this.mapView = c)} // eslint-disable-line react/jsx-no-bind
-          onPress={this.onMapPress}
-          loadingEnabled={true}
-        >
-          {this.state.coordinates.map(
-            (coordinate, index) => (
-              <MapView.Marker
-                key={`coordinate_${index}`}
-                coordinate={coordinate}
-              />
-            ) // eslint-disable-line react/no-array-index-key
-          )}
-          {this.state.coordinates.length === 2 && (
-            <MapViewDirections
-              origin={this.state.coordinates[0]}
-              destination={this.state.coordinates[1]}
-              apikey={GOOGLE_MAPS_APIKEY}
-              strokeWidth={3}
-              strokeColor="hotpink"
-              onReady={this.onReady}
-              onError={this.onError}
-            />
-          )}
-        </MapView>
-      </View>
-    );
-  }
+export default function AboutScreen() {
+  return (
+    <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
+          <ScrollView>
+              <Text>Hello from the other side!</Text>
+          </ScrollView>
+    </ImageBackground>      
+  );
 }
+
+AboutScreen.navigationOptions = {
+  headerTitle: (
+    <View
+      style={{
+        flex: 2,
+        flexDirection: "row"
+      }}
+    >
+      <Text
+        style={{
+          flex: 2,
+          paddingTop: 10,
+          fontSize: 18,
+          fontWeight: "700",
+          color: "white",
+          textAlign: "left",
+          paddingLeft: "3%"
+        }}
+      >
+        About
+      </Text>
+      <View
+        style={{
+          flex: 1
+        }}
+      ></View>
+
+      <View style={{ alignSelf: "center", flex: 2 }}>
+        <Image
+          resizeMode="cover"
+          style={{
+            width: 120,
+            height: 50,
+            resizeMode: "contain"
+          }}
+          source={require("../assets/images/logo.png")}
+        />
+      </View>
+    </View>
+  ),
+  headerStyle: {
+    backgroundColor: "#276b9c",
+    height: 44
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold"
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 30,
-    backgroundColor: "#ecf0f1"
+    paddingTop: 15,
+    backgroundColor: "#fff"
   }
 });

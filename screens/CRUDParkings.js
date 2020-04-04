@@ -16,7 +16,7 @@ import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-const handleParkings = firebase.functions().httpsCallable("handleParkings");
+//const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
 export default function HomeScreen() {
   const [parkings, setParkings] = useState([]);
@@ -27,18 +27,43 @@ export default function HomeScreen() {
   const [type, setType] = React.useState("");
   const [id, setId] = React.useState("");
 
-  useEffect(() => {
-    db.collection("Parkings").onSnapshot(querySnapshot => {
-      const parkings = [];
-      console.log("----",parkings)
-      querySnapshot.forEach(doc => { 
-        parkings.push({ id: doc.id, ...doc.data() });
+  // useEffect(() => {
+  //   db.collection("Parkings").onSnapshot(querySnapshot => {
+  //     const parkings = [];
+  //     console.log("----",parkings)
+  //     querySnapshot.forEach(doc => { 
+  //       parkings.push({ id: doc.id, ...doc.data() });
        
+  //     });
+  //     console.log(" Current parkings: ", parkings);
+  //     setParkings([...parkings]);
+  //   });
+  // }, []);
+  useEffect(() => {
+    db.collection("ParkingLots")
+      .get()
+      .then(querySnapshot => {
+        const ParkingLots = [];
+        let allParkings = [];
+        querySnapshot.forEach(doc => {
+          ParkingLots.push({ id: doc.id, ...doc.data() });
+          db.collection("ParkingLots")
+            .doc(doc.id)
+            .collection("Parkings")
+            .onSnapshot(querySnapshot => {
+              const nparkings = [];
+              allParkings = allParkings.filter(p => p.fk !== doc.id);
+              querySnapshot.forEach(docP => {
+                nparkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+              });
+              allParkings = [...allParkings, ...nparkings];
+              setParkings([...allParkings]);
+            });
+        });
+        setParkingLots([...ParkingLots]);
       });
-      console.log(" Current parkings: ", parkings);
-      setParkings([...parkings]);
-    });
-  }, []);
+    },[]);
+
 
   const handleSend = async () => {
     if (id) {

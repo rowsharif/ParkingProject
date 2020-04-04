@@ -17,50 +17,65 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 //import { handleParkings } from "../functions";
-const handleNeartestBuildings = firebase.functions().httpsCallable("handleNeartestBuildings");
+const handleNearestBuilding = firebase.functions().httpsCallable("handleNearestBuilding");
 
 export default function HomeScreen() {
-  const [NeartestBuilding, setNeartestBuilding] = useState([]);
+  const [nearestBuilding, setNearestBuilding] = useState([]);
   const [number, setNumber] = React.useState(0);
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
 
   useEffect(() => {
-    db.collection("NeartestBuildings").onSnapshot(querySnapshot => {
-      const NeartestBuildings = [];
-      querySnapshot.forEach(doc => {
-        NeartestBuildings.push({ id: doc.id, ...doc.data() });
+    db.collection("ParkingLots")
+      .get()
+      .then(querySnapshot => {
+        const ParkingLots = [];
+        let allNearestBuildings = [];
+        querySnapshot.forEach(doc => {
+          ParkingLots.push({ id: doc.id, ...doc.data() });
+          db.collection("ParkingLots")
+            .doc(doc.id)
+            .collection("NearestBuildings")
+            .onSnapshot(querySnapshot => {
+              const nNearestBuildings = [];
+              allNearestBuildings = allNearestBuildings.filter(p => p.fk !== doc.id);
+              querySnapshot.forEach(docP => {
+                nNearestBuildings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+              });
+              allNearestBuildings = [...allNearestBuildings, ...nNearestBuildings];
+              setNearestBuilding([...allNearestBuildings]);
+            });
+        });
+        setParkingLots([...ParkingLots]);
       });
-      console.log(" Current NeartestBuilding: ", NeartestBuildings);
-      setParkingLot([...NeartestBuildings]);
-    });
-  }, []);
+    },[]);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleNeartestBuildings({
-        NeartestBuilding: { id, name,number },
+      const response2 = await handleNearestBuilding({
+        nearestBuilding: { id, name, number },
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handleNeartestBuildings({
-        NeartestBuilding: { id, name,number },
+      const response2 = await handleNearestBuilding({
+        nearestBuilding: { id, name, number },
         operation: "add"
       });
     }
     setName("");
     setNumber("");
+    setId("");
   };
 
-  const handleEdit = NeartestBuilding => {
-    setName(NeartestBuilding.name);
-    setNumber(NeartestBuilding.number);
-    setId(NeartestBuilding.id);
+  const handleEdit = nearestBuilding => {
+    setName(nearestBuilding.name);
+    setNumber(nearestBuilding.number);
+    setId(nearestBuilding.id);
   };
-  const handleDelete = async NeartestBuilding => {
-    const response2 = await handleNeartestBuildings({
-        NeartestBuilding: NeartestBuilding,
+  const handleDelete = async nearestBuilding => {
+    const response2 = await handleNearestBuilding({
+      nearestBuilding: nearestBuilding,
       operation: "delete"
     });
   };
@@ -71,13 +86,13 @@ export default function HomeScreen() {
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="always"
       >
-        {NeartestBuildings.map((NeartestBuilding, i) => (
+        {nearestBuilding.map((nearestBuilding, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {NeartestBuilding.name} - {NeartestBuilding.number} 
+              {nearestBuilding.name} - {nearestBuilding.number} 
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(NeartestBuilding)} />
-            <Button title="X" onPress={() => handleDelete(NeartestBuilding)} />
+            <Button title="Edit" onPress={() => handleEdit(nearestBuilding)} />
+            <Button title="X" onPress={() => handleDelete(nearestBuilding)} />
           </View>
         ))}
       </ScrollView>
@@ -93,7 +108,7 @@ export default function HomeScreen() {
         placeholder="number"
         value={number}
       />
-    
+       
       <Button title="Send" onPress={handleSend} />
     </View>
   );

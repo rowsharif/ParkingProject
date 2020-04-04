@@ -33,7 +33,7 @@ const CRUDEmployees = props => {
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
-
+  // const [crewName,setCrewName]=useState()
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -71,11 +71,13 @@ const CRUDEmployees = props => {
                     });
                     allEmployees = [...allEmployees, ...nemployees];
                     setEmployees([...allEmployees]);
+
                   });
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
-              console.log("Crews", crews);
+              console.log("Crews", allCrews);
+
             });
         });
       });
@@ -109,6 +111,7 @@ const CRUDEmployees = props => {
     setName("");
     setId("");
     setIdentifier("");
+    // setCrew("")
   };
 
   const handleEdit = employee => {
@@ -118,9 +121,10 @@ const CRUDEmployees = props => {
     setFk(employee.fk);
     setFkp(employee.fkp);
     setId(employee.id);
+    // setCrew(employee.crews.name)
   };
   const handleDelete = async employee => {
-    const response2 = await handleEmployee({
+    const response2 = await handleEmployee({ 
       employee: employee,
       operation: "delete"
     });
@@ -138,6 +142,8 @@ const CRUDEmployees = props => {
             <Button title="Edit" onPress={() => handleEdit(employee)} />
             <Button title="X" onPress={() => handleDelete(employee)} />
           </View>
+       
+       
         ))}
         <TextInput
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
@@ -165,7 +171,7 @@ const CRUDEmployees = props => {
           onValueChange={itemValue => setCrew(itemValue)}
         >
           {crews.map((crew, i) => (
-            <Picker.Item label={crew.name} value={crew.name} />
+            <Picker.Item label={crew.name} value={crew} />
           ))}
         </Picker>
 

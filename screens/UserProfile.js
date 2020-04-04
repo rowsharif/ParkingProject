@@ -14,7 +14,7 @@ import "firebase/storage";
 import "firebase/functions";
 import db from "../db";
 import * as ImagePicker from "expo-image-picker";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = props => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
@@ -123,7 +123,7 @@ const UserProfile = props => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
@@ -176,64 +176,29 @@ const UserProfile = props => {
           />
         )}
 
-        <View style={{ margin: "2%" }}>
-          <Button title="Pick Image" onPress={handlePickImage} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Upload img" onPress={handleUpload} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Save" onPress={handleSave} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Create User"
-            onPress={() => props.navigation.navigate("CRUDServices")}
-          />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="User history"
-            onPress={() => props.navigation.navigate("CRUDHistory")}
-          />
-        </View>
+         <View  style={{flexDirection:"row",flex:2,flexWrap:"wrap",justifyContent:"center"}}>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin:"3%",alignSelf: "center",padding:"3%"}} onPress={handlePickImage} ><Text style={styles.buttonText}>Pick Image</Text></TouchableOpacity>
+        
+          <TouchableOpacity    style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleUpload}><Text style={styles.buttonText}>Upload img</Text></TouchableOpacity>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleSave}><Text style={styles.buttonText}>Save</Text></TouchableOpacity>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDServices")}><Text style={styles.buttonText}>Handle Service</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="My Profile"
-            onPress={() => props.navigation.navigate("CRUDMyProfile")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDHistory")}><Text style={styles.buttonText}>Handle History</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Promotion"
-            onPress={() => props.navigation.navigate("CRUDPromotion")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDMyProfile")}><Text style={styles.buttonText}>My Profile</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Crew"
-            onPress={() => props.navigation.navigate("CRUDCrew")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDPromotion")}><Text style={styles.buttonText}>Handle Promotion</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Employee"
-            onPress={() => props.navigation.navigate("CRUDEmployee")}
-          />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Newsletter"
-            onPress={() => props.navigation.navigate("CRUDNewsletter")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDCrew")}><Text style={styles.buttonText}>Handle Crew</Text></TouchableOpacity>
+
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDEmployee")}><Text style={styles.buttonText}>Handle Employee</Text></TouchableOpacity>
+
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "1%",alignSelf: "center",padding:"3%" }}onPress={() => props.navigation.navigate("CRUDNewsletter")}><Text style={styles.buttonText}>Handle Newsletter</Text></TouchableOpacity>
         {/* </ScrollView> */}
+       
+      </View>
       </ImageBackground>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -291,8 +256,23 @@ export default UserProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    
+  }, 
+  buttonText: {
+    textAlign: "center",
+    fontSize: 18
   },
+  button: {
+    borderWidth: 1,
+    textAlign: "center",
+    borderColor: "blue",
+    backgroundColor: "#d6fffc",
+    width: "80%",
+    margin: "1%",
+    alignSelf: "center"
+  },
+ 
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",

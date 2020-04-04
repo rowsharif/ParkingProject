@@ -1,10 +1,12 @@
+//@refresh reset
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, View, Image, Text, Modal, TextInput, Button, ImageBackground, SafeAreaView, FlatList } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { StyleSheet, View, Image, Text, Modal, TextInput, Button, ImageBackground, SafeAreaView, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import db from "../db.js";
 import {
   FontAwesome 
 } from "@expo/vector-icons";
+import * as Animatable from 'react-native-animatable';
+
 
 export default function NewsletterScreen() {
   
@@ -60,12 +62,14 @@ export default function NewsletterScreen() {
                   marginTop:"15%"
                 }
                 })}}>
+            <Animatable.View animation="pulse" iterationCount="infinite" style={{ textAlign: 'center' }}>
+              <View style={{alignItems:"flex-end", margin:10}}>
+                <FontAwesome  name="close" size={22} color="black" onPress={()=> setModalVisible(false)} />
+              </View>
+            </Animatable.View>
 
-            <View style={{alignItems:"flex-end", margin:10}}>
-              <FontAwesome  name="close" size={22} color="black" onPress={()=> setModalVisible(false)} />
-            </View>
             <View style={{alignItems:"center", height:"100%", width:"100%"}}>
-              <Image source={{uri: news.image}} resizeMode="contain" style={{width:"40%", height: "40%"}}/>
+                <Image source={{uri: news.image}} resizeMode="contain" style={{width:"40%", height: "40%"}}/>
             <View style={{borderColor:"white", borderWidth:2, height:"55%", width:"90%", borderRadius:5}}>
               <Text style={{margin:"2%",textAlign:"center", fontWeight:"bold", fontSize:20}}>{news.header}</Text>
              <View style={{borderColor:"white", borderWidth:1, width:"100%"}}></View>
@@ -76,31 +80,33 @@ export default function NewsletterScreen() {
         
         </Modal>        
           <View style={{height:"100%"}} >
-            {newsletter.map( item => 
-            <TouchableOpacity style={{backgroundColor:"#c7c7c7", height:150, borderRadius: 10, marginTop:"1%",
-              ...Platform.select({
-                ios: {
-                  paddingTop:"2%",
-                  padding:"3%"
-                },
-                android: {
-                  paddingTop:"2%",
-                  padding:"7%"
+            {newsletter.map( (item, index) => 
+            <Animatable.View animation={index%2===0?"slideInLeft":"slideInRight"} iterationCount={1} style={{ textAlign: 'center' }} key={item.id}>
+              <TouchableOpacity style={{backgroundColor:"#c7c7c7", height:150, borderRadius: 10, marginTop:"1%",
+                ...Platform.select({
+                  ios: {
+                    paddingTop:"2%",
+                    padding:"3%"
+                  },
+                  android: {
+                    paddingTop:"2%",
+                    padding:"7%"
 
-                }
-                })}} 
-                key={item.id}
-                onPress={()=>triggerModal(item)}
-                >
+                  }
+                  })}} 
+                  key={item.id}
+                  onPress={()=>triggerModal(item)}
+                  >
 
-                  <Text style={{textAlign:"center", fontWeight:"bold",}}>{item.header}</Text>
-                  <View style={{ height: "100%", flexDirection:"row", marginTop:5}}>
-                  <Image source={{uri: item.image}} resizeMode="contain" style={{width:100, height: 100, marginTop:-10}}/>
-                    
-                    <Text style={{width:"67%", height: 100, marginLeft:8}}>{item.body}</Text>
-                    
-                  </View>
-              </TouchableOpacity>
+                    <Text style={{textAlign:"center", fontWeight:"bold",}}>{item.header}</Text>
+                    <View style={{ height: "100%", flexDirection:"row", marginTop:5}}>
+                    <Image source={{uri: item.image}} resizeMode="contain" style={{width:100, height: 100, marginTop:-10}}/>
+                      
+                      <Text style={{width:"67%", height: 100, marginLeft:8}}>{item.body}</Text>
+                      
+                    </View>
+                </TouchableOpacity>
+              </Animatable.View>
             )
               
             }            

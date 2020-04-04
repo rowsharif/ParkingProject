@@ -64,19 +64,19 @@ const StackNavigator = createStackNavigator(
         height: 44
       },
 
-      activeTintColor: "black",
+      // activeTintColor: "black",
       headerTintColor: "#fff",
       headerTitleStyle: {
         fontWeight: "bold"
       }
     },
-    tabBarOptions: {
-      activeTintColor: "yellow",
-      inactiveTintColor: "black",
-      style: {
-        backgroundColor: "#e6ffe6"
-      }
-    }
+    // tabBarOptions: {
+    //   activeTintColor: "yellow",
+    //   inactiveTintColor: "black",
+    //   style: {
+    //     backgroundColor: "#e6ffe6"
+    //   }
+    // }
   }
 );
 
@@ -86,6 +86,18 @@ const MyProfileScreen = props => {
   return <AppContainer />;
   // return <CRUDNewsletter />
 };
+
+// MyProfileScreen.navigationOptions = {
+//   tabBarLabel: "MyProfileScreen222",
+//   tabBarIcon: () => (
+//     <Ionicons name="md-home" size={30} color="blue" />
+//   ),
+//   activeColor: "red",
+//   inactiveColor: "blue",
+//   barStyle: {backgroundColor: "#f2ecb6"}
+  
+// };
+
 export default MyProfileScreen;
 
 const styles = StyleSheet.create({

@@ -9,7 +9,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ImageBackground,
+  KeyboardAvoidingView
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -75,33 +77,61 @@ const CRUDNewsletter = (props) => {
     });
   };
   return (
-    <View style={styles.container}>
+    // <KeyboardAvoidingView style={styles.container} behavior={Platform.Os == "ios" ? "padding" : "height"}>
+
+    <View style={styles.container}>      
+       <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
+        <ScrollView style={{ marginLeft: "5%", marginRight:"5%"}}>
      
         {newsletter.map((newsletter, i) => (
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
-            <Text style={styles.getStartedText}>
-              Hello NewsletterCRUD
+          <View key={newsletter.id} style={{marginLeft:"10%"}}>
+            <View style={{flexDirection: "row", alignItems:"center", }}>
+            <Image source={{uri: newsletter.image}} resizeMode="contain" style={{width:50, height: 50}}/>
+            <Text>
+              {newsletter.header}
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(newsletter)} />
-            <Button title="X" onPress={() => handleDelete(newsletter)} />
+            </View>
+            
+            <View style={{ paddingTop: 10, flexDirection: "row" }}>
+              <View style={{minWidth:200}}>
+              <Text style={styles.getStartedText}>
+                {newsletter.body}
+              </Text>
+              </View>
+              <Button title="Edit" onPress={() => handleEdit(newsletter)} />
+              <Button title="X" onPress={() => handleDelete(newsletter)} />
+            </View>
           </View>
         ))}
-      <TextInput
-        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        // onChangeText={setPercent}
-        placeholder="percent"
-        value={0}
+        <View style={{justifyContent:"center", alignItems:"center"}}>
+        <TextInput
+        style={{margin:5, width:300, height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setHeader}
+        placeholder="Header"
+        value={header}
       />
       <TextInput
         style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
-        // onChangeText={setCode}
-        placeholder="code"
-        // value={code}
+        onChangeText={setBody}
+        placeholder="Body"
+        value={body}
       />
+      <TextInput
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setImage}
+        placeholder="Image URL"
+        value={image}
+      />
+        </View>
+      
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 
-    </View>
+      </ScrollView>
+      
+      </ImageBackground>      
+     </View>
+    // </KeyboardAvoidingView>
   );
 };
 CRUDNewsletter.navigationOptions = {

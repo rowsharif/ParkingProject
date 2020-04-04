@@ -99,7 +99,7 @@ exports.handleEmployee = functions.https.onCall(async (data, context) => {
       .collection("Crew")
       .doc(data.employee.fk)
       .collection("Employee")
-      .add(employee);
+      .add(data.employee);
   } else if (data.operation === "delete") {
     db.collection("ParkingLots")
       .doc(data.employee.fk)

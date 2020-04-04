@@ -77,7 +77,6 @@ const CRUDEmployees = props => {
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
               console.log("Crews", allCrews);
-
             });
         });
       });

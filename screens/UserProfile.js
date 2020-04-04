@@ -246,7 +246,7 @@ const UserProfile = props => {
   );
 };
 
-UserProfile.navigationOptions = {
+UserProfile.navigationOptions = props => ({
   headerTitle: (
     <View
       style={{
@@ -294,13 +294,14 @@ UserProfile.navigationOptions = {
   headerTitleStyle: {
     fontWeight: "bold"
   }
-};
+});
+
 export default UserProfile;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   developmentModeText: {
     marginBottom: 20,

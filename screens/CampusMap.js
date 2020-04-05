@@ -14,7 +14,7 @@ import {
   TouchableHighlight,
   View,
   Dimensions,
-  Modal
+  Modal,
 } from "react-native";
 //importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
@@ -32,7 +32,7 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
   FontAwesome5,
-  FontAwesome5Brands
+  FontAwesome5Brands,
 } from "@expo/vector-icons";
 
 export default function CampusMap() {
@@ -59,7 +59,7 @@ export default function CampusMap() {
   // the initial value of hours is 0
   const [crew, setCrew] = useState();
 
-  const setModalvisible = x => {
+  const setModalvisible = (x) => {
     setModalVisible(x);
     setPromotionValid("");
   };
@@ -69,8 +69,8 @@ export default function CampusMap() {
   const [location, setLocation] = useState({
     coords: {
       latitude: 25.360766,
-      longitude: 51.480378
-    }
+      longitude: 51.480378,
+    },
   });
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [Services, setServices] = useState([]);
@@ -108,8 +108,8 @@ export default function CampusMap() {
         .collection("ParkingLots")
         .doc(parking.fk)
         .collection("Crew")
-        .onSnapshot(querySnapshot => {
-          querySnapshot.forEach(doc => {
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
             crew = { id: doc.id, ...doc.data() };
           });
           //using the function setCrew to change the state variable “crew” to the function local variable “crew”
@@ -122,18 +122,18 @@ export default function CampusMap() {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cars")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const Cars = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           Cars.push({
             fk: firebase.auth().currentUser.uid,
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           });
         });
-        setCar(Cars.filter(c => c.current === true)[0]);
+        setCar(Cars.filter((c) => c.current === true)[0]);
         setPromotionValid(" ");
-        console.log("My car ------", Cars.filter(c => c.current === true)[0]);
+        console.log("My car ------", Cars.filter((c) => c.current === true)[0]);
       });
   }, []);
 
@@ -159,9 +159,9 @@ export default function CampusMap() {
   }, [promotionValid]);
 
   useEffect(() => {
-    db.collection("Services").onSnapshot(querySnapshot => {
+    db.collection("Services").onSnapshot((querySnapshot) => {
       const Services = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         Services.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Services: ", Services);
@@ -170,9 +170,9 @@ export default function CampusMap() {
   }, []);
 
   useEffect(() => {
-    db.collection("Promotions").onSnapshot(querySnapshot => {
+    db.collection("Promotions").onSnapshot((querySnapshot) => {
       const Promotions = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         Promotions.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Promotions: ", Promotions);
@@ -212,20 +212,20 @@ export default function CampusMap() {
     db.collection("ParkingLots")
       .doc("kECljqmSifLwfkpX6qPy")
       .collection("Parkings")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const parkings = [];
-        querySnapshot.forEach(docP => {
+        querySnapshot.forEach((docP) => {
           parkings.push({
             fk: "kECljqmSifLwfkpX6qPy",
             id: docP.id,
-            ...docP.data()
+            ...docP.data(),
           });
         });
         setParkings([...parkings]);
       });
   }, []);
 
-  const markerClick = parking => {
+  const markerClick = (parking) => {
     setModalvisible(true);
     setParking(parking);
   };
@@ -234,6 +234,7 @@ export default function CampusMap() {
     let temp = parking;
     temp.status = i;
     const response2 = await handleParkings({
+      uid: firebase.auth().currentUser.uid,
       temp,
       car,
       ServicesToAdd,
@@ -247,7 +248,7 @@ export default function CampusMap() {
             : "CancelReservation"
           : i === 1
           ? "Reserve"
-          : "Park"
+          : "Park",
     });
     setModalVisible(false);
     handleLocalNotification(i, o);
@@ -261,14 +262,14 @@ export default function CampusMap() {
       body: null,
       ios: {
         sound: true,
-        _displayInForeground: true
+        _displayInForeground: true,
       },
       android: {
         icon:
           "https://med.virginia.edu/cme/wp-content/uploads/sites/262/2015/10/free-vector-parking-available-sign-clip-art_116878_Parking_Available_Sign_clip_art_hight.png",
         color: "#276b9c",
-        vibrate: true
-      }
+        vibrate: true,
+      },
     };
     if (i === 2 && o === true) {
       title = "Parked!";
@@ -289,24 +290,24 @@ export default function CampusMap() {
     Notifications.presentLocalNotificationAsync(localNotification);
   };
 
-  const handleServicesToAdd = Service => {
-    if (ServicesToAdd.filter(s => s.id === Service.id).length === 0) {
+  const handleServicesToAdd = (Service) => {
+    if (ServicesToAdd.filter((s) => s.id === Service.id).length === 0) {
       setServicesToAdd([...ServicesToAdd, Service]);
     } else {
-      setServicesToAdd(ServicesToAdd.filter(s => s.id !== Service.id));
+      setServicesToAdd(ServicesToAdd.filter((s) => s.id !== Service.id));
     }
   };
 
-  const handlePromotion = code => {
+  const handlePromotion = (code) => {
     if (
-      Promotions.filter(p => p.code === code).length > 0 &&
+      Promotions.filter((p) => p.code === code).length > 0 &&
       new Date().getTime() <
-        Promotions.filter(p => p.code === code)[0]
+        Promotions.filter((p) => p.code === code)[0]
           .endDateTime.toDate()
           .getTime()
     ) {
       setPromotionValid(true);
-      setPromotion(Promotions.filter(p => p.code === code)[0]);
+      setPromotion(Promotions.filter((p) => p.code === code)[0]);
     } else {
       setPromotionValid(false);
       setPromotion({});
@@ -323,7 +324,7 @@ export default function CampusMap() {
           latitude: 25.358833,
           longitude: 51.479314,
           latitudeDelta: 0.02,
-          longitudeDelta: 0.02
+          longitudeDelta: 0.02,
         }}
         mapType="satellite"
         minZoomLevel={18}
@@ -331,12 +332,12 @@ export default function CampusMap() {
         // onPress={()=> setModalVisible2(true)}
       >
         {parkings &&
-          parkings.map(parking => (
+          parkings.map((parking) => (
             <MapView.Marker
               key={parking.id + parking.fk}
               coordinate={{
                 latitude: parking.latitude,
-                longitude: parking.longitude
+                longitude: parking.longitude,
               }}
               pinColor="green"
               onPress={() => markerClick(parking)}
@@ -349,13 +350,13 @@ export default function CampusMap() {
                           parking.type === "gold" ? "#FFD700" : "#ffffff",
                         borderWidth: 2,
                         backgroundColor:
-                          parking.type === "gold" ? "#FFD700" : "#ffffff"
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
                       }
                     : {
                         borderColor: "black",
                         borderWidth: 2,
-                        backgroundColor: "white"
-                      }
+                        backgroundColor: "white",
+                      },
                 ]}
               >
                 {parking.status === 2 ? (
@@ -417,7 +418,7 @@ export default function CampusMap() {
         <MapView.Marker
           coordinate={{
             latitude: location.coords.latitude,
-            longitude: location.coords.longitude
+            longitude: location.coords.longitude,
           }}
           pinColor="green"
           title="You are here"
@@ -473,12 +474,12 @@ export default function CampusMap() {
                     paddingTop: 50,
                     margin: "25%",
                     minHeight: 300,
-                    width: "60%"
+                    width: "60%",
                   },
                   android: {
-                    minHeight: 200
-                  }
-                })
+                    minHeight: 200,
+                  },
+                }),
               }}
             >
               <Text>
@@ -499,7 +500,7 @@ export default function CampusMap() {
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%"
+                        width: "100%",
                       }}
                     >
                       <Animatable.View
@@ -552,7 +553,7 @@ export default function CampusMap() {
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%"
+                        width: "100%",
                       }}
                     >
                       {/*TextInput A foundational component for inputting text into the app via a keyboard. */}
@@ -564,7 +565,7 @@ export default function CampusMap() {
                           width: "90%",
                           textAlign: "center",
                           marginTop: "5%",
-                          backgroundColor: "white"
+                          backgroundColor: "white",
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -607,7 +608,7 @@ export default function CampusMap() {
                       )}
                       <View style={{ alignItems: "center" }}>
                         {Services &&
-                          Services.map(Service => (
+                          Services.map((Service) => (
                             // CheckBox is from React Native elements
                             // the prop "center" aligns checkbox to center
                             //the prop "title" is the title of checkbox
@@ -627,7 +628,7 @@ export default function CampusMap() {
                               checkedIcon="dot-circle-o"
                               uncheckedIcon="circle-o"
                               checked={
-                                ServicesToAdd.filter(s => s.id === Service.id)
+                                ServicesToAdd.filter((s) => s.id === Service.id)
                                   .length !== 0
                               }
                               onPress={() => handleServicesToAdd(Service)}
@@ -639,7 +640,7 @@ export default function CampusMap() {
                           flexDirection: "row",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "100%"
+                          width: "100%",
                         }}
                       >
                         <Animatable.View
@@ -686,7 +687,7 @@ export default function CampusMap() {
                   style={{
                     width: "100%",
                     alignItems: "center",
-                    justifyContent: "center"
+                    justifyContent: "center",
                   }}
                 >
                   <TouchableHighlight
@@ -708,7 +709,7 @@ export default function CampusMap() {
 }
 //No navigationOptions is needed, the header is null therefor no header will show
 CampusMap.navigationOptions = {
-  header: null
+  header: null,
 };
 
 function DevelopmentModeNotice() {
@@ -756,7 +757,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonYellow: {
     backgroundColor: "#d1cd56",
@@ -766,7 +767,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonRed: {
     backgroundColor: "#eb5a50",
@@ -776,7 +777,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonPay: {
     backgroundColor: "#5dba68",
@@ -786,7 +787,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonHide: {
     width: "95%",
@@ -794,65 +795,65 @@ const styles = StyleSheet.create({
     backgroundColor: "#b5b5b0",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5
+    borderRadius: 5,
   },
   markerClick: {
     backgroundColor: "white",
     width: 150,
-    height: 200
+    height: 200,
   },
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   mapStyle: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height
+    height: Dimensions.get("window").height,
   },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -864,33 +865,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

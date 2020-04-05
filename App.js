@@ -13,7 +13,7 @@ import {
   StyleSheet,
   View,
   TextInput,
-  Button
+  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -29,7 +29,7 @@ import _ from "lodash";
 
 YellowBox.ignoreWarnings(["Setting a timer"]);
 const _console = _.clone(console);
-console.warn = message => {
+console.warn = (message) => {
   if (message.indexOf("Setting a timer") <= -1) {
     _console.warn(message);
   }
@@ -53,43 +53,15 @@ export default function App(props) {
         firebase.auth().currentUser.uid
       }`
     );
-    updateUserLogin();
+    db.collection("users").doc(firebase.auth().currentUser.uid).set({
+      id: firebase.auth().currentUser.uid,
+      role: "student",
+      eid: email,
+    });
   };
 
   const handleLogin = async () => {
     await firebase.auth().signInWithEmailAndPassword(email, password);
-    updateUserLogin();
-  };
-
-  const updateUserLogin = async () => {
-    try {
-      let user = {};
-      const result = await db
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            user = doc.data();
-          });
-        });
-      db.collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .set({
-          id: firebase.auth().currentUser.uid,
-          lastLogin: new Date(),
-          role: user.role,
-          eid: user.eid
-        });
-    } catch {
-      db.collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .set({
-          id: firebase.auth().currentUser.uid,
-          lastLogin: new Date(),
-          role: "student"
-        });
-    }
   };
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
@@ -134,15 +106,15 @@ async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
       require("./assets/images/robot-dev.png"),
-      require("./assets/images/robot-prod.png")
+      require("./assets/images/robot-prod.png"),
     ]),
     Font.loadAsync({
       // This is the font that we are using for our tab bar
       ...Ionicons.font,
       // We include SpaceMono because we use it in HomeScreen.js. Feel free to
       // remove this if you are not using it in your app
-      "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
-    })
+      "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
+    }),
   ]);
 }
 
@@ -159,14 +131,14 @@ function handleFinishLoading(setLoadingComplete) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
-  }
+    marginBottom: 20,
+  },
 });

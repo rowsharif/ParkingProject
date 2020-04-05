@@ -7,7 +7,7 @@ import {
   TextInput,
   Button,
   ImageBackground,
-  ProgressBarAndroid
+  ProgressBarAndroid,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -17,7 +17,7 @@ import db from "../db";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
-const UserProfile = props => {
+const UserProfile = (props) => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
@@ -29,7 +29,7 @@ const UserProfile = props => {
   const [progress, setProgress] = useState(0);
   const [showProgress, setshowProgress] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
-  const [time, setTime] = useState(5);
+  const [time, setTime] = useState(1);
 
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
@@ -61,7 +61,7 @@ const UserProfile = props => {
       displayName,
       photoURL: uri,
       email,
-      phoneNumber: phoneNumber
+      phoneNumber: phoneNumber,
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
@@ -106,7 +106,7 @@ const UserProfile = props => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1
+      quality: 1,
     });
 
     if (!result.cancelled) {
@@ -133,7 +133,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setDisplayName}
           placeholder="Display Name"
@@ -145,7 +145,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setemail}
           placeholder="Email"
@@ -157,7 +157,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setphoneNumber}
           placeholder="Phone number"
@@ -169,7 +169,7 @@ const UserProfile = props => {
             source={{
               uri: photoURL
                 ? photoURL
-                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
             }}
           />
         )}
@@ -185,38 +185,168 @@ const UserProfile = props => {
           </View>
         )}
 
-         <View  style={{flexDirection:"row",flex:2,flexWrap:"wrap",justifyContent:"center"}}>
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin:"3%",alignSelf: "center",padding:"3%"}} onPress={handlePickImage} ><Text style={styles.buttonText}>Pick Image</Text></TouchableOpacity>
-        
-          <TouchableOpacity    style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleUpload}><Text style={styles.buttonText}>Upload img</Text></TouchableOpacity>
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleSave}><Text style={styles.buttonText}>Save</Text></TouchableOpacity>
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDServices")}><Text style={styles.buttonText}>Handle Service</Text></TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 2,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={handlePickImage}
+          >
+            <Text style={styles.buttonText}>Pick Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={handleSave}
+          >
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDServices")}
+          >
+            <Text style={styles.buttonText}>Handle Service</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDHistory")}><Text style={styles.buttonText}>Handle History</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDHistory")}
+          >
+            <Text style={styles.buttonText}>Handle History</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDMyProfile")}><Text style={styles.buttonText}>My Profile</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDMyProfile")}
+          >
+            <Text style={styles.buttonText}>My Profile</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDPromotion")}><Text style={styles.buttonText}>Handle Promotion</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDPromotion")}
+          >
+            <Text style={styles.buttonText}>Handle Promotion</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDCrew")}><Text style={styles.buttonText}>Handle Crew</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDCrew")}
+          >
+            <Text style={styles.buttonText}>Handle Crew</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDEmployee")}><Text style={styles.buttonText}>Handle Employee</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDEmployee")}
+          >
+            <Text style={styles.buttonText}>Handle Employee</Text>
+          </TouchableOpacity>
 
-          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "1%",alignSelf: "center",padding:"3%" }}onPress={() => props.navigation.navigate("CRUDNewsletter")}><Text style={styles.buttonText}>Handle Newsletter</Text></TouchableOpacity>
-        {/* </ScrollView> */}
-       
-      </View>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "1%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDNewsletter")}
+          >
+            <Text style={styles.buttonText}>Handle Newsletter</Text>
+          </TouchableOpacity>
+          {/* </ScrollView> */}
+        </View>
       </ImageBackground>
     </View>
   );
 };
 
-UserProfile.navigationOptions = props => ({
+UserProfile.navigationOptions = (props) => ({
   headerTitle: (
     <View
       style={{
         flex: 2,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -227,14 +357,14 @@ UserProfile.navigationOptions = props => ({
           fontWeight: "700",
           color: "white",
           textAlign: "left",
-          paddingLeft: "3%"
+          paddingLeft: "3%",
         }}
       >
         UserProfile
       </Text>
       <View
         style={{
-          flex: 1
+          flex: 1,
         }}
       ></View>
 
@@ -244,7 +374,7 @@ UserProfile.navigationOptions = props => ({
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -253,12 +383,12 @@ UserProfile.navigationOptions = props => ({
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default UserProfile;
@@ -267,11 +397,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    
-  }, 
+  },
   buttonText: {
     textAlign: "center",
-    fontSize: 18
+    fontSize: 18,
   },
   button: {
     borderWidth: 1,
@@ -280,52 +409,52 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6fffc",
     width: "80%",
     margin: "1%",
-    alignSelf: "center"
+    alignSelf: "center",
   },
- 
+
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   button: {
-    margin: "5%"
+    margin: "5%",
   },
   contentContainer: {},
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -337,33 +466,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

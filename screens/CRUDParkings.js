@@ -155,6 +155,8 @@ export default function HomeScreen() {
         </Picker>
         
       <Button title="Send" onPress={handleSend} />
+      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
+
     </View>
   );
 }

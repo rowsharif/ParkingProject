@@ -6,7 +6,8 @@ import {
   Text,
   TextInput,
   Button,
-  ImageBackground
+  ImageBackground,
+  ProgressBarAndroid
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -14,7 +15,7 @@ import "firebase/storage";
 import "firebase/functions";
 import db from "../db";
 import * as ImagePicker from "expo-image-picker";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = props => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
@@ -25,6 +26,11 @@ const UserProfile = props => {
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
   const user = firebase.auth().currentUser;
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setshowProgress] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [time, setTime] = useState(5);
+
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
@@ -49,36 +55,13 @@ const UserProfile = props => {
   }, []);
 
   const handleSave = async () => {
-    // if (uri !== photoURL) {
-    //   const response = await fetch(uri);
-    //   const blob = await response.blob();
-    //   const putResult = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .put(blob);
-    //   const url = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .getDownloadURL();
-    //   setUri(url);
-    //   setPhotoURL(url);
-    // }
-
-    // const updateUser = firebase.functions().httpsCallable("updateUser");
-    // const response2 = await updateUser({
-    //   uid: firebase.auth().currentUser.uid,
-    //   displayName,
-    //   photoURL: url
-    // });
     const updateUser = firebase.functions().httpsCallable("updateUser");
     const response2 = await updateUser({
       uid,
       displayName,
       photoURL: uri,
       email,
-      phoneNumber:phoneNumber
+      phoneNumber: phoneNumber
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
@@ -106,6 +89,16 @@ const UserProfile = props => {
       setPhotoURL(url);
     }
   };
+  const timer = async () => {
+    setshowProgress(true);
+    setTime(time - 1);
+    setProgress(progress + 0.3);
+    if (time - 1 <= 0) {
+      await handleUpload();
+      setshowProgress(false);
+      clearTimeout(timeoutId);
+    }
+  };
 
   const handlePickImage = async () => {
     // show camera roll, allow user to select
@@ -120,11 +113,15 @@ const UserProfile = props => {
       console.log("not cancelled", result.uri);
       setUri(result.uri);
     }
+    setProgress(0);
+    setTime(5);
   };
+  useEffect(() => {
+    time > 0 && setTimeoutId(setTimeout(() => timer(), 1000));
+  }, [time]);
 
- 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
@@ -148,7 +145,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%",
+            margin: "2%"
           }}
           onChangeText={setemail}
           placeholder="Email"
@@ -176,85 +173,68 @@ const UserProfile = props => {
             }}
           />
         )}
+        {showProgress && (
+          <View style={{ margin: "2%" }}>
+            <ProgressBarAndroid
+              styleAttr="Horizontal"
+              indeterminate={false}
+              progress={progress}
+              animating={true}
+              color="blue"
+            />
+          </View>
+        )}
 
-        <View style={{ margin: "2%" }}>
-          <Button title="Pick Image" onPress={handlePickImage} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Upload img" onPress={handleUpload} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Save" onPress={handleSave} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Create User"
-            onPress={() => props.navigation.navigate("CRUDServices")}
-          />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="User history"
-            onPress={() => props.navigation.navigate("CRUDHistory")}
-          />
-        </View>
-       
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="My Profile"
-            onPress={() => props.navigation.navigate("CRUDMyProfile")}
-          />
-        </View>
+         <View  style={{flexDirection:"row",flex:2,flexWrap:"wrap",justifyContent:"center"}}>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin:"3%",alignSelf: "center",padding:"3%"}} onPress={handlePickImage} ><Text style={styles.buttonText}>Pick Image</Text></TouchableOpacity>
+        
+          <TouchableOpacity    style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleUpload}><Text style={styles.buttonText}>Upload img</Text></TouchableOpacity>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleSave}><Text style={styles.buttonText}>Save</Text></TouchableOpacity>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDServices")}><Text style={styles.buttonText}>Handle Service</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Promotion"
-            onPress={() => props.navigation.navigate("CRUDPromotion")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDHistory")}><Text style={styles.buttonText}>Handle History</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Crew"
-            onPress={() => props.navigation.navigate("CRUDCrew")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDMyProfile")}><Text style={styles.buttonText}>My Profile</Text></TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Employee"
-            onPress={() => props.navigation.navigate("CRUDEmployee")}
-          />
-        </View>
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDPromotion")}><Text style={styles.buttonText}>Handle Promotion</Text></TouchableOpacity>
+
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDCrew")}><Text style={styles.buttonText}>Handle Crew</Text></TouchableOpacity>
+
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDEmployee")}><Text style={styles.buttonText}>Handle Employee</Text></TouchableOpacity>
+
+          <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "1%",alignSelf: "center",padding:"3%" }}onPress={() => props.navigation.navigate("CRUDNewsletter")}><Text style={styles.buttonText}>Handle Newsletter</Text></TouchableOpacity>
         {/* </ScrollView> */}
+       
+      </View>
       </ImageBackground>
-      </ScrollView>
+    </View>
   );
 };
 
-UserProfile.navigationOptions = {
+UserProfile.navigationOptions = props => ({
   headerTitle: (
     <View
       style={{
-        flex: 1,
+        flex: 2,
         flexDirection: "row"
       }}
     >
       <Text
         style={{
-          flex: 1,
+          flex: 2,
           paddingTop: 10,
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "left",
+          paddingLeft: "3%"
         }}
       >
-        MyProfile
+        UserProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 1
         }}
       ></View>
 
@@ -279,13 +259,30 @@ UserProfile.navigationOptions = {
   headerTitleStyle: {
     fontWeight: "bold"
   }
-};
+});
+
 export default UserProfile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    
+  }, 
+  buttonText: {
+    textAlign: "center",
+    fontSize: 18
   },
+  button: {
+    borderWidth: 1,
+    textAlign: "center",
+    borderColor: "blue",
+    backgroundColor: "#d6fffc",
+    width: "80%",
+    margin: "1%",
+    alignSelf: "center"
+  },
+ 
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
@@ -296,9 +293,7 @@ const styles = StyleSheet.create({
   button: {
     margin: "5%"
   },
-  contentContainer: {
-    paddingTop: 30
-  },
+  contentContainer: {},
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,

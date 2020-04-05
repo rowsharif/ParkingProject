@@ -1,5 +1,5 @@
 //@refresh reset
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Image,
   Platform,
@@ -9,238 +9,245 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Picker
 } from "react-native";
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-import { createNativeWrapper } from 'react-native-gesture-handler';
+import { createNativeWrapper } from "react-native-gesture-handler";
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
-const CRUDServices = (props) => {
-  const [employee, setEmployee] = useState([]);
+const CRUDEmployees = props => {
+  const [employees, setEmployees] = useState([]);
+  const [crews, setCrews] = useState([]);
+  const [crew, setCrew] = useState([]);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
-  const[parking,setParking]=useState([]);
+  const [parking, setParking] = useState([]);
   const [type, setType] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [identifier, setIdentifier] = React.useState("");
   const [id, setId] = React.useState("");
-  const [uid, setuid] = useState();
-
-  const askPermission = async () => {
-    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-    setHasCameraRollPermission(status === "granted");
-  };
-
+  const [fkp, setFkp] = useState();
+  const [fk, setFk] = useState();
+  // const [crewName,setCrewName]=useState()
   useEffect(() => {
-    setuid(firebase.auth().currentUser.uid);
-    askPermission();
-  }, []);
+    db.collection("ParkingLots")
+      .get()
+      .then(querySnapshot => {
+        const ParkingLots = [];
+        let allCrews = [];
+        let allEmployees = [];
+        querySnapshot.forEach(doc => {
+          ParkingLots.push({ id: doc.id, ...doc.data() });
+          db.collection("ParkingLots")
+            .doc(doc.id)
+            .collection("Crew")
+            .onSnapshot(querySnapshot => {
+              const ncrews = [];
+              allCrews = allCrews.filter(p => p.fk !== doc.id);
+              querySnapshot.forEach(docP => {
+                ncrews.push({ fk: doc.id, id: docP.id, ...docP.data() });
 
-  useEffect(() => {
-    const user = firebase.auth().currentUser;
-    setDisplayName(user.displayName);
-    setphoneNumber(user.phoneNumber);
-    setemail(user.email);
-    db.collection("ParkingLots").doc().collection("Crew").doc().collection("Employee").get().then(querySnapshot => {
-      const employee = [];
-      querySnapshot.forEach(doc => {
-        employee.push({ id: doc.id, ...doc.data() });
+                db.collection("ParkingLots")
+                  .doc(doc.id)
+                  .collection("Crew")
+                  .doc(docP.id)
+                  .collection("Employee")
+                  .onSnapshot(querySnapshot => {
+                    const nemployees = [];
+                    allEmployees = allEmployees.filter(p => p.fk !== docP.id);
+                    querySnapshot.forEach(docE => {
+                      nemployees.push({
+                        fkp: doc.id,
+                        fk: docP.id,
+                        crewName: docP.name,
+                        id: docE.id,
+                        ...docE.data()
+                      });
+                    });
+                    allEmployees = [...allEmployees, ...nemployees];
+                    setEmployees([...allEmployees]);
+
+                  });
+              });
+              allCrews = [...allCrews, ...ncrews];
+              setCrews([...allCrews]);
+              console.log("Crews", allCrews);
+            });
+        });
       });
-      console.log(" Current services: ", employee);
-      setCrew([...employee]);
-    });
   }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleEmployee({
-        employee: { id, type},
-        operation: "update"
-      });
+      if (crew.id === fk) {
+        const response2 = await handleEmployee({
+          employee: { id, type, name, identifier, fk, fkp },
+          operation: "update"
+        });
+      } else {
+        const response2 = await handleEmployee({
+          employee: { id, type, name, identifier, fk, fkp },
+          operation: "delete"
+        });
+        const response3 = await handleEmployee({
+          employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
+          operation: "add"
+        });
+      }
     } else {
       // call serverless function instead
       const response2 = await handleEmployee({
-        employee: { type },
+        employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
         operation: "add"
       });
     }
- setType("");
-   
+    setType("");
+    setName("");
     setId("");
-    const updateUser = firebase.functions().httpsCallable("updateUser");
-    const response2 = await updateUser({
-      uid,
-      displayName,
-      photoURL: uri,
-      email,
-      phoneNumber:phoneNumber
-    });
-   
+    setIdentifier("");
+    // setCrew("")
   };
 
   const handleEdit = employee => {
     setType(employee.type);
-   
+    setName(employee.name);
+    setIdentifier(employee.identifier);
+    setFk(employee.fk);
+    setFkp(employee.fkp);
     setId(employee.id);
+    // setCrew(employee.crews.name)
   };
   const handleDelete = async employee => {
-    const response2 = await handleEmployee({
-        employee: employee,
+    const response2 = await handleEmployee({ 
+      employee: employee,
       operation: "delete"
     });
   };
   return (
-    <View style={styles.container}>
-     <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setDisplayName}
-          placeholder="Display Name"
-          value={displayName}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%",
-          }}
-          onChangeText={setemail}
-          placeholder="Email"
-          value={email}
-        />
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: "gray",
-            borderWidth: 1,
-            fontSize: 24,
-            margin: "2%"
-          }}
-          onChangeText={setphoneNumber}
-          placeholder="Phone number"
-          value={phoneNumber}
-        />
-        {employee.map((employee, i) => (
+    <ScrollView>
+      <View style={styles.container}>
+      
+        {employees.map((employee, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {employee.type} - 
+              {employee.identifier} - {employee.name} - {employee.type} - crew
+              Name:{employee.crewName}
             </Text>
             <Button title="Edit" onPress={() => handleEdit(employee)} />
             <Button title="X" onPress={() => handleDelete(employee)} />
           </View>
+       
+       
         ))}
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setName}
-        placeholder="Name"
-        value={name}
-      />
-    
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setIdentifier}
+          placeholder="Identifier"
+          value={identifier}
+        />
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setType}
+          placeholder="Type"
+          value={type}
+        />
+        <TextInput
+          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          onChangeText={setName}
+          placeholder="Name"
+          value={name}
+        />
 
-
-
-
-    <Picker
-          style={styles.picker} itemStyle={styles.pickerItem}
-          selectedValue={employee}
-          onValueChange={(itemValue) => setEmployee([...employee])}
+        <Picker
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+          selectedValue={crew}
+          onValueChange={itemValue => setCrew(itemValue)}
         >
-            {crew.map((crew, i) => (
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
-            <Text style={styles.getStartedText}>
-               <Picker.Item label={crew.name} value={crew.name} />
-         
-            </Text>
-          
-          </View>
-        ))}
-         
+          {crews.map((crew, i) => (
+            <Picker.Item label={crew.name} value={crew} />
+          ))}
         </Picker>
 
-
-
-
-
-      <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
-
-    </View>
+        <Button title="Send" onPress={handleSend} />
+        <Button
+          color="green"
+          title="Back"
+          onPress={() => props.navigation.goBack()}
+        ></Button>
+      </View>
+    </ScrollView>
   );
 };
-CRUDServices.navigationOptions = {
-    headerTitle: (
-      <View
+CRUDEmployees.navigationOptions = {
+  headerTitle: (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row"
+      }}
+    >
+      <Text
         style={{
           flex: 1,
-          flexDirection: "row"
+          paddingTop: 10,
+          fontSize: 18,
+          fontWeight: "700",
+          color: "white",
+          textAlign: "center"
         }}
       >
-        <Text
+        MyProfile
+      </Text>
+      <View
+        style={{
+          flex: 2
+        }}
+      ></View>
+
+      <View style={{ alignSelf: "center", flex: 2 }}>
+        <Image
+          resizeMode="cover"
           style={{
-            flex: 1,
-            paddingTop: 10,
-            fontSize: 18,
-            fontWeight: "700",
-            color: "white",
-            textAlign: "center"
+            width: 120,
+            height: 50,
+            resizeMode: "contain"
           }}
-        >
-          MyProfile
-        </Text>
-        <View
-          style={{
-            flex: 2
-          }}
-        ></View>
-  
-        <View style={{ alignSelf: "center", flex: 2 }}>
-          <Image
-            resizeMode="cover"
-            style={{
-              width: 120,
-              height: 50,
-              resizeMode: "contain"
-            }}
-            source={require("../assets/images/logo.png")}
-          />
-        </View>
+          source={require("../assets/images/logo.png")}
+        />
       </View>
-    ),
-    headerStyle: {
-      backgroundColor: "#276b9c",
-      height: 44
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "bold"
-    }
-  };
-  export default CRUDServices;
+    </View>
+  ),
+  headerStyle: {
+    backgroundColor: "#276b9c",
+    height: 44
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold"
+  }
+};
+export default CRUDEmployees;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-       
-        alignItems: 'center',
-        justifyContent: "center",
-      
-    },
-    picker: {
-        width: 200,
-        backgroundColor: '#FFF0E0',
-        borderColor: 'black',
-        borderWidth: 1,
-      },
-      pickerItem: {
-        color: 'red'
-      },
-}); 
+  container: {
+    flex: 1,
+
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  picker: {
+    width: 200,
+    backgroundColor: "#FFF0E0",
+    borderColor: "black",
+    borderWidth: 1
+  },
+  pickerItem: {
+    color: "red"
+  }
+});

@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -19,10 +19,10 @@ import db from "../db.js";
 import { createNativeWrapper } from "react-native-gesture-handler";
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
-const CRUDEmployees = props => {
+const CRUDEmployees = (props) => {
   const [employees, setEmployees] = useState([]);
   const [crews, setCrews] = useState([]);
-  const [crew, setCrew] = useState([]);
+  const [crew, setCrew] = useState({});
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
@@ -33,23 +33,23 @@ const CRUDEmployees = props => {
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
-
+  // const [crewName,setCrewName]=useState()
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const ParkingLots = [];
         let allCrews = [];
         let allEmployees = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           ParkingLots.push({ id: doc.id, ...doc.data() });
           db.collection("ParkingLots")
             .doc(doc.id)
             .collection("Crew")
-            .onSnapshot(querySnapshot => {
+            .onSnapshot((querySnapshot) => {
               const ncrews = [];
-              allCrews = allCrews.filter(p => p.fk !== doc.id);
-              querySnapshot.forEach(docP => {
+              allCrews = allCrews.filter((p) => p.fk !== doc.id);
+              querySnapshot.forEach((docP) => {
                 ncrews.push({ fk: doc.id, id: docP.id, ...docP.data() });
 
                 db.collection("ParkingLots")
@@ -57,16 +57,16 @@ const CRUDEmployees = props => {
                   .collection("Crew")
                   .doc(docP.id)
                   .collection("Employee")
-                  .onSnapshot(querySnapshot => {
+                  .onSnapshot((querySnapshot) => {
                     const nemployees = [];
-                    allEmployees = allEmployees.filter(p => p.fk !== docP.id);
-                    querySnapshot.forEach(docE => {
+                    allEmployees = allEmployees.filter((p) => p.fk !== docP.id);
+                    querySnapshot.forEach((docE) => {
                       nemployees.push({
                         fkp: doc.id,
                         fk: docP.id,
                         crewName: docP.name,
                         id: docE.id,
-                        ...docE.data()
+                        ...docE.data(),
                       });
                     });
                     allEmployees = [...allEmployees, ...nemployees];
@@ -75,7 +75,7 @@ const CRUDEmployees = props => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
-              console.log("Crews", crews);
+              console.log("Crews", allCrews);
             });
         });
       });
@@ -86,43 +86,45 @@ const CRUDEmployees = props => {
       if (crew.id === fk) {
         const response2 = await handleEmployee({
           employee: { id, type, name, identifier, fk, fkp },
-          operation: "update"
+          operation: "update",
         });
       } else {
         const response2 = await handleEmployee({
           employee: { id, type, name, identifier, fk, fkp },
-          operation: "delete"
+          operation: "delete",
         });
         const response3 = await handleEmployee({
           employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
-          operation: "add"
+          operation: "add",
         });
       }
     } else {
       // call serverless function instead
       const response2 = await handleEmployee({
         employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
-        operation: "add"
+        operation: "add",
       });
     }
     setType("");
     setName("");
     setId("");
     setIdentifier("");
+    // setCrew("")
   };
 
-  const handleEdit = employee => {
+  const handleEdit = (employee) => {
     setType(employee.type);
     setName(employee.name);
     setIdentifier(employee.identifier);
     setFk(employee.fk);
     setFkp(employee.fkp);
     setId(employee.id);
+    // setCrew(employee.crews.name)
   };
-  const handleDelete = async employee => {
+  const handleDelete = async (employee) => {
     const response2 = await handleEmployee({
       employee: employee,
-      operation: "delete"
+      operation: "delete",
     });
   };
   return (
@@ -161,10 +163,10 @@ const CRUDEmployees = props => {
           style={styles.picker}
           itemStyle={styles.pickerItem}
           selectedValue={crew}
-          onValueChange={itemValue => setCrew(itemValue)}
+          onValueChange={(itemValue) => setCrew(itemValue)}
         >
           {crews.map((crew, i) => (
-            <Picker.Item label={crew.name} value={crew.name} />
+            <Picker.Item label={crew.name} value={crew} />
           ))}
         </Picker>
 
@@ -183,7 +185,7 @@ CRUDEmployees.navigationOptions = {
     <View
       style={{
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -193,14 +195,14 @@ CRUDEmployees.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         MyProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 2,
         }}
       ></View>
 
@@ -210,7 +212,7 @@ CRUDEmployees.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -219,12 +221,12 @@ CRUDEmployees.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 export default CRUDEmployees;
 
@@ -233,15 +235,15 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   picker: {
     width: 200,
     backgroundColor: "#FFF0E0",
     borderColor: "black",
-    borderWidth: 1
+    borderWidth: 1,
   },
   pickerItem: {
-    color: "red"
-  }
+    color: "red",
+  },
 });

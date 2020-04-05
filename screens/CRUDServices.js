@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,Picker
 } from "react-native";
+import * as Animatable from 'react-native-animatable';
 
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -71,8 +72,8 @@ const CRUDServices = (props) => {
             <Text style={styles.getStartedText}>
               {service.name} - {service.price}
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(service)} />
-            <Button title="X" onPress={() => handleDelete(service)} />
+            <Animatable.View animation="shake" iterationCount="5" style={{ textAlign: 'center' }}><Button title="Edit" onPress={() => handleEdit(service)} /></Animatable.View>
+            <Animatable.View animation="shake" iterationCount="5" style={{ textAlign: 'center' }}><Button title="X" onPress={() => handleDelete(service)} /></Animatable.View>
           </View>
         ))}
       <TextInput
@@ -89,12 +90,8 @@ const CRUDServices = (props) => {
       />
 
 
-      
-
-
-    
-      <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
+<Animatable.View animation="bounceIn" iterationCount="5" style={{ textAlign: 'center' }}><Button title="Send" onPress={handleSend} /></Animatable.View>
+<Animatable.View animation="bounceIn" iterationCount="5" style={{ textAlign: 'center' }}><Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button></Animatable.View>
 
     </View>
   );

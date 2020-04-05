@@ -6,7 +6,8 @@ import {
   Text,
   TextInput,
   Button,
-  ImageBackground
+  ImageBackground,
+  ProgressBarAndroid,
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -14,9 +15,9 @@ import "firebase/storage";
 import "firebase/functions";
 import db from "../db";
 import * as ImagePicker from "expo-image-picker";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
-const UserProfile = props => {
+const UserProfile = (props) => {
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
@@ -25,6 +26,11 @@ const UserProfile = props => {
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
   const user = firebase.auth().currentUser;
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setshowProgress] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [time, setTime] = useState(1);
+
   const askPermission = async () => {
     const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
     setHasCameraRollPermission(status === "granted");
@@ -49,36 +55,13 @@ const UserProfile = props => {
   }, []);
 
   const handleSave = async () => {
-    // if (uri !== photoURL) {
-    //   const response = await fetch(uri);
-    //   const blob = await response.blob();
-    //   const putResult = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .put(blob);
-    //   const url = await firebase
-    //     .storage()
-    //     .ref()
-    //     .child(firebase.auth().currentUser.uid)
-    //     .getDownloadURL();
-    //   setUri(url);
-    //   setPhotoURL(url);
-    // }
-
-    // const updateUser = firebase.functions().httpsCallable("updateUser");
-    // const response2 = await updateUser({
-    //   uid: firebase.auth().currentUser.uid,
-    //   displayName,
-    //   photoURL: url
-    // });
     const updateUser = firebase.functions().httpsCallable("updateUser");
     const response2 = await updateUser({
       uid,
       displayName,
       photoURL: uri,
       email,
-      phoneNumber: phoneNumber
+      phoneNumber: phoneNumber,
     });
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
@@ -106,6 +89,16 @@ const UserProfile = props => {
       setPhotoURL(url);
     }
   };
+  const timer = async () => {
+    setshowProgress(true);
+    setTime(time - 1);
+    setProgress(progress + 0.3);
+    if (time - 1 <= 0) {
+      await handleUpload();
+      setshowProgress(false);
+      clearTimeout(timeoutId);
+    }
+  };
 
   const handlePickImage = async () => {
     // show camera roll, allow user to select
@@ -113,17 +106,22 @@ const UserProfile = props => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1
+      quality: 1,
     });
 
     if (!result.cancelled) {
       console.log("not cancelled", result.uri);
       setUri(result.uri);
     }
+    setProgress(0);
+    setTime(5);
   };
+  useEffect(() => {
+    time > 0 && setTimeoutId(setTimeout(() => timer(), 1000));
+  }, [time]);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
@@ -135,7 +133,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setDisplayName}
           placeholder="Display Name"
@@ -147,7 +145,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setemail}
           placeholder="Email"
@@ -159,7 +157,7 @@ const UserProfile = props => {
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 24,
-            margin: "2%"
+            margin: "2%",
           }}
           onChangeText={setphoneNumber}
           placeholder="Phone number"
@@ -171,80 +169,186 @@ const UserProfile = props => {
             source={{
               uri: photoURL
                 ? photoURL
-                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
             }}
           />
         )}
+        {showProgress && (
+          <View style={{ margin: "2%" }}>
+            <ProgressBarAndroid
+              styleAttr="Horizontal"
+              indeterminate={false}
+              progress={progress}
+              animating={true}
+              color="blue"
+            />
+          </View>
+        )}
 
-        <View style={{ margin: "2%" }}>
-          <Button title="Pick Image" onPress={handlePickImage} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Upload img" onPress={handleUpload} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button title="Save" onPress={handleSave} />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Create User"
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 2,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={handlePickImage}
+          >
+            <Text style={styles.buttonText}>Pick Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={handleSave}
+          >
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDServices")}
-          />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="User history"
+          >
+            <Text style={styles.buttonText}>Handle Service</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDHistory")}
-          />
-        </View>
+          >
+            <Text style={styles.buttonText}>Handle History</Text>
+          </TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="My Profile"
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDMyProfile")}
-          />
-        </View>
+          >
+            <Text style={styles.buttonText}>My Profile</Text>
+          </TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Promotion"
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDPromotion")}
-          />
-        </View>
+          >
+            <Text style={styles.buttonText}>Handle Promotion</Text>
+          </TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Crew"
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDCrew")}
-          />
-        </View>
+          >
+            <Text style={styles.buttonText}>Handle Crew</Text>
+          </TouchableOpacity>
 
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Employee"
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "3%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDEmployee")}
-          />
-        </View>
-        <View style={{ margin: "2%" }}>
-          <Button
-            title="Newsletter"
+          >
+            <Text style={styles.buttonText}>Handle Employee</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "1%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
             onPress={() => props.navigation.navigate("CRUDNewsletter")}
-          />
+          >
+            <Text style={styles.buttonText}>Handle Newsletter</Text>
+          </TouchableOpacity>
+          {/* </ScrollView> */}
         </View>
-        {/* </ScrollView> */}
       </ImageBackground>
-    </ScrollView>
+    </View>
   );
 };
 
-UserProfile.navigationOptions = props => ({
+UserProfile.navigationOptions = (props) => ({
   headerTitle: (
     <View
       style={{
-        flex:2,
-        flexDirection: "row"
+        flex: 2,
+        flexDirection: "row",
       }}
-    >    
+    >
       <Text
         style={{
           flex: 2,
@@ -253,14 +357,14 @@ UserProfile.navigationOptions = props => ({
           fontWeight: "700",
           color: "white",
           textAlign: "left",
-          paddingLeft: "3%"
+          paddingLeft: "3%",
         }}
       >
         UserProfile
       </Text>
       <View
         style={{
-          flex: 1
+          flex: 1,
         }}
       ></View>
 
@@ -270,7 +374,7 @@ UserProfile.navigationOptions = props => ({
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -279,12 +383,12 @@ UserProfile.navigationOptions = props => ({
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default UserProfile;
@@ -294,49 +398,63 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 18,
+  },
+  button: {
+    borderWidth: 1,
+    textAlign: "center",
+    borderColor: "blue",
+    backgroundColor: "#d6fffc",
+    width: "80%",
+    margin: "1%",
+    alignSelf: "center",
+  },
+
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   button: {
-    margin: "5%"
+    margin: "5%",
   },
   contentContainer: {},
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -348,33 +466,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

@@ -13,7 +13,7 @@ exports.welcomeUser = functions.firestore
     db.collection("messages").add({
       from: user.uid,
       to: "Everyone",
-      text: `Welcome to ${user.displayName}`
+      text: `Welcome to ${user.displayName}`,
     });
   });
 
@@ -38,13 +38,9 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   if (data.operation === "add") {
     db.collection("Services").add(data.service);
   } else if (data.operation === "delete") {
-    db.collection("Services")
-      .doc(data.service.id)
-      .delete();
+    db.collection("Services").doc(data.service.id).delete();
   } else {
-    db.collection("Services")
-      .doc(data.service.id)
-      .update(data.service);
+    db.collection("Services").doc(data.service.id).update(data.service);
   }
 });
 
@@ -55,13 +51,9 @@ exports.handlePromotion = functions.https.onCall(async (data, context) => {
   if (data.operation === "add") {
     db.collection("Promotions").add(data.promotion);
   } else if (data.operation === "delete") {
-    db.collection("Promotions")
-      .doc(data.promotion.id)
-      .delete();
+    db.collection("Promotions").doc(data.promotion.id).delete();
   } else {
-    db.collection("Promotions")
-      .doc(data.promotion.id)
-      .update(data.promotion);
+    db.collection("Promotions").doc(data.promotion.id).update(data.promotion);
   }
 });
 
@@ -71,18 +63,18 @@ exports.handleCrew = functions.https.onCall(async (data, context) => {
   // only if ok then add message
   if (data.operation === "add") {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
+      .doc(data.crew.fkp)
       .collection("Crew")
-      .add(data.crew.id);
+      .add(data.crew);
   } else if (data.operation === "delete") {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
+      .doc(data.crew.fkp)
       .collection("Crew")
       .doc(data.crew.id)
       .delete();
   } else {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
+      .doc(data.crew.fkp)
       .collection("Crew")
       .doc(data.crew.id)
       .update(data.crew);
@@ -99,20 +91,20 @@ exports.handleEmployee = functions.https.onCall(async (data, context) => {
       .collection("Crew")
       .doc(data.employee.fk)
       .collection("Employee")
-      .add(employee);
+      .add(data.employee);
   } else if (data.operation === "delete") {
     db.collection("ParkingLots")
-      .doc(data.employee.fk)
-      .collection("Crew")
       .doc(data.employee.fkp)
+      .collection("Crew")
+      .doc(data.employee.fk)
       .collection("Employee")
       .doc(data.employee.id)
       .delete();
   } else {
     db.collection("ParkingLots")
-      .doc(data.employee.fk)
-      .collection("Crew")
       .doc(data.employee.fkp)
+      .collection("Crew")
+      .doc(data.employee.fk)
       .collection("Employee")
       .doc(data.employee.id)
       .update(data.employee);
@@ -127,17 +119,13 @@ exports.handleNewsletter = functions.https.onCall(async (data, context) => {
   if (data.operation === "add") {
     db.collection("newsletter").add(data.newsletter);
   } else if (data.operation === "delete") {
-    db.collection("newsletter")
-      .doc(data.newsletter.id)
-      .delete();
+    db.collection("newsletter").doc(data.newsletter.id).delete();
   } else {
-    db.collection("newsletter")
-      .doc(data.newsletter.id)
-      .update(data.newsletter);
+    db.collection("newsletter").doc(data.newsletter.id).update(data.newsletter);
   }
 });
 
-const bot = async message => {
+const bot = async (message) => {
   const user = await admin.auth().getUser(message.from);
   // do something based on the message
 
@@ -158,7 +146,7 @@ exports.updateUser = functions.https.onCall(async (data, context) => {
     displayName: data.displayName,
     email: data.email,
     phoneNumber: data.phoneNumber,
-    photoURL: data.photoURL
+    photoURL: data.photoURL,
   });
 });
 
@@ -169,13 +157,13 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   const result = await admin.auth().updateUser(request.query.data.uid, {
     displayName: "Unknown",
     photoURL:
-      "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+      "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
   });
   console.log("after set", result);
 
   const listUsersResult = await admin.auth().listUsers(1000);
 
-  listUsersResult.users.forEach(userRecord => {
+  listUsersResult.users.forEach((userRecord) => {
     console.log("user", userRecord.toJSON());
   });
 
@@ -184,7 +172,7 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
-  console.log("handleParkings data", data.crew.name);
+  console.log("handleParkings data", data.uid);
   // temp,
   // car,
   // promotion
@@ -199,11 +187,12 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
   if (data.operation === "Park") {
     //add History
     const history = await db.collection("History").add({
-      CarId: car.id,
+      Car: car,
       ParkingId: data.temp.id,
       DateTime: new Date(),
       Duration: {},
-      TotalAmount: {}
+      TotalAmount: {},
+      uid: data.uid,
     });
 
     if (data.car.Parking.status === 1) {
@@ -217,7 +206,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       0
     );
     //add UserServices
-    sta.map(Service => {
+    sta.map((Service) => {
       return db
         .collection("ParkingLots")
         .doc(data.temp.fk)
@@ -229,7 +218,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
           ServiceId: Service.id,
           ParkingId: data.temp.id,
           DateTime: new Date(),
-          EmployeeId: {}
+          EmployeeId: {},
         });
     });
     car.Parking = data.temp;
@@ -260,24 +249,22 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       ParkingId: data.temp.id,
       ServicesIds: data.car.Parking.ServicesToAdd,
       TotalAmount: totalAmount,
-      Duration: data.hours
+      Duration: data.hours,
     });
     //update History
     let h = {};
     let dHistory = db
       .collection("History")
       .doc(car.Parking.HistoryId)
-      .get(snapshot => {
-        snapshot.forEach(doc => {
+      .get((snapshot) => {
+        snapshot.forEach((doc) => {
           h = doc.data();
         });
       });
     h.id = car.Parking.HistoryId;
     h.TotalAmount = totalAmount;
     h.Duration = data.hours;
-    db.collection("History")
-      .doc(car.Parking.HistoryId)
-      .update(h);
+    db.collection("History").doc(car.Parking.HistoryId).update(h);
     car.Parking = {};
   }
 
@@ -287,9 +274,5 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     .doc(data.temp.id)
     .update(data.temp);
 
-  db.collection("users")
-    .doc(car.fk)
-    .collection("Cars")
-    .doc(car.id)
-    .update(car);
+  db.collection("users").doc(car.fk).collection("Cars").doc(car.id).update(car);
 });

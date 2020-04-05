@@ -42,6 +42,7 @@ const CRUDhistories = (props) => {
         querySnapshot.forEach((doc) => {
           history.push({ id: doc.id, ...doc.data() });
         });
+        console.log("history", history);
         sethistories([...history]);
       });
   }, []);
@@ -54,22 +55,28 @@ const CRUDhistories = (props) => {
       {histories.map((history, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
           <Text>
-            {"Total Amount - " +
-              history.TotalAmount +
-              "QR,      Car - " +
-              history.CarId +
-              " ,   Parking-  " +
-              history.ParkingId +
-              " ,   Duration-  " +
-              history.Duration +
-              "\n"}
+            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
+          </Text>
+          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
+          <Text>
+            Date - {history.DateTime.toDate().getDate()}-
+            {history.DateTime.toDate().getMonth()}-
+            {history.DateTime.toDate().getFullYear()}
+          </Text>
+          <Text>
+            Time - {history.DateTime.toDate().getHours()}:
+            {history.DateTime.toDate().getMinutes()}
+          </Text>
+          <Text>
+            Duration -{" "}
+            {history.Duration >= 0 ? history.Duration : "Car still in campus"}
           </Text>
         </View>
       ))}
 
       <Button
         color="green"
-        title="Back"
+        title="Cancel"
         onPress={() => props.navigation.goBack()}
       ></Button>
     </ScrollView>

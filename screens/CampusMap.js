@@ -139,7 +139,12 @@ export default function CampusMap() {
 
   useEffect(() => {
     let totalAmount = 0;
-    if (car.Parking && car.Parking.status === 2 && car.Parking.DateTime) {
+    if (
+      car &&
+      car.Parking &&
+      car.Parking.status === 2 &&
+      car.Parking.DateTime
+    ) {
       const hours = Math.floor(
         Math.abs(
           new Date().getTime() - car.Parking.DateTime.toDate().getTime()
@@ -360,6 +365,7 @@ export default function CampusMap() {
                 ]}
               >
                 {parking.status === 2 ? (
+                  car &&
                   car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id ? (
@@ -392,7 +398,8 @@ export default function CampusMap() {
                     source={require("../assets/images/green.png")}
                     style={{ width: 18, height: 10 }}
                   />
-                ) : car.Parking &&
+                ) : car &&
+                  car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id ? (
                   <Animatable.View
@@ -492,7 +499,8 @@ export default function CampusMap() {
               </Text>
 
               {parking.status === 1
-                ? car.Parking &&
+                ? car &&
+                  car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
                     <View
@@ -546,7 +554,8 @@ export default function CampusMap() {
                     </View>
                   )
                 : parking.status === 2
-                ? car.Parking &&
+                ? car &&
+                  car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id && (
                     <View
@@ -598,7 +607,8 @@ export default function CampusMap() {
                       </Animatable.View>
                     </View>
                   )
-                : car.Parking &&
+                : car &&
+                  car.Parking &&
                   !car.Parking.id && (
                     <View>
                       {Services && (

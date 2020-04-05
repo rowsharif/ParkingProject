@@ -190,6 +190,8 @@ const UserProfile = props => {
         
           <TouchableOpacity    style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleUpload}><Text style={styles.buttonText}>Upload img</Text></TouchableOpacity>
           <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={handleSave}><Text style={styles.buttonText}>Save</Text></TouchableOpacity>
+
+        {/* props.navigation.navigate is a prop that is used in a screen component to navigate between screens withing the toplevel stack. .navigate() function goes to another screen and figures out the action that is needed to take along  */}
           <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDServices")}><Text style={styles.buttonText}>Handle Service</Text></TouchableOpacity>
 
           <TouchableOpacity   style={{borderWidth: 1,textAlign: "center",borderColor: "blue",backgroundColor: "#d6fffc",width: "auto",margin: "3%",alignSelf: "center",padding:"3%"}}onPress={() => props.navigation.navigate("CRUDHistory")}><Text style={styles.buttonText}>Handle History</Text></TouchableOpacity>

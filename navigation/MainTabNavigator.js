@@ -16,19 +16,30 @@ import NewsletterScreen from "../screens/NewsletterScreen";
 import CampusMap from "../screens/CampusMap";
 import MyProfileScreen from "../screens/MyProfileScreen";
 
+////Below selects the platform to run the app
+///if the platform is web, the headermode is set to screen
+///default returns the most fitting platform that the user is running the app 
 const config = Platform.select({
   web: { headerMode: "screen" },
   default: {}
 });
 
+
+//// Below creates a stack navigator;homestack of the home screen
+//////this creates a screen in the navbar by calling the screen file 
+//////HomeScreen is loaded to the stackNavigator and a 'navigation' prop will be given
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen
+    
   },
   config
 );
-
+ /////below is a text label that will be displayed in the navigationbar of the homescreen
+////below is an icon that will be displayed along with the label text of the screen in the navbar
+/////path is a maping that is set in the route configs. The action is taken from the path
 HomeStack.navigationOptions = {
+ 
   tabBarLabel: "Home",
   tabBarIcon: ({ focused }) => (
     <MaterialCommunityIcons
@@ -106,7 +117,15 @@ MyProfileStack.navigationOptions = {
 
 MyProfileStack.path = "";
 
-// const tabNavigator = createBottomTabNavigator(
+
+
+
+//////createMaterialBottomTabNavigator creates a navigation at the bottom of the app and calls all the stacks that were created above to display in the navigation bar.
+    ////swipeEnabled allows swiping between tabs
+////animationEnabled allows to animate while moving between tabs
+///activeColor color of the active tab
+///inactiveColor color of the inactive tabs
+///indicatorStyle style object for the tab indicator (line at the bottom of the tab).
 const tabNavigator = createMaterialBottomTabNavigator(
   {
     HomeStack,

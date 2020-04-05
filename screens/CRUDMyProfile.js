@@ -38,7 +38,7 @@ const CRUDhistories = (props) => {
 },[]);
   useEffect(() => {
     
-    db.collection("History").whereEqualTo(FieldPath.documentId(),firebase.auth().currentUser.uid).get().then(querySnapshot => {
+    db.collection("History").whereEqualTo(FieldPath.documentId(),firebase.auth().currentUser.uid).onSnapshot(querySnapshot => {
     const history = [""];
     querySnapshot.forEach(doc => {
       history.push({ id: doc.id, ...doc.data() });

@@ -25,7 +25,7 @@ const CRUDServices = (props) => {
   const [fkp, setFkp] = useState();
 const [pname,setPname]=useState()
 const [pnames,setPnames]=useState([])
-
+const [plname,setPlname]=useState([]);
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -91,7 +91,6 @@ const [pnames,setPnames]=useState([])
   };
   return (
     <ScrollView style={styles.container}>
-     {console.log("------------------------",fkp)}
         {crews.map((crew, i) => (
           <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text key={i} style={styles.getStartedText}>

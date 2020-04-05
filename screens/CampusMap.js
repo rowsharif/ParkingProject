@@ -1,5 +1,6 @@
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect } from "react";
+// importing useState and useEffect from react
+import React, { useState, useEffect } from "react"; // React needs to be imported
 import MapView from "react-native-maps";
 import {
   Image,
@@ -15,8 +16,8 @@ import {
   Dimensions,
   Modal
 } from "react-native";
+//importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
-
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -35,11 +36,17 @@ import {
 } from "@expo/vector-icons";
 
 export default function CampusMap() {
+  // React Hooks are functions that allow the use of React state and a
+  // component's lifecycle methods in a functional component
+  // useState and useEffect are built-in Hooks
+  const [parkings, setParkings] = useState([]);
+  // Above is declare a new state variable, which we'll call "parking" as a const ;
+  // setParkings is a function that we use to change (set) the value of parkings;
+  // the initial value of parkings is []; which is an empty array
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
-  const [parking, setParking] = useState([]);
+  const [parking, setParking] = useState({});
   const [car, setCar] = useState({});
   const [promotion, setPromotion] = useState({});
   const [Promotions, setPromotions] = useState([]);
@@ -47,6 +54,9 @@ export default function CampusMap() {
   const [promotionValid, setPromotionValid] = useState("");
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
+  // Above is declare a new state variable, which we'll call "hours" as a const ;
+  // setHours is a function that we use to change (set) the value of hours;
+  // the initial value of hours is 0
   const [crew, setCrew] = useState();
 
   const setModalvisible = x => {
@@ -82,10 +92,18 @@ export default function CampusMap() {
     setPromotionValid(" ");
   }, []);
 
+  //useEffect Hook tells React that the component needs to do something after render
+  //React will remember the function passed and call it later after performing the updates
+  //placing useEffect inside the component allows access to the state’s variables (parking, crew)
+  //by default, it runs both after the first render and after every update.
+  //The below useEffect will run after the first render and whenever the state variable “parking” changes.
   useEffect(() => {
+    //initializing an local variable “crew” as empty object “{}”
     let crew = {};
+    //checking if the state variable “parking” is not empty and that it has a variable “fk”
     parking &&
       parking.fk &&
+      //if the condition is true; we’ll get the crew of the parking parkingLot from firebase and then save it in the local variable crew
       db
         .collection("ParkingLots")
         .doc(parking.fk)
@@ -94,8 +112,10 @@ export default function CampusMap() {
           querySnapshot.forEach(doc => {
             crew = { id: doc.id, ...doc.data() };
           });
+          //using the function setCrew to change the state variable “crew” to the function local variable “crew”
           setCrew(crew);
         });
+    // below is stating when to render; after the state variable “parking” is updated
   }, [parking]);
 
   useEffect(() => {
@@ -294,6 +314,7 @@ export default function CampusMap() {
   };
 
   return (
+    //View is a container that supports layout
     <View style={styles.container}>
       <MapView
         provider="google"
@@ -341,18 +362,25 @@ export default function CampusMap() {
                   car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id ? (
+                    //Using Animatable.View To animate the element
+                    //choosing the name of the animation inside the prop "animation"
+                    //choosing how many times to run the animation inside the prop "iterationCount", useing "infinite" for looped animations.
+                    //choosing direction of animation, which is especially useful for repeating animations inside the prop "direction"
                     <Animatable.View
                       animation="rubberBand"
                       iterationCount="infinite"
                       direction="alternate"
                     >
+                      {/* The element to be animated is an icon "MaterialCommunityIcons" */}
                       <MaterialCommunityIcons
                         name="car-brake-parking"
                         size={20}
                         color="purple"
                       />
-                    </Animatable.View>
+                    </Animatable.View> //closing tag for Animatable
                   ) : (
+                    //Image is a React component for displaying different types of images
+                    //source prop The image source (either a remote URL or a local file resource). in this case local file
                     <Image
                       source={require("../assets/images/red.png")}
                       style={{ width: 18, height: 10 }}
@@ -396,19 +424,24 @@ export default function CampusMap() {
         />
       </MapView>
       <View>
+        {/* The Modal component is a basic way to present content above an enclosing view.
+        The animationType prop controls how the modal animates. the "slide" value make the modal slides in from the bottom
+        The transparent prop determines whether your modal will fill the entire view. Setting this to true will render the modal over a transparent background.
+        The visible prop determines whether the modal is visible. its value is a state variable that changes to true or false to show or hide the modal.
+        the key prop is used because the modal is inside a map function
+        */}
         <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible2}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-          }}
           key={parking.id}
         >
           <View style={{ marginTop: 22 }}>
             <View
               style={{ margin: "20%", backgroundColor: "gray", height: 100 }}
             >
+              {/*Text - A React component for displaying text. 
+              onPress prop determine the function to call on press.*/}
               <Text onPress={() => setModalVisible2(false)}>Close</Text>
             </View>
           </View>
@@ -475,6 +508,11 @@ export default function CampusMap() {
                         direction="alternate"
                       >
                         <View>
+                          {/*A wrapper for making views respond properly to touches 
+                           On press down, the opacity of the wrapped view is decreased, which allows the underlay color to show through, darkening or tinting the view.
+                           TouchableHighlight must have one child in this case a text component
+                           the prop onPress determine the function to use when the TouchableHighlight is pressed
+                           the prop style  determine the style of the TouchableHighlight*/}
                           <TouchableHighlight
                             style={styles.buttonGreen}
                             onPress={() => {
@@ -517,6 +555,7 @@ export default function CampusMap() {
                         width: "100%"
                       }}
                     >
+                      {/*TextInput A foundational component for inputting text into the app via a keyboard. */}
                       <TextInput
                         style={{
                           height: 40,
@@ -569,6 +608,13 @@ export default function CampusMap() {
                       <View style={{ alignItems: "center" }}>
                         {Services &&
                           Services.map(Service => (
+                            // CheckBox is from React Native elements
+                            // the prop "center" aligns checkbox to center
+                            //the prop "title" is the title of checkbox
+                            //the prop "checkedIcon" is the checked icon set to "dot-circle-o"
+                            //the prop "uncheckedIcon" is the checked icon set to "circle-o"
+                            //the prop "checked" is the status of checkbox; true for checked and false for unchecked; checking if the element is inside the state array "ServicesToAdd"
+                            //the prop "onPress" is the  function to call when the checkbox is pressed (the function change the value of checked true-false)
                             <CheckBox
                               center
                               title={
@@ -660,7 +706,7 @@ export default function CampusMap() {
     </View>
   );
 }
-
+//No navigationOptions is needed, the header is null therefor no header will show
 CampusMap.navigationOptions = {
   header: null
 };
@@ -700,6 +746,7 @@ function handleHelpPress() {
   );
 }
 
+//A StyleSheet is an abstraction similar to CSS StyleSheets
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",

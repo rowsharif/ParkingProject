@@ -21,12 +21,14 @@ const config = Platform.select({
   default: {}
 });
 
+
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen
   },
   config
 );
+
 
 HomeStack.navigationOptions = {
   tabBarLabel: "Home",
@@ -42,12 +44,15 @@ HomeStack.navigationOptions = {
 
 HomeStack.path = "";
 
+
 const AboutStack = createStackNavigator(
   {
     About: AboutScreen
   },
+  
   config
 );
+
 
 AboutStack.navigationOptions = {
   tabBarLabel: "About",
@@ -58,12 +63,16 @@ AboutStack.navigationOptions = {
 
 AboutStack.path = "";
 
+
+
+
 const NewsletterStack = createStackNavigator(
   {
     Newsletter: NewsletterScreen
   },
   config
 );
+
 
 NewsletterStack.navigationOptions = {
   tabBarLabel: "Newsletter",
@@ -74,12 +83,14 @@ NewsletterStack.navigationOptions = {
 
 NewsletterStack.path = "";
 
+
 const CampusMapStack = createStackNavigator(
   {
     CampusMap: CampusMap
   },
   config
 );
+
 
 CampusMapStack.navigationOptions = {
   tabBarLabel: "CampusMap",
@@ -88,7 +99,10 @@ CampusMapStack.navigationOptions = {
   )
 };
 
+
 CampusMapStack.path = "";
+
+
 
 const MyProfileStack = createStackNavigator(
   {
@@ -96,6 +110,7 @@ const MyProfileStack = createStackNavigator(
   },
   config
 );
+
 
 MyProfileStack.navigationOptions = {
   tabBarLabel: "User Profile",
@@ -106,7 +121,9 @@ MyProfileStack.navigationOptions = {
 
 MyProfileStack.path = "";
 
-// const tabNavigator = createBottomTabNavigator(
+
+
+
 const tabNavigator = createMaterialBottomTabNavigator(
   {
     HomeStack,
@@ -116,7 +133,6 @@ const tabNavigator = createMaterialBottomTabNavigator(
     NewsletterStack
   },
   {
-    //tabBarPosition: "top",
     swipeEnabled: true,
     animationEnabled: true,
     activeColor: "white",
@@ -129,7 +145,6 @@ const tabNavigator = createMaterialBottomTabNavigator(
         backgroundColor: "#276b9c",
         paddingTop: 4
       },
-      //lablePosition:"beside-icon",
       lableStyle: {
         textAlign: "center",
         fontSize: 19,

@@ -9,14 +9,16 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Picker,
+
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-//const handleParkings = firebase.functions().httpsCallable("handleParkings");
+const handleCRUDParkings = firebase.functions().httpsCallable("handleCRUDParkings");
 
 export default function HomeScreen() {
   const [parkings, setParkings] = useState([]);
@@ -26,6 +28,8 @@ export default function HomeScreen() {
   const [amountperhour, setAmountperhour] = React.useState(0);
   const [type, setType] = React.useState("");
   const [id, setId] = React.useState("");
+  const [ParkingLot,setParkingLot] = useState([]);
+  const [ParkingLots, setParkingLots] =useState([]);
 
   // useEffect(() => {
   //   db.collection("Parkings").onSnapshot(querySnapshot => {
@@ -115,7 +119,7 @@ export default function HomeScreen() {
           </View>
         ))}
       </ScrollView>
-      <TextInput
+      {/* <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setlatitude}
         placeholder="latitude"
@@ -126,11 +130,11 @@ export default function HomeScreen() {
         onChangeText={setLongitude}
         placeholder="longitude"
         value={longitude}
-      />
+      /> */}
        <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setAmountperhour}
-        placeholder="Amountperhour"
+        placeholder="Amount per hour"
         value={amountperhour}
       />
       <TextInput
@@ -139,6 +143,17 @@ export default function HomeScreen() {
         placeholder="Type"
         value={type}
       />
+        <Picker
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+          selectedValue={ParkingLot}
+          onValueChange={(itemValue) => setParkingLot(itemValue)}
+        >
+          {ParkingLots.map((ParkingLot, i) => (
+            <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+          ))}
+        </Picker>
+        
       <Button title="Send" onPress={handleSend} />
     </View>
   );

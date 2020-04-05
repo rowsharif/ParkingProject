@@ -9,8 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Picker
+  View
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -18,67 +17,54 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 //import { handleParkings } from "../functions";
-const handleNearestBuilding = firebase.functions().httpsCallable("handleNearestBuilding");
+const handleParkingLot = firebase.functions().httpsCallable("handleParkingLot");
 
 export default function HomeScreen() {
-  const [nearestBuilding, setNearestBuilding] = useState([]);
-  const [number, setNumber] = React.useState(0);
+  const [parkingLots, setParkingLot] = useState([]);
+  const [longitude, setLongitude] = React.useState(0);
+  const [latitude, setLatitude] = React.useState(0);
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
-  const [ParkingLot,setParkingLot] = useState([]);
-  const [ParkingLots, setParkingLots] =useState([]);
 
   useEffect(() => {
-    db.collection("ParkingLots")
-      .get()
-      .then(querySnapshot => {
-        const ParkingLots = [];
-        let allNearestBuildings = [];
-        querySnapshot.forEach(doc => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
-          db.collection("ParkingLots")
-            .doc(doc.id)
-            .collection("NearestBuildings")
-            .onSnapshot(querySnapshot => {
-              const nNearestBuildings = [];
-              allNearestBuildings = allNearestBuildings.filter(p => p.fk !== doc.id);
-              querySnapshot.forEach(docP => {
-                nNearestBuildings.push({ fk: doc.id, id: docP.id, ...docP.data() });
-              });
-              allNearestBuildings = [...allNearestBuildings, ...nNearestBuildings];
-              setNearestBuilding([...allNearestBuildings]);
-            });
-        });
-        setParkingLots([...ParkingLots]);
+    db.collection("ParkingLots").onSnapshot(querySnapshot => {
+      const parkingLots = [];
+      querySnapshot.forEach(doc => {
+        parkingLots.push({ id: doc.id, ...doc.data() });
       });
-    },[]);
+      console.log(" Current parkingLots: ", parkingLots);
+      setParkingLot([...parkingLots]);
+    });
+  }, []);
 
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleNearestBuilding({
-        nearestBuilding: { id, name, number },
+      const response2 = await handleParkingLot({
+        parkingLot: { id, name, longitude,latitude },
         operation: "update"
       });
     } else {
       // call serverless function instead
-      const response2 = await handleNearestBuilding({
-        nearestBuilding: { id, name, number },
+      const response2 = await handleParkingLot({
+        parkingLot: { id, name, longitude,latitude },
         operation: "add"
       });
     }
     setName("");
-    setNumber("");
+    setLongitude("");
+    setLatitude("");
     setId("");
   };
 
-  const handleEdit = nearestBuilding => {
-    setName(nearestBuilding.name);
-    setNumber(nearestBuilding.number);
-    setId(nearestBuilding.id);
+  const handleEdit = parkingLot => {
+    setName(parkingLot.name);
+    setLatitude(parkingLot.latitude);
+    setLongitude(parkingLot.longitude);
+    setId(parkingLot.id);
   };
-  const handleDelete = async nearestBuilding => {
-    const response2 = await handleNearestBuilding({
-      nearestBuilding: nearestBuilding,
+  const handleDelete = async parkingLot => {
+    const response2 = await handleParkingLot({
+      parkingLot: parkingLot,
       operation: "delete"
     });
   };
@@ -89,13 +75,13 @@ export default function HomeScreen() {
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="always"
       >
-        {nearestBuilding.map((nearestBuilding, i) => (
+        {parkingLots.map((parkingLot, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {nearestBuilding.name} - {nearestBuilding.number} 
+              {parkingLot.name} - {parkingLot.latitude} -{parkingLot.longitude}
             </Text>
-            <Button title="Edit" onPress={() => handleEdit(nearestBuilding)} />
-            <Button title="X" onPress={() => handleDelete(nearestBuilding)} />
+            {/* <Button title="Edit" onPress={() => handleEdit(parkingLot)} /> */}
+            <Button title="X" onPress={() => handleDelete(parkingLot)} />
           </View>
         ))}
       </ScrollView>
@@ -107,21 +93,16 @@ export default function HomeScreen() {
       />
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setNumber}
-        placeholder="number"
-        value={number}
+        onChangeText={setLatitude}
+        placeholder="latitude"
+        value={latitude}
       />
-      <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={ParkingLot}
-          onValueChange={(itemValue) => setParkingLot(itemValue)}
-        >
-          {ParkingLots.map((ParkingLot, i) => (
-            <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-          ))}
-        </Picker>
-       
+       <TextInput
+        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setLongitude}
+        placeholder="longitude"
+        value={longitude}
+      />
       <Button title="Send" onPress={handleSend} />
     </View>
   );

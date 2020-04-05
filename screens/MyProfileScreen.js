@@ -25,6 +25,9 @@ import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
 import CRUDNewsletter from "./CRUDNewsletter";
+import CRUDParkings from "./CRUDParkings";
+import CRUDParkingLots from "./CRUDParkingLots";
+import CRUDNearestBuildings from "./CRUDNearestBuildings";
 
 const StackNavigator = createStackNavigator(
   {
@@ -40,6 +43,15 @@ const StackNavigator = createStackNavigator(
     CRUDHistory: {
       screen: CRUDHistory
     },
+    CRUDParkings: {
+      screen: CRUDParkings
+    },
+     CRUDParkingLots: {
+      screen: CRUDParkingLots
+     },
+     CRUDNearestBuildings:{
+       screen:CRUDNearestBuildings
+     },
     CRUDMyProfile: {
       screen: CRUDMyProfile
     },

@@ -47,41 +47,57 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
       .update(data.service);
   }
 });
+exports.handleNearestBuilding = functions.https.onCall(async (data, context) => {
+  console.log("NearestBuilding data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("NearestBuildings").add(data.NearestBuilding);
+  } else if (data.operation === "delete") {
+    db.collection("NearestBuildings")
+      .doc(data.NearestBuilding.id)
+      .delete();
+  } else {
+    db.collection("NearestBuildings")
+      .doc(data.NearestBuilding.id)
+      .update(data.NearestBuilding);
+  }
+});
 
-/////////handle parking
-// exports.handleParkings = functions.https.onCall(async (data, context) => {
-//   console.log("parking data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings").add(data.Parking);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .delete();
-//   } else {
-//     db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
-//       .doc(data.parking.id)
-//       .update(data.parking);
-//   }
-// });
+///////handle handleCRUDParkings
+exports.handleCRUDParkings = functions.https.onCall(async (data, context) => {
+  console.log("parking data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings").add(data.Parking);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
+      .delete();
+  } else {
+    db.collection("ParkingsLots").doc(data.parking.fk).collection("Parkings")
+      .doc(data.parking.id)
+      .update(data.parking);
+  }
+});
 
-///////handle parking LOT
-// exports.handleParkingLot = functions.https.onCall(async (data, context) => {
-//   console.log("handleParkingLot data", data);
-//   // check for things not allowed
-//   // only if ok then add message
-//   if (data.operation === "add") {
-//     db.collection("ParkingLots").add(data.parkingLot);
-//   } else if (data.operation === "delete") {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .delete();
-//   } else {
-//     db.collection("ParkingLots")
-//       .doc(data.parkingLot.id)
-//       .update(data.parkingLot);
-//   }
-// });
+/////handle parking LOT
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
+  console.log("handleParkingLot data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .delete();
+  } else {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLot);
+  }
+});
 
 const bot = async message => {
   const user = await admin.auth().getUser(message.from);

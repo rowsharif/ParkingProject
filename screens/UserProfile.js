@@ -286,6 +286,53 @@ const UserProfile = (props) => {
           >
             <Text style={styles.buttonText}>Handle Promotion</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "1%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDParkings")}
+          >
+            <Text style={styles.buttonText}>Handle parking</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "1%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDParkingLots")}
+          >
+            <Text style={styles.buttonText}>Handle parking lot</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              textAlign: "center",
+              borderColor: "blue",
+              backgroundColor: "#d6fffc",
+              width: "auto",
+              margin: "1%",
+              alignSelf: "center",
+              padding: "3%",
+            }}
+            onPress={() => props.navigation.navigate("CRUDNearestBuildings")}
+          >
+            <Text style={styles.buttonText}>Handle NearestBuildings</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={{
@@ -299,7 +346,9 @@ const UserProfile = (props) => {
               padding: "3%",
             }}
             onPress={() => props.navigation.navigate("CRUDCrew")}
+
           >
+            
             <Text style={styles.buttonText}>Handle Crew</Text>
           </TouchableOpacity>
 
@@ -334,6 +383,9 @@ const UserProfile = (props) => {
           >
             <Text style={styles.buttonText}>Handle Newsletter</Text>
           </TouchableOpacity>
+
+         
+          
           {/* </ScrollView> */}
         </View>
       </ImageBackground>

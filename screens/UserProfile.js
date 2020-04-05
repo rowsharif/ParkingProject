@@ -85,15 +85,7 @@ const UserProfile = (props) => {
       duration:2300
     });
     
-    // alert(
-    //   'Necessary changes will be displayed in the next login',
-    //   [
-    //     {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-    //     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-    //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-    //   ],
-    //   { cancelable: false }
-    // )
+    
       setPhonevalidate(true)
     }
     else{

@@ -94,7 +94,7 @@ const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
       />
       <Animatable.View animation="bounceIn" iterationCount={3} direction="alternate" style={{ width: "100%" }}>
       <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
+      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
       </Animatable.View>
     </View>
   );

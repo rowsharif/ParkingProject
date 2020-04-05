@@ -19,11 +19,21 @@ import db from "../db.js";
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);
+  const [car, setCar] = useState([]);
 
+  useEffect(() => {
+    db.collection("Cars").onSnapshot((querySnapshot) => {
+      const car = [""];
+      querySnapshot.forEach((doc) => {
+        car.push({ id: doc.id, ...doc.data() });
+      });
+      setCar([...car]);
+    });
+  }, []);
   
   useEffect(() => {
     db.collection("History").onSnapshot(querySnapshot => {
-    const history = [""];
+    const history = [];
     querySnapshot.forEach(doc => {
       history.push({ id: doc.id, ...doc.data() });
     });
@@ -36,14 +46,28 @@ const CRUDhistories = (props) => {
     <ScrollView>
      <Text style={{textAlign:"center",fontWeight:"bold"}}>
        Users history </Text>
+       <Text>Number of histories of users: {histories.length}</Text>
  {histories.map((history,i)=>(
     <View key={i}style={{ borderColor: "gray",
     borderWidth: 1,}}>
-      <Text>
-  {"Total Amount - "+ history.TotalAmount+"QR,      Car - "+ history.CarId + " ,   Parking-  "+ history.ParkingId+ " ,   Duration-  "+history.Duration+" ,   Duration-  "+history.DateTime.toDate().getDate()+"\n"}</Text></View>
- ))}     
-     
-        
+      
+     <Text>
+            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
+          </Text>
+          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
+          <Text>
+            Date - {history.DateTime.toDate().getDate()}-
+            {history.DateTime.toDate().getMonth()}-
+            {history.DateTime.toDate().getFullYear()}
+          </Text>
+          <Text>
+            Time - {history.DateTime.toDate().getHours()}:
+            {history.DateTime.toDate().getMinutes()}
+          </Text>
+          <Text>
+            Duration -{" "}
+            {history.Duration >= 0 ? history.Duration : "Car still in campus"}
+          </Text></View>))}
       <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
 
     </ScrollView>

@@ -173,7 +173,7 @@ const CRUDEmployees = (props) => {
         <Button title="Send" onPress={handleSend} />
         <Button
           color="green"
-          title="Back"
+          title="Cancel"
           onPress={() => props.navigation.goBack()}
         ></Button>
       </View>

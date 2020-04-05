@@ -187,7 +187,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
   if (data.operation === "Park") {
     //add History
     const history = await db.collection("History").add({
-      CarId: car.id,
+      Car: car,
       ParkingId: data.temp.id,
       DateTime: new Date(),
       Duration: {},

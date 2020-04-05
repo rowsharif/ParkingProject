@@ -25,7 +25,14 @@ import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
 import CRUDNewsletter from "./CRUDNewsletter";
+import CRUDParkings from "./CRUDParkings";
+import CRUDParkingLots from "./CRUDParkingLots";
+import CRUDNearestBuildings from "./CRUDNearestBuildings";
 
+
+////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
+///////////////Below, are different screens that are used within the screens folder. The initial screen is set as the userprofile screen. The userprofile screen then calls the other screens
+////used within the initial screen using props. defaultNavigationOptions calls objects such as headerstyle, headerTintColor and headerTitleStyle that will reflect on the navigation
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
@@ -40,6 +47,15 @@ const StackNavigator = createStackNavigator(
     CRUDHistory: {
       screen: CRUDHistory
     },
+    CRUDParkings: {
+      screen: CRUDParkings
+    },
+     CRUDParkingLots: {
+      screen: CRUDParkingLots
+     },
+     CRUDNearestBuildings:{
+       screen:CRUDNearestBuildings
+     },
     CRUDMyProfile: {
       screen: CRUDMyProfile
     },
@@ -80,6 +96,8 @@ const StackNavigator = createStackNavigator(
   }
 );
 
+
+// createAppContainer is a function that is responsible to manage the app and link with the top level container components to take as a parameter (Maintabnavigation)
 const AppContainer = createAppContainer(StackNavigator);
 
 const MyProfileScreen = props => {

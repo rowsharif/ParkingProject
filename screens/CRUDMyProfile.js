@@ -76,7 +76,7 @@ const CRUDhistories = (props) => {
 
       <Button
         color="green"
-        title="Back"
+        title="Cancel"
         onPress={() => props.navigation.goBack()}
       ></Button>
     </ScrollView>

@@ -4,6 +4,8 @@ global.btoa = global.btoa || encode;
 global.atob = global.atob || decode;
 
 import { AppLoading } from "expo";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState, useEffect } from "react";
@@ -97,6 +99,7 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === "ios" && <StatusBar barStyle="default" />}
         <AppNavigator />
+        <FlashMessage position="top" /> 
       </View>
     );
   }

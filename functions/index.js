@@ -172,7 +172,7 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
 
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
-  console.log("handleParkings data", data.crew.name);
+  console.log("handleParkings data", data.uid);
   // temp,
   // car,
   // promotion
@@ -192,7 +192,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       DateTime: new Date(),
       Duration: {},
       TotalAmount: {},
-      uid: uid,
+      uid: data.uid,
     });
 
     if (data.car.Parking.status === 1) {

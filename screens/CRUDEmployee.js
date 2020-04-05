@@ -33,7 +33,7 @@ const CRUDEmployees = props => {
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
-
+  // const [crewName,setCrewName]=useState()
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -71,6 +71,7 @@ const CRUDEmployees = props => {
                     });
                     allEmployees = [...allEmployees, ...nemployees];
                     setEmployees([...allEmployees]);
+
                   });
               });
               allCrews = [...allCrews, ...ncrews];
@@ -109,6 +110,7 @@ const CRUDEmployees = props => {
     setName("");
     setId("");
     setIdentifier("");
+    // setCrew("")
   };
 
   const handleEdit = employee => {
@@ -118,9 +120,10 @@ const CRUDEmployees = props => {
     setFk(employee.fk);
     setFkp(employee.fkp);
     setId(employee.id);
+    // setCrew(employee.crews.name)
   };
   const handleDelete = async employee => {
-    const response2 = await handleEmployee({
+    const response2 = await handleEmployee({ 
       employee: employee,
       operation: "delete"
     });
@@ -128,6 +131,7 @@ const CRUDEmployees = props => {
   return (
     <ScrollView>
       <View style={styles.container}>
+      
         {employees.map((employee, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
@@ -137,6 +141,8 @@ const CRUDEmployees = props => {
             <Button title="Edit" onPress={() => handleEdit(employee)} />
             <Button title="X" onPress={() => handleDelete(employee)} />
           </View>
+       
+       
         ))}
         <TextInput
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}

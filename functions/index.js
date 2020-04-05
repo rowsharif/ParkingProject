@@ -71,18 +71,18 @@ exports.handleCrew = functions.https.onCall(async (data, context) => {
   // only if ok then add message
   if (data.operation === "add") {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
-      .collection("Crew")
-      .add(data.crew.id);
-  } else if (data.operation === "delete") {
+    .doc(data.crew.fkp)
+    .collection("Crew")
+    .add(data.crew)
+ } else if (data.operation === "delete") {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
+      .doc(data.crew.fkp)
       .collection("Crew")
       .doc(data.crew.id)
       .delete();
   } else {
     db.collection("ParkingLots")
-      .doc(data.temp.fk)
+      .doc(data.crew.fkp)
       .collection("Crew")
       .doc(data.crew.id)
       .update(data.crew);

@@ -15,9 +15,11 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+import * as Animatable from 'react-native-animatable';
+
 const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
 
-const CRUDPromotion = (props) => {
+  const CRUDPromotion = (props) => {
   const [promotions, setPromotion] = useState([]);
   const [code, setCode] = React.useState("");
   const [percent, setPercent] = React.useState("");
@@ -90,9 +92,10 @@ const CRUDPromotion = (props) => {
         placeholder="code"
         value={code}
       />
+      <Animatable.View animation="bounceIn" iterationCount={3} direction="alternate" style={{ width: "100%" }}>
       <Button title="Send" onPress={handleSend} />
       <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
-
+      </Animatable.View>
     </View>
   );
 };

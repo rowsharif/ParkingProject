@@ -84,12 +84,12 @@ exports.handleEmployee=functions.https.onCall(async(data,context)=>{
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").add(data.crew.id);
+    db.collection("ParkingLots").doc(data.employee.fk).collection("Crew").doc().collection("Employee").add(data.crew.id);
   } else if (data.operation === "delete") {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
+    db.collection("ParkingLots").doc(data.employee.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
       .delete();
   } else {
-    db.collection("ParkingLots").doc(data.temp.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
+    db.collection("ParkingLots").doc(data.employee.fk).collection("Crew").doc().collection("Employee").doc(data.crew.id)
       .update(data.crew);
   }
 });

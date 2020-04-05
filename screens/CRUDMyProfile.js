@@ -53,16 +53,18 @@ const CRUDhistories = (props) => {
       </Text>
       {histories.map((history, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
+          {history.TotalAmount && (
+            <Text>Total Amount - {history.TotalAmount}</Text>
+          )}
+          <Text>Car - {history.Car.PlateNumber}</Text>
+          <Text>Parking - {history.ParkingId}</Text>
           <Text>
-            {"Total Amount - " +
-              history.TotalAmount +
-              "QR,      Car - " +
-              history.CarId +
-              " ,   Parking-  " +
-              history.ParkingId +
-              " ,   Duration-  " +
-              history.Duration +
-              "\n"}
+            Duration -{" "}
+            {history.Duration === 0
+              ? "0"
+              : history.Duration
+              ? history.Duration
+              : "Car is still in campus"}
           </Text>
         </View>
       ))}

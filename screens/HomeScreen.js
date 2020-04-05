@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
   Modal,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -49,9 +49,9 @@ export default function HomeScreen() {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cars")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const Cars = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           Cars.push({ id: doc.id, ...doc.data() });
         });
         console.log(" Current Cars: ", Cars);
@@ -70,21 +70,19 @@ export default function HomeScreen() {
     setPlateNumber("");
   };
 
-  const deleteCar = async car => {
+  const deleteCar = async (car) => {
     db.collection("users")
       .doc(currentUser.uid)
       .collection("Cars")
       .doc(car.id)
       .delete();
-    setCars(Cars.filter(c => c.id != car.id));
+    setCars(Cars.filter((c) => c.id != car.id));
   };
 
   const handleSend = async () => {
     const from = currentUser.uid;
     if (id) {
-      db.collection("messages")
-        .doc(id)
-        .update({ from, to, text });
+      db.collection("messages").doc(id).update({ from, to, text });
     } else {
       // call serverless function instead
       const sendMessage = firebase.functions().httpsCallable("sendMessage");
@@ -98,7 +96,7 @@ export default function HomeScreen() {
     setId("");
   };
 
-  const handleEdit = message => {
+  const handleEdit = (message) => {
     setTo(message.to);
     setText(message.text);
     setId(message.id);
@@ -108,9 +106,9 @@ export default function HomeScreen() {
     firebase.auth().signOut();
   };
 
-  const handleCar = c => {
+  const handleCar = (c) => {
     c.current = true;
-    Cars.map(car => {
+    Cars.map((car) => {
       if (car.id === c.id) {
         car.current = true;
         db.collection("users")
@@ -166,7 +164,7 @@ export default function HomeScreen() {
             style={{
               paddingTop: 10,
               fontSize: 18,
-              fontWeight: "700"
+              fontWeight: "700",
             }}
           >
             Welcome {currentUser.displayName}!
@@ -177,7 +175,7 @@ export default function HomeScreen() {
               source={{
                 uri: currentUser.photoURL
                   ? currentUser.photoURL
-                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"
+                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
               }}
             />
           </View>
@@ -211,7 +209,7 @@ export default function HomeScreen() {
                   backgroundColor: "white",
 
                   width: "100%",
-                  height: "98%"
+                  height: "98%",
                 }}
               >
                 <ImageBackground
@@ -224,7 +222,7 @@ export default function HomeScreen() {
                         style={{
                           paddingTop: 10,
                           fontSize: 18,
-                          fontWeight: "700"
+                          fontWeight: "700",
                         }}
                       >
                         Which car are you driving?
@@ -233,7 +231,7 @@ export default function HomeScreen() {
                       {Cars &&
                         Cars.length > 0 &&
                         Cars.map((car, i) => (
-                          <View key={car.id}>
+                          <View key={i}>
                             <TouchableOpacity
                               style={styles.button}
                               onPress={() => handleCar(car)}
@@ -252,7 +250,7 @@ export default function HomeScreen() {
                             style={{
                               height: 40,
                               borderColor: "gray",
-                              borderWidth: 1
+                              borderWidth: 1,
                             }}
                             onChangeText={setPlateNumber}
                             placeholder=" PlateNumber"
@@ -278,7 +276,7 @@ HomeScreen.navigationOptions = {
     <View
       style={{
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -288,14 +286,14 @@ HomeScreen.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         Home
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 2,
         }}
       ></View>
 
@@ -305,7 +303,7 @@ HomeScreen.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -314,12 +312,12 @@ HomeScreen.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 
 function DevelopmentModeNotice() {
@@ -360,7 +358,7 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
-    fontSize: 18
+    fontSize: 18,
   },
   button: {
     borderWidth: 1,
@@ -369,54 +367,54 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6fffc",
     width: "80%",
     margin: "1%",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -428,33 +426,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

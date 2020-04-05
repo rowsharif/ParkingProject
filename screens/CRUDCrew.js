@@ -1,5 +1,5 @@
 //@refresh reset
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Image,
   Platform,
@@ -9,7 +9,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,Picker
+  View,
+  Picker,
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -19,87 +20,99 @@ const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
 const CRUDServices = (props) => {
   const [crews, setCrews] = useState([]);
-  const[parking,setParking]=useState([]);
+  const [parking, setParking] = useState([]);
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
-const [pname,setPname]=useState()
-const [pnames,setPnames]=useState([])
-const [plname,setPlname]=useState([]);
+  const [pname, setPname] = useState();
+  const [pnames, setPnames] = useState([]);
+
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const ParkingLots = [];
         let allCrews = [];
-        let allEmployees = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           ParkingLots.push({ id: doc.id, ...doc.data() });
           db.collection("ParkingLots")
             .doc(doc.id)
             .collection("Crew")
-            .onSnapshot(querySnapshot => {
+            .onSnapshot((querySnapshot) => {
               const ncrews = [];
-              allCrews = allCrews.filter(p => p.fkp !== doc.id);
-              querySnapshot.forEach(docP => {
-                ncrews.push({ fkp: doc.id, id: docP.id, ...docP.data() });
-              
+              allCrews = allCrews.filter((p) => p.fkp !== doc.id);
+              querySnapshot.forEach((docP) => {
+                ncrews.push({
+                  fkp: doc.id,
+                  pln: doc.data().name,
+                  id: docP.id,
+                  ...docP.data(),
+                });
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
               // console.log("Crews", allCrews);
               // console.log("Pnames",pnames.name)
-              setPnames([...ParkingLots])
-
+              setPnames([...ParkingLots]);
             });
-
         });
       });
   }, []);
 
-
-
   const handleSend = async () => {
     if (id) {
-      const response2 = await handleCrew({
-        crews: { id, name,fkp},
-        operation: "update"
-      });
+      if (fkp === pname.id) {
+        const response2 = await handleCrew({
+          crew: { id, name, fkp },
+          operation: "update",
+        });
+      } else {
+        const response2 = await handleCrew({
+          crew: { id, name, fkp },
+          operation: "delete",
+        });
+        const response3 = await handleCrew({
+          crew: { name, fkp: pname.id },
+          operation: "add",
+        });
+      }
     } else {
       // call serverless function instead
       const response2 = await handleCrew({
-        crews: { name,fkp },
-        operation: "add"
+        crew: { name, fkp: pname.id },
+        operation: "add",
       });
     }
+
     setName("");
-   
+
     setId("");
   };
 
-  const handleEdit = crew => {
+  const handleEdit = (crew) => {
     setName(crew.name);
     setFkp(crew.fkp);
 
     setId(crew.id);
   };
-  const handleDelete = async crew => {
+  const handleDelete = async (crew) => {
     const response2 = await handleCrew({
-        crew: crew,
-      operation: "delete"
+      crew: crew,
+      operation: "delete",
     });
   };
   return (
     <ScrollView style={styles.container}>
-        {crews.map((crew, i) => (
-          <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
-            <Text key={i} style={styles.getStartedText}>
-              {crew.name} - {"   "} - {crew.fkp} ---
-            </Text>
-            <Button title="Edit" onPress={() => handleEdit(crew)} />
-            <Button title="X" onPress={() => handleDelete(crew)} />
-          </View>
-        ))}
+      {console.log("------------------------", fkp)}
+      {crews.map((crew, i) => (
+        <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
+          <Text key={i} style={styles.getStartedText}>
+            {crew.name} - {"   "} - {crew.pln} ---
+          </Text>
+          <Button title="Edit" onPress={() => handleEdit(crew)} />
+          <Button title="X" onPress={() => handleDelete(crew)} />
+        </View>
+      ))}
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setName}
@@ -107,77 +120,79 @@ const [plname,setPlname]=useState([]);
         value={name}
       />
       <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={pname}
-          onValueChange={itemValue => setPname(itemValue)}
-        >
-          {pnames.map((pname, i) => (
-            <Picker.Item label={pname.name} value={pname} />
-          ))}
-        </Picker>
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={pname}
+        onValueChange={(itemValue) => setPname(itemValue)}
+      >
+        {pnames.map((pname, i) => (
+          <Picker.Item label={pname.name} value={pname} />
+        ))}
+      </Picker>
       <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
-
+      <Button
+        color="green"
+        title="Back"
+        onPress={() => props.navigation.goBack()}
+      ></Button>
     </ScrollView>
   );
 };
 CRUDServices.navigationOptions = {
-    headerTitle: (
-      <View
+  headerTitle: (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+      }}
+    >
+      <Text
         style={{
           flex: 1,
-          flexDirection: "row"
+          paddingTop: 10,
+          fontSize: 18,
+          fontWeight: "700",
+          color: "white",
+          textAlign: "center",
         }}
       >
-        <Text
+        MyProfile
+      </Text>
+      <View
+        style={{
+          flex: 2,
+        }}
+      ></View>
+
+      <View style={{ alignSelf: "center", flex: 2 }}>
+        <Image
+          resizeMode="cover"
           style={{
-            flex: 1,
-            paddingTop: 10,
-            fontSize: 18,
-            fontWeight: "700",
-            color: "white",
-            textAlign: "center"
+            width: 120,
+            height: 50,
+            resizeMode: "contain",
           }}
-        >
-          MyProfile
-        </Text>
-        <View
-          style={{
-            flex: 2
-          }}
-        ></View>
-  
-        <View style={{ alignSelf: "center", flex: 2 }}>
-          <Image
-            resizeMode="cover"
-            style={{
-              width: 120,
-              height: 50,
-              resizeMode: "contain"
-            }}
-            source={require("../assets/images/logo.png")}
-          />
-        </View>
+          source={require("../assets/images/logo.png")}
+        />
       </View>
-    ),
-    headerStyle: {
-      backgroundColor: "#276b9c",
-      height: 44
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "bold"
-    }
-  };
-  export default CRUDServices;
+    </View>
+  ),
+  headerStyle: {
+    backgroundColor: "#276b9c",
+    height: 44,
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold",
+  },
+};
+export default CRUDServices;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-       
-        // alignItems: 'center',
-        // justifyContent: "center",
-      
-    },
-}); 
+  container: {
+    flex: 1,
+
+    // alignItems: 'center',
+    // justifyContent: "center",
+  },
+});

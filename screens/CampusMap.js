@@ -1,5 +1,6 @@
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect } from "react";
+// importing useState and useEffect from react
+import React, { useState, useEffect } from "react"; // React needs to be imported
 import MapView from "react-native-maps";
 import {
   Image,
@@ -13,10 +14,10 @@ import {
   TouchableHighlight,
   View,
   Dimensions,
-  Modal
+  Modal,
 } from "react-native";
+//importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
-
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -31,15 +32,21 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
   FontAwesome5,
-  FontAwesome5Brands
+  FontAwesome5Brands,
 } from "@expo/vector-icons";
 
 export default function CampusMap() {
+  // React Hooks are functions that allow the use of React state and a
+  // component's lifecycle methods in a functional component
+  // useState and useEffect are built-in Hooks
+  const [parkings, setParkings] = useState([]);
+  // Above is declare a new state variable, which we'll call "parking" as a const ;
+  // setParkings is a function that we use to change (set) the value of parkings;
+  // the initial value of parkings is []; which is an empty array
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [parkings, setParkings] = useState([]);
   const [ParkingLots, setParkingLots] = useState([]);
-  const [parking, setParking] = useState([]);
+  const [parking, setParking] = useState({});
   const [car, setCar] = useState({});
   const [promotion, setPromotion] = useState({});
   const [Promotions, setPromotions] = useState([]);
@@ -47,9 +54,12 @@ export default function CampusMap() {
   const [promotionValid, setPromotionValid] = useState("");
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
+  // Above is declare a new state variable, which we'll call "hours" as a const ;
+  // setHours is a function that we use to change (set) the value of hours;
+  // the initial value of hours is 0
   const [crew, setCrew] = useState();
 
-  const setModalvisible = x => {
+  const setModalvisible = (x) => {
     setModalVisible(x);
     setPromotionValid("");
   };
@@ -59,8 +69,8 @@ export default function CampusMap() {
   const [location, setLocation] = useState({
     coords: {
       latitude: 25.360766,
-      longitude: 51.480378
-    }
+      longitude: 51.480378,
+    },
   });
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [Services, setServices] = useState([]);
@@ -82,38 +92,48 @@ export default function CampusMap() {
     setPromotionValid(" ");
   }, []);
 
+  //useEffect Hook tells React that the component needs to do something after render
+  //React will remember the function passed and call it later after performing the updates
+  //placing useEffect inside the component allows access to the state’s variables (parking, crew)
+  //by default, it runs both after the first render and after every update.
+  //The below useEffect will run after the first render and whenever the state variable “parking” changes.
   useEffect(() => {
+    //initializing an local variable “crew” as empty object “{}”
     let crew = {};
+    //checking if the state variable “parking” is not empty and that it has a variable “fk”
     parking &&
       parking.fk &&
+      //if the condition is true; we’ll get the crew of the parking parkingLot from firebase and then save it in the local variable crew
       db
         .collection("ParkingLots")
         .doc(parking.fk)
         .collection("Crew")
-        .onSnapshot(querySnapshot => {
-          querySnapshot.forEach(doc => {
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
             crew = { id: doc.id, ...doc.data() };
           });
+          //using the function setCrew to change the state variable “crew” to the function local variable “crew”
           setCrew(crew);
         });
+    // below is stating when to render; after the state variable “parking” is updated
   }, [parking]);
 
   useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Cars")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const Cars = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           Cars.push({
             fk: firebase.auth().currentUser.uid,
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           });
         });
-        setCar(Cars.filter(c => c.current === true)[0]);
+        setCar(Cars.filter((c) => c.current === true)[0]);
         setPromotionValid(" ");
-        console.log("My car ------", Cars.filter(c => c.current === true)[0]);
+        console.log("My car ------", Cars.filter((c) => c.current === true)[0]);
       });
   }, []);
 
@@ -139,9 +159,9 @@ export default function CampusMap() {
   }, [promotionValid]);
 
   useEffect(() => {
-    db.collection("Services").onSnapshot(querySnapshot => {
+    db.collection("Services").onSnapshot((querySnapshot) => {
       const Services = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         Services.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Services: ", Services);
@@ -150,9 +170,9 @@ export default function CampusMap() {
   }, []);
 
   useEffect(() => {
-    db.collection("Promotions").onSnapshot(querySnapshot => {
+    db.collection("Promotions").onSnapshot((querySnapshot) => {
       const Promotions = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         Promotions.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Promotions: ", Promotions);
@@ -192,20 +212,20 @@ export default function CampusMap() {
     db.collection("ParkingLots")
       .doc("kECljqmSifLwfkpX6qPy")
       .collection("Parkings")
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const parkings = [];
-        querySnapshot.forEach(docP => {
+        querySnapshot.forEach((docP) => {
           parkings.push({
             fk: "kECljqmSifLwfkpX6qPy",
             id: docP.id,
-            ...docP.data()
+            ...docP.data(),
           });
         });
         setParkings([...parkings]);
       });
   }, []);
 
-  const markerClick = parking => {
+  const markerClick = (parking) => {
     setModalvisible(true);
     setParking(parking);
   };
@@ -214,6 +234,7 @@ export default function CampusMap() {
     let temp = parking;
     temp.status = i;
     const response2 = await handleParkings({
+      uid: firebase.auth().currentUser.uid,
       temp,
       car,
       ServicesToAdd,
@@ -227,7 +248,7 @@ export default function CampusMap() {
             : "CancelReservation"
           : i === 1
           ? "Reserve"
-          : "Park"
+          : "Park",
     });
     setModalVisible(false);
     handleLocalNotification(i, o);
@@ -241,14 +262,14 @@ export default function CampusMap() {
       body: null,
       ios: {
         sound: true,
-        _displayInForeground: true
+        _displayInForeground: true,
       },
       android: {
         icon:
           "https://med.virginia.edu/cme/wp-content/uploads/sites/262/2015/10/free-vector-parking-available-sign-clip-art_116878_Parking_Available_Sign_clip_art_hight.png",
         color: "#276b9c",
-        vibrate: true
-      }
+        vibrate: true,
+      },
     };
     if (i === 2 && o === true) {
       title = "Parked!";
@@ -269,24 +290,24 @@ export default function CampusMap() {
     Notifications.presentLocalNotificationAsync(localNotification);
   };
 
-  const handleServicesToAdd = Service => {
-    if (ServicesToAdd.filter(s => s.id === Service.id).length === 0) {
+  const handleServicesToAdd = (Service) => {
+    if (ServicesToAdd.filter((s) => s.id === Service.id).length === 0) {
       setServicesToAdd([...ServicesToAdd, Service]);
     } else {
-      setServicesToAdd(ServicesToAdd.filter(s => s.id !== Service.id));
+      setServicesToAdd(ServicesToAdd.filter((s) => s.id !== Service.id));
     }
   };
 
-  const handlePromotion = code => {
+  const handlePromotion = (code) => {
     if (
-      Promotions.filter(p => p.code === code).length > 0 &&
+      Promotions.filter((p) => p.code === code).length > 0 &&
       new Date().getTime() <
-        Promotions.filter(p => p.code === code)[0]
+        Promotions.filter((p) => p.code === code)[0]
           .endDateTime.toDate()
           .getTime()
     ) {
       setPromotionValid(true);
-      setPromotion(Promotions.filter(p => p.code === code)[0]);
+      setPromotion(Promotions.filter((p) => p.code === code)[0]);
     } else {
       setPromotionValid(false);
       setPromotion({});
@@ -294,6 +315,7 @@ export default function CampusMap() {
   };
 
   return (
+    //View is a container that supports layout
     <View style={styles.container}>
       <MapView
         provider="google"
@@ -302,7 +324,7 @@ export default function CampusMap() {
           latitude: 25.358833,
           longitude: 51.479314,
           latitudeDelta: 0.02,
-          longitudeDelta: 0.02
+          longitudeDelta: 0.02,
         }}
         mapType="satellite"
         minZoomLevel={18}
@@ -310,12 +332,12 @@ export default function CampusMap() {
         // onPress={()=> setModalVisible2(true)}
       >
         {parkings &&
-          parkings.map(parking => (
+          parkings.map((parking) => (
             <MapView.Marker
               key={parking.id + parking.fk}
               coordinate={{
                 latitude: parking.latitude,
-                longitude: parking.longitude
+                longitude: parking.longitude,
               }}
               pinColor="green"
               onPress={() => markerClick(parking)}
@@ -328,31 +350,38 @@ export default function CampusMap() {
                           parking.type === "gold" ? "#FFD700" : "#ffffff",
                         borderWidth: 2,
                         backgroundColor:
-                          parking.type === "gold" ? "#FFD700" : "#ffffff"
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
                       }
                     : {
                         borderColor: "black",
                         borderWidth: 2,
-                        backgroundColor: "white"
-                      }
+                        backgroundColor: "white",
+                      },
                 ]}
               >
                 {parking.status === 2 ? (
                   car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id ? (
+                    //Using Animatable.View To animate the element
+                    //choosing the name of the animation inside the prop "animation"
+                    //choosing how many times to run the animation inside the prop "iterationCount", useing "infinite" for looped animations.
+                    //choosing direction of animation, which is especially useful for repeating animations inside the prop "direction"
                     <Animatable.View
                       animation="rubberBand"
                       iterationCount="infinite"
                       direction="alternate"
                     >
+                      {/* The element to be animated is an icon "MaterialCommunityIcons" */}
                       <MaterialCommunityIcons
                         name="car-brake-parking"
                         size={20}
                         color="purple"
                       />
-                    </Animatable.View>
+                    </Animatable.View> //closing tag for Animatable
                   ) : (
+                    //Image is a React component for displaying different types of images
+                    //source prop The image source (either a remote URL or a local file resource). in this case local file
                     <Image
                       source={require("../assets/images/red.png")}
                       style={{ width: 18, height: 10 }}
@@ -389,26 +418,31 @@ export default function CampusMap() {
         <MapView.Marker
           coordinate={{
             latitude: location.coords.latitude,
-            longitude: location.coords.longitude
+            longitude: location.coords.longitude,
           }}
           pinColor="green"
           title="You are here"
         />
       </MapView>
       <View>
+        {/* The Modal component is a basic way to present content above an enclosing view.
+        The animationType prop controls how the modal animates. the "slide" value make the modal slides in from the bottom
+        The transparent prop determines whether your modal will fill the entire view. Setting this to true will render the modal over a transparent background.
+        The visible prop determines whether the modal is visible. its value is a state variable that changes to true or false to show or hide the modal.
+        the key prop is used because the modal is inside a map function
+        */}
         <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible2}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-          }}
           key={parking.id}
         >
           <View style={{ marginTop: 22 }}>
             <View
               style={{ margin: "20%", backgroundColor: "gray", height: 100 }}
             >
+              {/*Text - A React component for displaying text. 
+              onPress prop determine the function to call on press.*/}
               <Text onPress={() => setModalVisible2(false)}>Close</Text>
             </View>
           </View>
@@ -440,12 +474,12 @@ export default function CampusMap() {
                     paddingTop: 50,
                     margin: "25%",
                     minHeight: 300,
-                    width: "60%"
+                    width: "60%",
                   },
                   android: {
-                    minHeight: 200
-                  }
-                })
+                    minHeight: 200,
+                  },
+                }),
               }}
             >
               <Text>
@@ -466,7 +500,7 @@ export default function CampusMap() {
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%"
+                        width: "100%",
                       }}
                     >
                       <Animatable.View
@@ -475,6 +509,11 @@ export default function CampusMap() {
                         direction="alternate"
                       >
                         <View>
+                          {/*A wrapper for making views respond properly to touches 
+                           On press down, the opacity of the wrapped view is decreased, which allows the underlay color to show through, darkening or tinting the view.
+                           TouchableHighlight must have one child in this case a text component
+                           the prop onPress determine the function to use when the TouchableHighlight is pressed
+                           the prop style  determine the style of the TouchableHighlight*/}
                           <TouchableHighlight
                             style={styles.buttonGreen}
                             onPress={() => {
@@ -514,9 +553,10 @@ export default function CampusMap() {
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%"
+                        width: "100%",
                       }}
                     >
+                      {/*TextInput A foundational component for inputting text into the app via a keyboard. */}
                       <TextInput
                         style={{
                           height: 40,
@@ -525,7 +565,7 @@ export default function CampusMap() {
                           width: "90%",
                           textAlign: "center",
                           marginTop: "5%",
-                          backgroundColor: "white"
+                          backgroundColor: "white",
                         }}
                         onChangeText={setCode}
                         onSubmitEditing={() => handlePromotion(code)}
@@ -568,7 +608,14 @@ export default function CampusMap() {
                       )}
                       <View style={{ alignItems: "center" }}>
                         {Services &&
-                          Services.map(Service => (
+                          Services.map((Service) => (
+                            // CheckBox is from React Native elements
+                            // the prop "center" aligns checkbox to center
+                            //the prop "title" is the title of checkbox
+                            //the prop "checkedIcon" is the checked icon set to "dot-circle-o"
+                            //the prop "uncheckedIcon" is the checked icon set to "circle-o"
+                            //the prop "checked" is the status of checkbox; true for checked and false for unchecked; checking if the element is inside the state array "ServicesToAdd"
+                            //the prop "onPress" is the  function to call when the checkbox is pressed (the function change the value of checked true-false)
                             <CheckBox
                               center
                               title={
@@ -581,7 +628,7 @@ export default function CampusMap() {
                               checkedIcon="dot-circle-o"
                               uncheckedIcon="circle-o"
                               checked={
-                                ServicesToAdd.filter(s => s.id === Service.id)
+                                ServicesToAdd.filter((s) => s.id === Service.id)
                                   .length !== 0
                               }
                               onPress={() => handleServicesToAdd(Service)}
@@ -593,7 +640,7 @@ export default function CampusMap() {
                           flexDirection: "row",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "100%"
+                          width: "100%",
                         }}
                       >
                         <Animatable.View
@@ -640,7 +687,7 @@ export default function CampusMap() {
                   style={{
                     width: "100%",
                     alignItems: "center",
-                    justifyContent: "center"
+                    justifyContent: "center",
                   }}
                 >
                   <TouchableHighlight
@@ -660,9 +707,9 @@ export default function CampusMap() {
     </View>
   );
 }
-
+//No navigationOptions is needed, the header is null therefor no header will show
 CampusMap.navigationOptions = {
-  header: null
+  header: null,
 };
 
 function DevelopmentModeNotice() {
@@ -700,6 +747,7 @@ function handleHelpPress() {
   );
 }
 
+//A StyleSheet is an abstraction similar to CSS StyleSheets
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",
@@ -709,7 +757,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonYellow: {
     backgroundColor: "#d1cd56",
@@ -719,7 +767,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonRed: {
     backgroundColor: "#eb5a50",
@@ -729,7 +777,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonPay: {
     backgroundColor: "#5dba68",
@@ -739,7 +787,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 2,
-    borderRadius: 5
+    borderRadius: 5,
   },
   buttonHide: {
     width: "95%",
@@ -747,65 +795,65 @@ const styles = StyleSheet.create({
     backgroundColor: "#b5b5b0",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5
+    borderRadius: 5,
   },
   markerClick: {
     backgroundColor: "white",
     width: 150,
-    height: 200
+    height: 200,
   },
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   mapStyle: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height
+    height: Dimensions.get("window").height,
   },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: "center",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: 50
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: "rgba(96,100,109, 0.8)",
   },
   codeHighlightContainer: {
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 24,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   tabBarInfoContainer: {
     position: "absolute",
@@ -817,33 +865,33 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: "center",
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
-  }
+    color: "#2e78b7",
+  },
 });

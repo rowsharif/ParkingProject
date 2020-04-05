@@ -50,8 +50,9 @@ HomeStack.navigationOptions = {
     />
   )
 };
-
+//paths - A mapping of overrides for the paths set in the route configs
 HomeStack.path = "";
+// The action and route params are extracted from the path.
 
 const AboutStack = createStackNavigator(
   {
@@ -135,25 +136,34 @@ const tabNavigator = createMaterialBottomTabNavigator(
     NewsletterStack
   },
   {
-    //tabBarPosition: "top",
+    //swipeEnabled - Whether to allow swiping between tabs.
     swipeEnabled: true,
+    //animationEnabled - Whether to animate when changing tabs.
     animationEnabled: true,
+    //activeColor - Custom color for icon and label in the active tab.
     activeColor: "white",
+    //inactiveColor - Custom color for icon and label in the inactive tab.
     inactiveColor: "gray",
+    //barStyle - Style for the bottom navigation bar.
     barStyle: { backgroundColor: "#276b9c" },
+    // tabBarOptions - Configure the tab bar
     tabBarOptions: {
+      //activeTintColor - Label and icon color of the active tab
       activeTintColor: "white",
+      //inactiveTintColor - Label and icon color of the inactive tab.
       inactiveTintColor: "gray",
+      //style - Style object for the tab bar.
       style: {
         backgroundColor: "#276b9c",
         paddingTop: 4
       },
-      //lablePosition:"beside-icon",
+      //labelStyle - Style object for the tab label.
       lableStyle: {
         textAlign: "center",
         fontSize: 19,
         fontWeight: "bold"
       },
+      //indicatorStyle - Style object for the tab indicator (line at the bottom of the tab).
       indicatorStyle: {
         borderBottomColor: "white",
         borderBottomWidth: 70

@@ -22,7 +22,7 @@ const handleNearestBuilding = firebase.functions().httpsCallable("handleNearestB
 
 export default function HomeScreen() {
   const [nearestBuilding, setNearestBuilding] = useState([]);
-  const [number, setNumber] = React.useState(0);
+  const [number, setNumber] = useState("");
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
   const [ParkingLot,setParkingLot] = useState([]);
@@ -109,7 +109,7 @@ export default function HomeScreen() {
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setNumber}
         placeholder="number"
-        value={number}
+        value={`${number}`}
       />
       <Picker
           style={styles.picker}

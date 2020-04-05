@@ -21,8 +21,8 @@ const handleParkingLot = firebase.functions().httpsCallable("handleParkingLot");
 
 export default function HomeScreen() {
   const [parkingLots, setParkingLot] = useState([]);
-  const [longitude, setLongitude] = React.useState(0);
-  const [latitude, setLatitude] = React.useState(0);
+  const [longitude, setLongitude] = useState("");
+  const [latitude, setLatitude] = useState("");
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
 
@@ -94,14 +94,16 @@ export default function HomeScreen() {
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setLatitude}
-        placeholder="latitude"
-        value={latitude}
+        placeholder= "latitude"
+        //value={latitude}
+        value={`${latitude}`}
       />
        <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setLongitude}
         placeholder="longitude"
-        value={longitude}
+        //value={longitude}
+        value= {`${longitude}`}
       />
       <Button title="Send" onPress={handleSend} />
     </View>

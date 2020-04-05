@@ -135,7 +135,7 @@ export default function HomeScreen() {
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setAmountperhour}
         placeholder="Amount per hour"
-        value={amountperhour}
+        value={`${amountperhour}`}
       />
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}

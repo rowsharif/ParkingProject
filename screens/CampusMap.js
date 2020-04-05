@@ -54,6 +54,7 @@ export default function CampusMap() {
   const [promotionValid, setPromotionValid] = useState("");
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
+  const [uid, setUid] = useState("");
   // Above is declare a new state variable, which we'll call "hours" as a const ;
   // setHours is a function that we use to change (set) the value of hours;
   // the initial value of hours is 0
@@ -90,6 +91,7 @@ export default function CampusMap() {
     askPermission();
     getLocation();
     setPromotionValid(" ");
+    setUid(firebase.auth().currentUser.uid);
   }, []);
 
   //useEffect Hook tells React that the component needs to do something after render
@@ -239,7 +241,7 @@ export default function CampusMap() {
     let temp = parking;
     temp.status = i;
     const response2 = await handleParkings({
-      uid: firebase.auth().currentUser.uid,
+      uid,
       temp,
       car,
       ServicesToAdd,

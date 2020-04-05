@@ -42,6 +42,7 @@ const CRUDhistories = (props) => {
         querySnapshot.forEach((doc) => {
           history.push({ id: doc.id, ...doc.data() });
         });
+        console.log("history", history);
         sethistories([...history]);
       });
   }, []);
@@ -53,18 +54,22 @@ const CRUDhistories = (props) => {
       </Text>
       {histories.map((history, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
-          {history.TotalAmount && (
-            <Text>Total Amount - {history.TotalAmount}</Text>
-          )}
-          <Text>Car - {history.Car.PlateNumber}</Text>
-          <Text>Parking - {history.ParkingId}</Text>
+          <Text>
+            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
+          </Text>
+          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
+          <Text>
+            Date - {history.DateTime.toDate().getDate()}-
+            {history.DateTime.toDate().getMonth()}-
+            {history.DateTime.toDate().getFullYear()}
+          </Text>
+          <Text>
+            Time - {history.DateTime.toDate().getHours()}:
+            {history.DateTime.toDate().getMinutes()}
+          </Text>
           <Text>
             Duration -{" "}
-            {history.Duration === 0
-              ? "0"
-              : history.Duration
-              ? history.Duration
-              : "Car is still in campus"}
+            {history.Duration >= 0 ? history.Duration : "Car still in campus"}
           </Text>
         </View>
       ))}

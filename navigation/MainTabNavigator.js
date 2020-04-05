@@ -54,12 +54,15 @@ HomeStack.navigationOptions = {
 HomeStack.path = "";
 // The action and route params are extracted from the path.
 
+
 const AboutStack = createStackNavigator(
   {
     About: AboutScreen
   },
+  
   config
 );
+
 
 AboutStack.navigationOptions = {
   tabBarLabel: "About",
@@ -70,12 +73,16 @@ AboutStack.navigationOptions = {
 
 AboutStack.path = "";
 
+
+
+
 const NewsletterStack = createStackNavigator(
   {
     Newsletter: NewsletterScreen
   },
   config
 );
+
 
 NewsletterStack.navigationOptions = {
   tabBarLabel: "Newsletter",
@@ -86,12 +93,14 @@ NewsletterStack.navigationOptions = {
 
 NewsletterStack.path = "";
 
+
 const CampusMapStack = createStackNavigator(
   {
     CampusMap: CampusMap
   },
   config
 );
+
 
 CampusMapStack.navigationOptions = {
   tabBarLabel: "CampusMap",
@@ -100,7 +109,10 @@ CampusMapStack.navigationOptions = {
   )
 };
 
+
 CampusMapStack.path = "";
+
+
 
 const MyProfileStack = createStackNavigator(
   {
@@ -108,6 +120,7 @@ const MyProfileStack = createStackNavigator(
   },
   config
 );
+
 
 MyProfileStack.navigationOptions = {
   tabBarLabel: "User Profile",

@@ -5,13 +5,13 @@ import {
   Text,
   View,
   Button,
-  ShadowPropTypesIOS
+  ShadowPropTypesIOS,
 } from "react-native";
 import {
   Ionicons,
   FontAwesome,
   MaterialIcons,
-  Feather
+  Feather,
 } from "@expo/vector-icons";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -25,50 +25,54 @@ import CRUDPromotion from "./CRUDPromotion";
 import CRUDCrew from "./CRUDCrew";
 import CRUDEmployee from "./CRUDEmployee";
 import CRUDNewsletter from "./CRUDNewsletter";
+import EmployeeServices from "./EmployeeServices";
 
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
-      screen: UserProfile
+      screen: UserProfile,
     },
     CRUDServices: {
-      screen: CRUDServices
+      screen: CRUDServices,
     },
     UpdateUser: {
-      screen: UpdateUser
+      screen: UpdateUser,
     },
     CRUDHistory: {
-      screen: CRUDHistory
+      screen: CRUDHistory,
     },
     CRUDMyProfile: {
-      screen: CRUDMyProfile
+      screen: CRUDMyProfile,
     },
     CRUDPromotion: {
-      screen: CRUDPromotion
+      screen: CRUDPromotion,
     },
     CRUDCrew: {
-      screen: CRUDCrew
+      screen: CRUDCrew,
     },
     CRUDEmployee: {
-      screen: CRUDEmployee
+      screen: CRUDEmployee,
     },
     CRUDNewsletter: {
-      screen: CRUDNewsletter
-    }
+      screen: CRUDNewsletter,
+    },
+    EmployeeServices: {
+      screen: EmployeeServices,
+    },
   },
   {
     initialRouteName: "UserProfile",
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: "#276b9c",
-        height: 44
+        height: 44,
       },
 
       // activeTintColor: "black",
       headerTintColor: "#fff",
       headerTitleStyle: {
-        fontWeight: "bold"
-      }
+        fontWeight: "bold",
+      },
     },
     // tabBarOptions: {
     //   activeTintColor: "yellow",
@@ -82,23 +86,14 @@ const StackNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(StackNavigator);
 
-const MyProfileScreen = props => {
+export default function MyProfileScreen() {
   return <AppContainer />;
   // return <CRUDNewsletter />
+}
+
+MyProfileScreen.navigationOptions = {
+  header: null,
 };
-
-// MyProfileScreen.navigationOptions = {
-//   tabBarLabel: "MyProfileScreen222",
-//   tabBarIcon: () => (
-//     <Ionicons name="md-home" size={30} color="blue" />
-//   ),
-//   activeColor: "red",
-//   inactiveColor: "blue",
-//   barStyle: {backgroundColor: "#f2ecb6"}
-  
-// };
-
-export default MyProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -106,6 +101,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "space-evenly",
-    backgroundColor: "#eee"
-  }
+    backgroundColor: "#eee",
+  },
 });

@@ -112,9 +112,10 @@ const UserProfile = (props) => {
     if (!result.cancelled) {
       console.log("not cancelled", result.uri);
       setUri(result.uri);
+
+      setProgress(0);
+      setTime(5);
     }
-    setProgress(0);
-    setTime(5);
   };
   useEffect(() => {
     time > 0 && setTimeoutId(setTimeout(() => timer(), 1000));

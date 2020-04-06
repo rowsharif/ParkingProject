@@ -55,7 +55,8 @@ const CRUDhistories = (props) => {
       {histories.map((history, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
           <Text>
-            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
+            Total Amount -{" "}
+            {history.TotalAmount >= 0 ? history.TotalAmount : "_"}
           </Text>
           <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
           <Text>

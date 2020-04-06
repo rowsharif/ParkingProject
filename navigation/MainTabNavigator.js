@@ -7,7 +7,7 @@ import {
   FontAwesome,
   AntDesign,
   MaterialCommunityIcons,
-  Feather
+  Feather,
 } from "@expo/vector-icons";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
@@ -22,13 +22,13 @@ import MyProfileScreen from "../screens/MyProfileScreen";
 // in case the platform is web then heafermode is screen ;otherwise, Android or iOS it will stay default
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 // createStackNavigator is a function that returns a React compone
 // it takes a route configuration object and, optionally, an options object
 const HomeStack = createStackNavigator(
   {
-    Home: HomeScreen
+    Home: HomeScreen,
   },
   config
 );
@@ -44,7 +44,7 @@ HomeStack.navigationOptions = {
       size={25}
       color="white"
     />
-  )
+  ),
 };
 //paths - A mapping of overrides for the paths set in the route configs
 HomeStack.path = "";
@@ -52,7 +52,7 @@ HomeStack.path = "";
 
 const AboutStack = createStackNavigator(
   {
-    About: AboutScreen
+    About: AboutScreen,
   },
   config
 );
@@ -61,14 +61,14 @@ AboutStack.navigationOptions = {
   tabBarLabel: "About",
   tabBarIcon: ({ focused }) => (
     <Feather focused={focused} name="info" size={25} color="white" />
-  )
+  ),
 };
 
 AboutStack.path = "";
 
 const NewsletterStack = createStackNavigator(
   {
-    Newsletter: NewsletterScreen
+    Newsletter: NewsletterScreen,
   },
   config
 );
@@ -77,14 +77,14 @@ NewsletterStack.navigationOptions = {
   tabBarLabel: "Newsletter",
   tabBarIcon: ({ focused }) => (
     <FontAwesome focused={focused} name="newspaper-o" size={22} color="white" />
-  )
+  ),
 };
 
 NewsletterStack.path = "";
 
 const CampusMapStack = createStackNavigator(
   {
-    CampusMap: CampusMap
+    CampusMap: CampusMap,
   },
   config
 );
@@ -93,14 +93,14 @@ CampusMapStack.navigationOptions = {
   tabBarLabel: "CampusMap",
   tabBarIcon: ({ focused }) => (
     <FontAwesome focused={focused} name="map-o" size={20} color="white" />
-  )
+  ),
 };
 
 CampusMapStack.path = "";
 
 const MyProfileStack = createStackNavigator(
   {
-    MyProfile: MyProfileScreen
+    MyProfile: MyProfileScreen,
   },
   config
 );
@@ -109,7 +109,7 @@ MyProfileStack.navigationOptions = {
   tabBarLabel: "User Profile",
   tabBarIcon: ({ focused }) => (
     <AntDesign focused={focused} name="profile" size={25} color="white" />
-  )
+  ),
 };
 
 MyProfileStack.path = "";
@@ -123,7 +123,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
     CampusMapStack,
     MyProfileStack,
     AboutStack,
-    NewsletterStack
+    NewsletterStack,
   },
   {
     //swipeEnabled - Whether to allow swiping between tabs.
@@ -145,20 +145,20 @@ const tabNavigator = createMaterialBottomTabNavigator(
       //style - Style object for the tab bar.
       style: {
         backgroundColor: "#276b9c",
-        paddingTop: 4
+        paddingTop: 4,
       },
       //labelStyle - Style object for the tab label.
       lableStyle: {
         textAlign: "center",
         fontSize: 19,
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       //indicatorStyle - Style object for the tab indicator (line at the bottom of the tab).
       indicatorStyle: {
         borderBottomColor: "white",
-        borderBottomWidth: 70
-      }
-    }
+        borderBottomWidth: 70,
+      },
+    },
   }
 );
 

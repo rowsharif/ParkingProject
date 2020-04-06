@@ -17,6 +17,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 import { createNativeWrapper } from "react-native-gesture-handler";
+
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
 const CRUDEmployees = (props) => {

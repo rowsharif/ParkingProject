@@ -19,6 +19,17 @@ import db from "../db.js";
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);
+  const [car, setCar] = useState([]);
+
+  useEffect(() => {
+    db.collection("Cars").onSnapshot((querySnapshot) => {
+      const car = [""];
+      querySnapshot.forEach((doc) => {
+        car.push({ id: doc.id, ...doc.data() });
+      });
+      setCar([...car]);
+    });
+  }, []);
 
   useEffect(() => {
     db.collection("History").onSnapshot((querySnapshot) => {
@@ -39,12 +50,12 @@ const CRUDhistories = (props) => {
         Cars parked in campus:{" "}
         {histories.filter((history) => !(history.Duration >= 0)).length}
       </Text>
+      <Text>Number of histories of users: {histories.length}</Text>
 
       {histories.map((history, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
           <Text>
-            Total Amount -{" "}
-            {history.TotalAmount >= 0 ? history.TotalAmount : "_"}
+            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
           </Text>
           <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
           <Text>

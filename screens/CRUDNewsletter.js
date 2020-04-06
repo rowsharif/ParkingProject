@@ -17,6 +17,10 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+import * as Animatable from "react-native-animatable";
+import { FontAwesome } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+
 const handleNewsletter = firebase.functions().httpsCallable("handleNewsletter");
 
 const CRUDNewsletter = (props) => {
@@ -41,6 +45,48 @@ const CRUDNewsletter = (props) => {
     });
   }, []);
 
+  const handleUpload = async (u) => {
+    // if (uri !== image) {
+    const response = await fetch(u);
+    const blob = await response.blob();
+
+    const putResult = await firebase
+      .storage()
+      .ref()
+      .child(firebase.auth().currentUser.uid)
+      .put(blob);
+    const url = await firebase
+      .storage()
+      .ref()
+      .child(firebase.auth().currentUser.uid)
+      .getDownloadURL();
+
+    setUri(url);
+    setImage(url);
+    console.log("----------------------", url);
+    // setPhotoURL(url);
+    // }
+  };
+
+  const handlePickImage = async () => {
+    // show camera roll, allow user to select
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      console.log("not cancelled", result.uri);
+      setUri(result.uri);
+      setImage(result.uri);
+      handleUpload(uri);
+    }
+    // setProgress(0);
+    // setTime(5);
+  };
+
   const handleSend = async () => {
     if (id) {
       const response2 = await handleNewsletter({
@@ -53,12 +99,14 @@ const CRUDNewsletter = (props) => {
         newsletter: { header, body, image },
         operation: "add",
       });
+      // console.log("resssssssssssssssssssssssssss",image);
     }
 
     setId("");
     setHeader("");
     setBody("");
-    setImage("");
+    setImage(null);
+    setModalVisible(false);
   };
 
   const handleEdit = (newsletter) => {
@@ -66,6 +114,7 @@ const CRUDNewsletter = (props) => {
     setHeader(newsletter.header);
     setBody(newsletter.body);
     setImage(newsletter.image);
+    setSelectedNewsletter(newsletter);
   };
 
   const handleDelete = async (newsletter) => {
@@ -73,7 +122,24 @@ const CRUDNewsletter = (props) => {
       newsletter: newsletter,
       operation: "delete",
     });
+    setModalVisible(false);
   };
+
+  const handleEditModal = (newsletter) => {
+    handleEdit(newsletter);
+    setCreate(false);
+    setModalVisible(true);
+  };
+
+  const handleCreate = () => {
+    setId("");
+    setHeader("");
+    setBody("");
+    setImage(null);
+    setCreate(true);
+    setModalVisible(true);
+  };
+
   return (
     // <KeyboardAvoidingView style={styles.container} behavior={Platform.Os == "ios" ? "padding" : "height"}>
 

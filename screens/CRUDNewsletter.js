@@ -12,6 +12,7 @@ import {
   View,
   ImageBackground,
   KeyboardAvoidingView,
+  Modal,
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -24,11 +25,20 @@ import * as ImagePicker from "expo-image-picker";
 const handleNewsletter = firebase.functions().httpsCallable("handleNewsletter");
 
 const CRUDNewsletter = (props) => {
-  const [newsletters, setNewsletters] = useState([]);
+  const [newsletter, setNewsletter] = useState([]);
+  const [selectedNewsletter, setSelectedNewsletter] = useState([]);
   const [id, setId] = useState("");
   const [header, setHeader] = useState("");
   const [body, setBody] = useState("");
   const [image, setImage] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [create, setCreate] = useState(false);
+
+  const [upload, setUpload] = useState(false);
+  const [uri, setUri] = useState("");
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [time, setTime] = useState(1);
 
   useEffect(() => {
     db.collection("newsletter").onSnapshot((querySnapshot) => {
@@ -40,8 +50,8 @@ const CRUDNewsletter = (props) => {
         });
         // console.log("News:---: ", news);
       });
-      setNewsletters([...news]);
-      console.log("-------------------", news);
+      setNewsletter([...news]);
+      // console.log("-------------------",newsletter);
     });
   }, []);
 
@@ -149,72 +159,332 @@ const CRUDNewsletter = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
-          {newsletters.map((newsletter, i) => (
-            <View key={newsletter.id} style={{ marginLeft: "10%" }}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Image
-                  source={{ uri: newsletter.image }}
-                  resizeMode="contain"
-                  style={{ width: 50, height: 50 }}
-                />
-                <Text>{newsletter.header}</Text>
-              </View>
-
-              <View style={{ paddingTop: 10, flexDirection: "row" }}>
-                <View style={{ minWidth: 200 }}>
-                  <Text style={styles.getStartedText}>{newsletter.body}</Text>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            // key={news.id}
+          >
+            <View
+              style={{
+                margin: "5%",
+                backgroundColor: "#c7c7c7",
+                height: "80%",
+                borderRadius: 10,
+                ...Platform.select({
+                  ios: {
+                    marginTop: "15%",
+                  },
+                  android: {
+                    marginTop: "15%",
+                  },
+                }),
+              }}
+            >
+              <Animatable.View
+                animation="pulse"
+                iterationCount="infinite"
+                style={{ textAlign: "center" }}
+              >
+                <View style={{ alignItems: "flex-end", margin: 10 }}>
+                  <FontAwesome
+                    name="close"
+                    size={22}
+                    color="black"
+                    onPress={() => setModalVisible(false)}
+                  />
                 </View>
-                <Button title="Edit" onPress={() => handleEdit(newsletter)} />
-                <Button title="X" onPress={() => handleDelete(newsletter)} />
+              </Animatable.View>
+
+              <View
+                style={{ alignItems: "center", height: "100%", width: "100%" }}
+              >
+                <View style={{ alignItems: "flex-start", width: "80%" }}>
+                  <Text style={{ textAlign: "left", fontWeight: "bold" }}>
+                    Header:
+                  </Text>
+                </View>
+                <TextInput
+                  style={{
+                    paddingLeft: 5,
+                    margin: 5,
+                    width: 300,
+                    height: 40,
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    backgroundColor: "white",
+                  }}
+                  onChangeText={setHeader}
+                  placeholder="Header"
+                  value={header}
+                />
+                <View style={{ alignItems: "flex-start", width: "80%" }}>
+                  <Text style={{ textAlign: "left", fontWeight: "bold" }}>
+                    Body:
+                  </Text>
+                </View>
+                <TextInput
+                  style={{
+                    paddingLeft: 5,
+                    margin: 5,
+                    width: 300,
+                    height: 100,
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    backgroundColor: "white",
+                  }}
+                  onChangeText={setBody}
+                  placeholder="Body"
+                  value={body}
+                />
+                <View style={{ alignItems: "flex-start", width: "80%" }}>
+                  <Text style={{ textAlign: "left", fontWeight: "bold" }}>
+                    Image:
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "80%",
+                    flexDirection: "row",
+                    borderWidth: 1,
+                    borderColor: "gray",
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => setUpload(false)}
+                    style={{
+                      width: "50%",
+                      backgroundColor: upload ? "lightgray" : "#e6e6e6",
+                      padding: 2,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>Gallery</Text>
+                  </TouchableOpacity>
+                  {/* <Text>|</Text> */}
+                  <TouchableOpacity
+                    onPress={() => setUpload(true)}
+                    style={{
+                      width: "50%",
+                      backgroundColor: upload ? "#e6e6e6" : "lightgray",
+                      padding: 2,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>URL</Text>
+                  </TouchableOpacity>
+                </View>
+                {upload ? (
+                  <TextInput
+                    style={{
+                      paddingLeft: 5,
+                      margin: 5,
+                      width: 300,
+                      height: 40,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      backgroundColor: "white",
+                    }}
+                    onChangeText={setImage}
+                    placeholder="Image URL"
+                    value={image}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      margin: 5,
+                      width: 300,
+                      height: 60,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}
+                  >
+                    {image && (
+                      <Image
+                        source={{ uri: image }}
+                        resizeMode="contain"
+                        style={{ width: 50, height: 50 }}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => handlePickImage()}
+                      style={{
+                        width: "50%",
+                        backgroundColor: "#e6e6e6",
+                        padding: 2,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 5,
+                      }}
+                    >
+                      <Text>Choose Image</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {create ? (
+                  <View
+                    style={{
+                      width: "100%",
+                      height: "10%",
+                      flexDirection: "row",
+                      marginTop: "10%",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={handleSend}
+                      style={{
+                        width: "30%",
+                        backgroundColor: "#5dba68",
+                        padding: 2,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 5,
+                        margin: 5,
+                      }}
+                    >
+                      <Text>Create</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      width: "100%",
+                      height: "10%",
+                      flexDirection: "row",
+                      marginTop: "10%",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleDelete(selectedNewsletter)}
+                      style={{
+                        width: "30%",
+                        backgroundColor: "#eb5a50",
+                        padding: 2,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 5,
+                        margin: 5,
+                      }}
+                    >
+                      <Text>Delete</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={handleSend}
+                      style={{
+                        width: "30%",
+                        backgroundColor: "#5dba68",
+                        padding: 2,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 5,
+                        margin: 5,
+                      }}
+                    >
+                      <Text>Save</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+          </Modal>
+          {newsletter.map((newsletter, i) => (
+            <View
+              key={newsletter.id}
+              style={{
+                backgroundColor: "#c7c7c7",
+                borderRadius: 5,
+                justifyContent: "center",
+                margin: 10,
+                flexDirection: "row",
+              }}
+            >
+              <View style={{ width: "80%", paddingTop: 5 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                  }}
+                >
+                  <Image
+                    source={{ uri: newsletter.image }}
+                    resizeMode="contain"
+                    style={{ width: 50, height: 50 }}
+                  />
+                  <Text style={{ fontWeight: "bold", marginLeft: 10 }}>
+                    {newsletter.header}
+                  </Text>
+                </View>
+
+                <View style={{ paddingTop: 10, flexDirection: "row" }}>
+                  <View style={{ width: "80%", paddingLeft: 20 }}>
+                    <Text>{newsletter.body}</Text>
+                  </View>
+
+                  {/* <Button title="X" onPress={() => handleDelete(newsletter)} /> */}
+                </View>
+              </View>
+              <View style={{ width: "20%", height: 150 }}>
+                {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}
+                <TouchableOpacity
+                  onPress={() => handleEditModal(newsletter)}
+                  style={{
+                    backgroundColor: "#276b9c",
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderTopRightRadius: 5,
+                    borderBottomRightRadius: 5,
+                  }}
+                >
+                  <Text>Edit</Text>
+                </TouchableOpacity>
               </View>
             </View>
           ))}
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <TextInput
-              style={{
-                margin: 5,
-                width: 300,
-                height: 40,
-                borderColor: "gray",
-                borderWidth: 1,
-              }}
-              onChangeText={setHeader}
-              placeholder=" Header"
-              value={header}
-            />
-            <TextInput
-              style={{
-                margin: 5,
-                width: 300,
-                height: 40,
-                borderColor: "gray",
-                borderWidth: 1,
-              }}
-              onChangeText={setBody}
-              placeholder=" Body"
-              value={body}
-            />
-            <TextInput
-              style={{
-                margin: 5,
-                width: 300,
-                height: 40,
-                borderColor: "gray",
-                borderWidth: 1,
-              }}
-              onChangeText={setImage}
-              placeholder=" Image URL"
-              value={image}
-            />
-          </View>
+          {/* <View style={{justifyContent:"center", alignItems:"center"}}>
+        <TextInput
+        style={{margin:5, width:300, height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setHeader}
+        placeholder="Header"
+        value={header}
+      />
+      <TextInput
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setBody}
+        placeholder="Body"
+        value={body}
+      />
+      <TextInput
+        style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setImage}
+        placeholder="Image URL"
+        value={image}
+      />
+        </View> */}
 
-          <Button title="Send" onPress={handleSend} />
-          <Button
-            color="green"
-            title="Back"
-            onPress={() => props.navigation.goBack()}
-          ></Button>
+          <View style={{ height: 100 }}>
+            {/* Empty to View to fix scrolling height issue */}
+          </View>
         </ScrollView>
+        <View>
+          <Button
+            title="Create New Newsletter"
+            onPress={() => handleCreate()}
+          ></Button>
+          {/* <Button  title="Send" onPress={handleSend} />
+        <Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button> */}
+        </View>
       </ImageBackground>
     </View>
     // </KeyboardAvoidingView>

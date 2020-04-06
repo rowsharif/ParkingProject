@@ -202,7 +202,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     }
     total = sta.reduce(
       (previousScore, currentScore, index) =>
-        previousScore + currentScore.price,
+        previousScore + parseInt(currentScore.price),
       0
     );
     //add UserServices
@@ -214,11 +214,11 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
         .doc(data.crew.id)
         .collection("UserServices")
         .add({
-          CarId: car.id,
-          ServiceId: Service.id,
+          Car: car.PlateNumber,
+          ServiceName: Service.name,
           ParkingId: data.temp.id,
           DateTime: new Date(),
-          EmployeeId: {},
+          EmployeeId: "",
         });
     });
     car.Parking = data.temp;

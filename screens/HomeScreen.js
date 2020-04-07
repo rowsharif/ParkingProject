@@ -12,6 +12,7 @@ import {
   View,
   Modal,
   ImageBackground,
+  TouchableHighlight,
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -31,6 +32,7 @@ export default function HomeScreen() {
 
   const [Cars, setCars] = React.useState([]);
   const [Car, setCar] = React.useState({});
+  const [errorOnDelete, setErrorOnDelete] = React.useState(false);
   const [PlateNumber, setPlateNumber] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState({});
 
@@ -71,12 +73,16 @@ export default function HomeScreen() {
   };
 
   const deleteCar = async (car) => {
-    db.collection("users")
-      .doc(currentUser.uid)
-      .collection("Cars")
-      .doc(car.id)
-      .delete();
-    setCars(Cars.filter((c) => c.id != car.id));
+    if (car.Parking && car.Parking.id) {
+      setErrorOnDelete(true);
+    } else {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .collection("Cars")
+        .doc(car.id)
+        .delete();
+      setCars(Cars.filter((c) => c.id != car.id));
+    }
   };
 
   const handleSend = async () => {
@@ -218,6 +224,65 @@ export default function HomeScreen() {
                 >
                   <View style={{ padding: 10 }}>
                     <View style={{ padding: 10 }}>
+                      <View style={{ marginTop: 0 }}>
+                        <Modal
+                          animationType="fade"
+                          transparent={true}
+                          visible={errorOnDelete}
+                        >
+                          <View
+                            style={{
+                              marginTop: 22,
+                              backgroundColor: "#3c78a3",
+                              margin: "15%",
+                              padding: "8%",
+                              // paddingTop: "1%",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              borderRadius: 5,
+                              ...Platform.select({
+                                ios: {
+                                  marginTop: "28%",
+                                  paddingTop: 50,
+                                  margin: "10%",
+                                  minHeight: 300,
+                                  width: "80%",
+                                },
+                                android: {
+                                  minHeight: 200,
+                                },
+                              }),
+                            }}
+                          >
+                            <Text>
+                              The car is parked (or has a reserved parking) and
+                              cannot be deleted!
+                            </Text>
+                            <Text
+                              style={{
+                                marginBottom: 30,
+                                marginTop: 30,
+                                padding: 5,
+                                borderColor: "red",
+                                borderWidth: 2,
+                              }}
+                            >
+                              Please leave the parking or cancle the reservation
+                              and try again.
+                            </Text>
+                            <TouchableHighlight
+                              style={styles.buttonHide}
+                              onPress={() => {
+                                setErrorOnDelete(!errorOnDelete);
+                              }}
+                            >
+                              <Text style={{ textAlign: "center" }}>
+                                Cancel{" "}
+                              </Text>
+                            </TouchableHighlight>
+                          </View>
+                        </Modal>
+                      </View>
                       <Text
                         style={{
                           paddingTop: 10,
@@ -454,5 +519,58 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: "#2e78b7",
+  },
+  buttonGreen: {
+    backgroundColor: "#5dba68",
+    width: "99%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5,
+  },
+  buttonYellow: {
+    backgroundColor: "#d1cd56",
+    width: "99%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5,
+  },
+  buttonRed: {
+    backgroundColor: "#eb5a50",
+    width: "99%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5,
+  },
+  buttonPay: {
+    backgroundColor: "#5dba68",
+    width: "95%",
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 2,
+    borderRadius: 5,
+  },
+  buttonHide: {
+    width: "95%",
+    height: 30,
+    backgroundColor: "#b5b5b0",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  markerClick: {
+    backgroundColor: "white",
+    width: 150,
+    height: 200,
   },
 });

@@ -82,7 +82,7 @@ const UserProfile = (props) => {
       message: "You will see changes in the next login",
       type: "success",
       backgroundColor:"#841584",
-      duration:2300
+      duration:2500
     });
     
     
@@ -181,7 +181,9 @@ const UserProfile = (props) => {
             borderWidth: 1,
             fontSize: 24,
             margin: "2%",
+            backgroundColor:"#C8C8C8"
           }}
+          editable={false}
           onChangeText={setemail}
           placeholder="Email"
           value={email}

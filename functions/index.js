@@ -44,6 +44,24 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
+
+
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
+  console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots").doc(data.parkingLot.id).delete();
+  } else {
+    db.collection("ParkingLots").doc(data.parkingLot.id).update(data.parkingLots);
+  }
+});
+
+
+
+
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
   // check for things not allowed

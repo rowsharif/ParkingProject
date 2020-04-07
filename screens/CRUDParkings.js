@@ -110,7 +110,7 @@ const CRUDParkings =(props)=> {
         keyboardShouldPersistTaps="always"
       >
         {parkings.map((parking, i) => (
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
+          <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
               {parking.latitude} - {parking.longitude} - {parking.amountperhour} - {parking.type}
             </Text>

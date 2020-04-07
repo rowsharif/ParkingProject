@@ -7,7 +7,7 @@ import {
   FontAwesome,
   AntDesign,
   MaterialCommunityIcons,
-  Feather
+  Feather,
 } from "@expo/vector-icons";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
@@ -18,28 +18,25 @@ import MyProfileScreen from "../screens/MyProfileScreen";
 
 ////Below selects the platform to run the app
 ///if the platform is web, the headermode is set to screen
-///default returns the most fitting platform that the user is running the app 
+///default returns the most fitting platform that the user is running the app
 const config = Platform.select({
   web: { headerMode: "screen" },
-  default: {}
+  default: {},
 });
 
-
 //// Below creates a stack navigator;homestack of the home screen
-//////this creates a screen in the navbar by calling the screen file 
+//////this creates a screen in the navbar by calling the screen file
 //////HomeScreen is loaded to the stackNavigator and a 'navigation' prop will be given
 const HomeStack = createStackNavigator(
   {
-    Home: HomeScreen
-    
+    Home: HomeScreen,
   },
   config
 );
- /////below is a text label that will be displayed in the navigationbar of the homescreen
+/////below is a text label that will be displayed in the navigationbar of the homescreen
 ////below is an icon that will be displayed along with the label text of the screen in the navbar
 /////path is a maping that is set in the route configs. The action is taken from the path
 HomeStack.navigationOptions = {
- 
   tabBarLabel: "Home",
   tabBarIcon: ({ focused }) => (
     <MaterialCommunityIcons
@@ -48,94 +45,79 @@ HomeStack.navigationOptions = {
       size={25}
       color="white"
     />
-  )
+  ),
 };
 //paths - A mapping of overrides for the paths set in the route configs
 HomeStack.path = "";
 // The action and route params are extracted from the path.
 
-
 const AboutStack = createStackNavigator(
   {
-    About: AboutScreen
+    About: AboutScreen,
   },
-  
+
   config
 );
-
 
 AboutStack.navigationOptions = {
   tabBarLabel: "About",
   tabBarIcon: ({ focused }) => (
     <Feather focused={focused} name="info" size={25} color="white" />
-  )
+  ),
 };
 
 AboutStack.path = "";
 
-
-
-
 const NewsletterStack = createStackNavigator(
   {
-    Newsletter: NewsletterScreen
+    Newsletter: NewsletterScreen,
   },
   config
 );
-
 
 NewsletterStack.navigationOptions = {
   tabBarLabel: "Newsletter",
   tabBarIcon: ({ focused }) => (
     <FontAwesome focused={focused} name="newspaper-o" size={22} color="white" />
-  )
+  ),
 };
 
 NewsletterStack.path = "";
 
-
 const CampusMapStack = createStackNavigator(
   {
-    CampusMap: CampusMap
+    CampusMap: CampusMap,
   },
   config
 );
-
 
 CampusMapStack.navigationOptions = {
   tabBarLabel: "CampusMap",
   tabBarIcon: ({ focused }) => (
     <FontAwesome focused={focused} name="map-o" size={20} color="white" />
-  )
+  ),
 };
-
 
 CampusMapStack.path = "";
 
-
-
 const MyProfileStack = createStackNavigator(
   {
-    MyProfile: MyProfileScreen
+    MyProfile: MyProfileScreen,
   },
   config
 );
-
 
 MyProfileStack.navigationOptions = {
   tabBarLabel: "User Profile",
   tabBarIcon: ({ focused }) => (
     <AntDesign focused={focused} name="profile" size={25} color="white" />
-  )
+  ),
 };
 
 MyProfileStack.path = "";
 
-
-
-
 //////createMaterialBottomTabNavigator creates a navigation at the bottom of the app and calls all the stacks that were created above to display in the navigation bar.
-    ////swipeEnabled allows swiping between tabs
+////swipeEnabled allows swiping between tabs
 ////animationEnabled allows to animate while moving between tabs
 ///activeColor color of the active tab
 ///inactiveColor color of the inactive tabs
@@ -146,7 +128,7 @@ const tabNavigator = createMaterialBottomTabNavigator(
     CampusMapStack,
     MyProfileStack,
     AboutStack,
-    NewsletterStack
+    NewsletterStack,
   },
   {
     //swipeEnabled - Whether to allow swiping between tabs.
@@ -168,20 +150,20 @@ const tabNavigator = createMaterialBottomTabNavigator(
       //style - Style object for the tab bar.
       style: {
         backgroundColor: "#276b9c",
-        paddingTop: 4
+        paddingTop: 4,
       },
       //labelStyle - Style object for the tab label.
       lableStyle: {
         textAlign: "center",
         fontSize: 19,
-        fontWeight: "bold"
+        fontWeight: "bold",
       },
       //indicatorStyle - Style object for the tab indicator (line at the bottom of the tab).
       indicatorStyle: {
         borderBottomColor: "white",
-        borderBottomWidth: 70
-      }
-    }
+        borderBottomWidth: 70,
+      },
+    },
   }
 );
 

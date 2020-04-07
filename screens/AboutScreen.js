@@ -11,25 +11,64 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
+import { createDrawerNavigator } from "react-navigation-drawer";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 
-export default function AboutScreen() {
+function CNAQ_Parking_App() {
+  const navigationOptions = {
+    drawerLabel: "Parking Project App",
+  };
   return (
-    <ImageBackground source={require("../assets/images/bg11.jpeg")} style={{ width: "100%", height: "100%"}}>   
-          <ScrollView>
-              <Text>Hello from the other side!</Text>
-          </ScrollView>
-    </ImageBackground>      
+    <ImageBackground
+      source={require("../assets/images/bg11.jpeg")}
+      style={{ width: "100%", height: "100%" }}
+    >
+      <ScrollView>
+        <Text>Hello from the other side!</Text>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
-AboutScreen.navigationOptions = {
+function Guide() {
+  const navigationOptions = {
+    drawerLabel: "Guide",
+  };
+  return (
+    <ImageBackground
+      source={require("../assets/images/bg11.jpeg")}
+      style={{ width: "100%", height: "100%" }}
+    >
+      <ScrollView>
+        <Text>Guide from the other side!</Text>
+      </ScrollView>
+    </ImageBackground>
+  );
+}
+const MyDrawerNavigator = createDrawerNavigator({
+  CNAQ_Parking_App: {
+    screen: CNAQ_Parking_App,
+  },
+  Guide: {
+    screen: Guide,
+  },
+});
+
+const AppContainer = createAppContainer(MyDrawerNavigator);
+
+export default function MyProfileScreen() {
+  return <AppContainer />;
+  // return <CRUDNewsletter />
+}
+
+MyProfileScreen.navigationOptions = {
   headerTitle: (
     <View
       style={{
         flex: 2,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -40,14 +79,14 @@ AboutScreen.navigationOptions = {
           fontWeight: "700",
           color: "white",
           textAlign: "left",
-          paddingLeft: "3%"
+          paddingLeft: "3%",
         }}
       >
         About
       </Text>
       <View
         style={{
-          flex: 1
+          flex: 1,
         }}
       ></View>
 
@@ -57,7 +96,7 @@ AboutScreen.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -66,18 +105,17 @@ AboutScreen.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: "#fff",
+  },
 });

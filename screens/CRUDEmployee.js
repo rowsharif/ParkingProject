@@ -17,6 +17,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 import { createNativeWrapper } from "react-native-gesture-handler";
+
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
 const CRUDEmployees = (props) => {
@@ -33,7 +34,18 @@ const CRUDEmployees = (props) => {
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
   const [fk, setFk] = useState();
+  const [services, setServices] = useState([]);
   // const [crewName,setCrewName]=useState()
+  useEffect(() => {
+    db.collection("Services").onSnapshot((querySnapshot) => {
+      const services = [];
+      querySnapshot.forEach((doc) => {
+        services.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current services: ", services);
+      setServices([...services]);
+    });
+  }, []);
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -119,6 +131,7 @@ const CRUDEmployees = (props) => {
     setFk(employee.fk);
     setFkp(employee.fkp);
     setId(employee.id);
+    setCrew(crews.filter((c) => c.id === employee.fk)[0]);
     // setCrew(employee.crews.name)
   };
   const handleDelete = async (employee) => {
@@ -146,12 +159,18 @@ const CRUDEmployees = (props) => {
           placeholder="Identifier"
           value={identifier}
         />
-        <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={setType}
-          placeholder="Type"
-          value={type}
-        />
+
+        <Picker
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+          selectedValue={type}
+          onValueChange={(itemValue) => setType(itemValue)}
+        >
+          {services.map((service, i) => (
+            <Picker.Item label={service.name} value={service.name} />
+          ))}
+        </Picker>
+
         <TextInput
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
           onChangeText={setName}

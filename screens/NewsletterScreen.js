@@ -74,6 +74,9 @@ export default function NewsletterScreen() {
           transparent={true}
           visible={modalVisible}          
           key={news.id}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
         >
           <View style={{margin: "5%", backgroundColor: "#c7c7c7", height:"80%", borderRadius: 10, ...Platform.select({
                 ios: {

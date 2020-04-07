@@ -32,7 +32,7 @@ const CRUDNewsletter = (props) => {
   const [id, setId] = useState("");
   const [header, setHeader] = useState("");
   const [body, setBody] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [create, setCreate] = useState(false);
@@ -41,7 +41,8 @@ const CRUDNewsletter = (props) => {
   const [uri, setUri] = useState("");
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
-
+  const [progress, setProgress] = useState(0);
+  const [showProgress, setshowProgress] = useState(false);
 
   useEffect(() => {
     db.collection("newsletter").onSnapshot( querySnapshot => {
@@ -63,26 +64,28 @@ const CRUDNewsletter = (props) => {
     // if (uri !== image) {
       const response = await fetch(u);
       const blob = await response.blob();
-
+      // const date = new Date;
+      const dateTime = new Date().getTime();
+      // console.log("ddddddddddddddddddddddddd",dateTime);
       const putResult = await firebase
         .storage()
         .ref()
-        .child(firebase.auth().currentUser.uid)
+        .child("News- "+dateTime)
         .put(blob);
       const url = await firebase
         .storage()
         .ref()
-        .child(firebase.auth().currentUser.uid)
+        .child("News- "+dateTime)
         .getDownloadURL();
 
       setUri(url);
       setImage(url);
-      console.log("----------------------",url)
+      // console.log("----------------------",url)
       // setPhotoURL(url);
     // }
   };
 
-  const handlePickImage = async () => {
+  const handlePickImage = async () => { 
     // show camera roll, allow user to select
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -95,21 +98,38 @@ const CRUDNewsletter = (props) => {
       console.log("not cancelled", result.uri);
       setUri(result.uri);
       setImage(result.uri);
-      handleUpload(uri);
+      // handleUpload(uri);
     }
-    // setProgress(0);
-    // setTime(5);
+    setProgress(0);
+    setTime(5);
   };
 
+  const timer = async () => {
+    setshowProgress(true);
+    setTime(time - 1);
+    setProgress(progress + 0.3);
+    if (time - 1 <= 0) {
+      await handleUpload(uri);
+      setshowProgress(false);
+      clearTimeout(timeoutId);
+    }
+  };
+
+  useEffect(() => {
+    time > 0 && setTimeoutId(setTimeout(() => timer(), 1000));
+  }, [time]);
+
   const handleSend = async () => {
-    
+    console.log("idddddddddddddd", id)
     if (id) {
+      console.log("updateeeeeeee");
       const response2 = await handleNewsletter({
         newsletter: { id, header, body, image },
         operation: "update"
       });
     } else {
       // call serverless function instead
+      console.log("add");
       const response2 = await handleNewsletter({
         newsletter: { header, body, image },
         operation: "add"
@@ -117,7 +137,7 @@ const CRUDNewsletter = (props) => {
       // console.log("resssssssssssssssssssssssssss",image);
     }
     
-    setId("");
+    setId(null);
     setHeader("");
     setBody("");
     setImage(null);
@@ -148,7 +168,7 @@ const CRUDNewsletter = (props) => {
   };
 
   const handleCreate = () => {
-    setId("");
+    setId(null);
     setHeader("");
     setBody("");
     setImage(null);
@@ -166,7 +186,10 @@ const CRUDNewsletter = (props) => {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={modalVisible}          
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}          
           // key={news.id}
         >
           <View style={{margin: "5%", backgroundColor: "#c7c7c7", height:"80%", borderRadius: 10, ...Platform.select({
@@ -234,7 +257,7 @@ const CRUDNewsletter = (props) => {
               
                 {create ? 
                 <View style={{width:"100%", height:"10%", flexDirection:"row", marginTop:"10%", justifyContent:"center"}}>
-                  <TouchableOpacity  onPress={handleSend} style={{width:"30%", backgroundColor:"#5dba68", padding:2, justifyContent:"center", alignItems:'center', borderRadius:5, margin:5}} >
+                  <TouchableOpacity  onPress={()=>handleSend()} style={{width:"30%", backgroundColor:"#5dba68", padding:2, justifyContent:"center", alignItems:'center', borderRadius:5, margin:5}} >
                     <Text>Create</Text>
                   </TouchableOpacity> 
                 </View>
@@ -244,7 +267,7 @@ const CRUDNewsletter = (props) => {
                   <Text>Delete</Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity  onPress={handleSend} style={{width:"30%", backgroundColor:"#5dba68", padding:2, justifyContent:"center", alignItems:'center', borderRadius:5, margin:5}} >
+                <TouchableOpacity  onPress={()=>handleSend()} style={{width:"30%", backgroundColor:"#5dba68", padding:2, justifyContent:"center", alignItems:'center', borderRadius:5, margin:5}} >
                   <Text>Save</Text>
                 </TouchableOpacity>
                 </View>

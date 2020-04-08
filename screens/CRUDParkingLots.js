@@ -12,7 +12,6 @@ import {
   View
 } from "react-native";
 
-import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
@@ -21,8 +20,8 @@ const handleParkingLot = firebase.functions().httpsCallable("handleParkingLot");
 
 const CRUDParkingLots =(props)=> {
   const [parkingLots, setParkingLot] = useState([]);
-  const [longitude, setLongitude] = useState("");
-  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
 
@@ -38,17 +37,22 @@ const CRUDParkingLots =(props)=> {
   }, []);
 
   const handleSend = async () => {
+
     if (id) {
       const response2 = await handleParkingLot({
         parkingLot: { id, name, longitude,latitude },
         operation: "update"
       });
-    } else {
+
+    }
+ 
+    else {
       // call serverless function instead
       const response2 = await handleParkingLot({
-        parkingLot: { id, name, longitude,latitude },
+        parkingLot: {name, longitude,latitude },
         operation: "add"
       });
+
     }
     setName("");
     setLongitude("");
@@ -80,7 +84,7 @@ const CRUDParkingLots =(props)=> {
             <Text style={styles.getStartedText}>
               {parkingLot.name} - {parkingLot.latitude} -{parkingLot.longitude}
             </Text>
-            {/* <Button title="Edit" onPress={() => handleEdit(parkingLot)} /> */}
+            <Button title="Edit" onPress={() => handleEdit(parkingLot)} />
             <Button title="X" onPress={() => handleDelete(parkingLot)} />
           </View>
         ))}
@@ -106,6 +110,8 @@ const CRUDParkingLots =(props)=> {
         value= {`${longitude}`}
       />
       <Button title="Send" onPress={handleSend} />
+      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
+
     </View>
   );
 }

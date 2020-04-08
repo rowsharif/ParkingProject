@@ -183,6 +183,7 @@ const UserProfile = (props) => {
             fontSize: 24,
             margin: "2%",
             backgroundColor:"#C8C8C8"
+            //backgroundColor: "#C8C8C8",
           }}
           editable={false}
           onChangeText={setemail}

@@ -55,9 +55,29 @@ export default function CampusMap() {
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
   const [uid, setUid] = useState("");
-  // Above is declare a new state variable, which we'll call "hours" as a const ;
-  // setHours is a function that we use to change (set) the value of hours;
-  // the initial value of hours is 0
+  const [mapType, setMapType] = useState(true);
+  const [mapRegion, setMapRegion] = useState({
+    latitude: 25.358833,
+    longitude: 51.479314,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [location, setLocation] = useState({
+    coords: {
+      latitude: 25.360766,
+      longitude: 51.480378,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    },
+  });
+
+  const [goTo, setGoto] = useState({
+    latitude: 25.358833,
+    longitude: 51.479314,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
   const [crew, setCrew] = useState();
 
   const setModalvisible = (x) => {
@@ -67,12 +87,6 @@ export default function CampusMap() {
   //  serverless function
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
-  const [location, setLocation] = useState({
-    coords: {
-      latitude: 25.360766,
-      longitude: 51.480378,
-    },
-  });
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [Services, setServices] = useState([]);
   const [ServicesToAdd, setServicesToAdd] = useState([]);
@@ -162,7 +176,7 @@ export default function CampusMap() {
       setHours(hours);
     }
 
-    setTotal(Math.floor(totalAmount));
+    setTotal(totalAmount.toFixed(2));
   }, [promotionValid]);
 
   useEffect(() => {
@@ -207,7 +221,7 @@ export default function CampusMap() {
     //           const nparkings = [];
     //           allParkings = allParkings.filter(p => p.fk !== doc.id);
     //           querySnapshot.forEach(docP => {
-    //             nparkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+    //             nparkings.push({ fk: doc.id, name: doc.data().name, id: docP.id, ...docP.data() });
     //           });
     //           allParkings = [...allParkings, ...nparkings];
     //           setParkings([...allParkings]);
@@ -224,6 +238,7 @@ export default function CampusMap() {
         querySnapshot.forEach((docP) => {
           parkings.push({
             fk: "kECljqmSifLwfkpX6qPy",
+            name: "C-6",
             id: docP.id,
             ...docP.data(),
           });
@@ -233,8 +248,21 @@ export default function CampusMap() {
   }, []);
 
   const markerClick = (parking) => {
-    setModalvisible(true);
+    //setGoto(mapRegion);
+    setGoto({
+      latitude: parking.latitude,
+      longitude: parking.longitude,
+      latitudeDelta: 0.0004,
+      longitudeDelta: 0.0004,
+    });
+    setModalVisible(true);
     setParking(parking);
+    setPromotionValid("");
+  };
+
+  const handleMapType = () => {
+    setMapType(!mapType);
+    setModalVisible2(false);
   };
 
   const handleCarParking = async (i, o) => {
@@ -321,22 +349,172 @@ export default function CampusMap() {
     }
   };
 
+  const handleGoto = (x) => {
+    if (x === 0) {
+      setGoto({
+        latitude: car.Parking.latitude,
+        longitude: car.Parking.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } else if (x === 2) {
+      setGoto({
+        latitude: 25.360766,
+        longitude: 51.480378,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } else {
+      getLocation();
+      setGoto({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    }
+    setModalVisible2(false);
+  };
+  const handleMapRegionChange = (mapRegion) => {
+    setMapRegion(mapRegion);
+    //setGoto(mapRegion);
+  };
+  const setmodalVisible2 = () => {
+    setModalVisible2(true);
+    //setGoto(mapRegion);
+  };
+
   return (
     //View is a container that supports layout
     <View style={styles.container}>
+      {/* The Modal component is a basic way to present content above an enclosing view.
+        The animationType prop controls how the modal animates. the "slide" value make the modal slides in from the bottom
+        The transparent prop determines whether your modal will fill the entire view. Setting this to true will render the modal over a transparent background.
+        The visible prop determines whether the modal is visible. its value is a state variable that changes to true or false to show or hide the modal.
+        the key prop is used because the modal is inside a map function
+        */}
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={() => {
+            setModalVisible2(false);
+          }}
+          key={parking.id}
+        >
+          <View style={{ marginTop: 22 }}>
+            <View
+              style={{
+                margin: "20%",
+                backgroundColor: "gray",
+                height: 230,
+                padding: 10,
+              }}
+            >
+              {car.Parking && car.Parking.id ? (
+                <Animatable.View
+                  animation="fadeInLeft"
+                  iterationCount={1}
+                  direction="alternate"
+                >
+                  <TouchableHighlight
+                    style={styles.buttonGreen}
+                    onPress={() => {
+                      handleGoto(0);
+                    }}
+                  >
+                    <Text>Go to my Parking</Text>
+                  </TouchableHighlight>
+                </Animatable.View>
+              ) : (
+                <Animatable.View
+                  animation="fadeInLeft"
+                  iterationCount={1}
+                  direction="alternate"
+                >
+                  <TouchableHighlight
+                    style={styles.buttonGreen}
+                    onPress={() => {
+                      handleGoto(2);
+                    }}
+                  >
+                    <Text>Go to Campus</Text>
+                  </TouchableHighlight>
+                </Animatable.View>
+              )}
+              <Animatable.View
+                animation="fadeInRight"
+                iterationCount={1}
+                direction="alternate"
+              >
+                <TouchableHighlight
+                  style={styles.buttonYellow}
+                  onPress={() => {
+                    handleGoto(1);
+                  }}
+                >
+                  <Text>Go To my Location</Text>
+                </TouchableHighlight>
+              </Animatable.View>
+              <Animatable.View
+                animation="fadeInRight"
+                iterationCount={1}
+                direction="alternate"
+              >
+                <TouchableHighlight
+                  style={styles.buttonGreen}
+                  onPress={() => {
+                    handleMapType(!mapType);
+                  }}
+                >
+                  <Text>{mapType ? "standard" : "satellite"}</Text>
+                </TouchableHighlight>
+              </Animatable.View>
+              <Animatable.View
+                animation="fadeInUp"
+                iterationCount={1}
+                direction="alternate"
+              >
+                <View
+                  style={{
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TouchableHighlight
+                    style={styles.buttonHide}
+                    onPress={() => {
+                      setModalVisible2(false);
+                    }}
+                  >
+                    <Text style={{ textAlign: "center" }}>Cancel </Text>
+                  </TouchableHighlight>
+                </View>
+              </Animatable.View>
+            </View>
+          </View>
+        </Modal>
+      </View>
       <MapView
         provider="google"
         style={styles.mapStyle}
-        initialRegion={{
-          latitude: 25.358833,
-          longitude: 51.479314,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
+        region={{
+          latitude: goTo.latitude,
+          longitude: goTo.longitude,
+          latitudeDelta: goTo.latitudeDelta,
+          longitudeDelta: goTo.longitudeDelta,
         }}
-        mapType="satellite"
+        mapType={mapType ? "satellite" : "standard"}
         minZoomLevel={18}
+        loadingEnable={true}
         moveOnMarkerPress={false}
-        // onPress={()=> setModalVisible2(true)}
+        onLongPress={() => setmodalVisible2(true)}
+        onRegionChange={() => handleMapRegionChange()}
+        //rotateEnabled={false}
+        // pitchEnabled={false}
+        // toolbarEnabled={false}
       >
         {parkings &&
           parkings.map((parking) => (
@@ -383,7 +561,7 @@ export default function CampusMap() {
                       {/* The element to be animated is an icon "MaterialCommunityIcons" */}
                       <MaterialCommunityIcons
                         name="car-brake-parking"
-                        size={20}
+                        size={24}
                         color="purple"
                       />
                     </Animatable.View> //closing tag for Animatable
@@ -392,13 +570,13 @@ export default function CampusMap() {
                     //source prop The image source (either a remote URL or a local file resource). in this case local file
                     <Image
                       source={require("../assets/images/red.png")}
-                      style={{ width: 18, height: 10 }}
+                      style={{ width: 22, height: 14 }}
                     />
                   )
                 ) : parking.status === 0 ? (
                   <Image
                     source={require("../assets/images/green.png")}
-                    style={{ width: 18, height: 10 }}
+                    style={{ width: 22, height: 14 }}
                   />
                 ) : car &&
                   car.Parking &&
@@ -411,14 +589,14 @@ export default function CampusMap() {
                   >
                     <MaterialCommunityIcons
                       name="registered-trademark"
-                      size={20}
+                      size={24}
                       color="purple"
                     />
                   </Animatable.View>
                 ) : (
                   <Image
                     source={require("../assets/images/yellow.png")}
-                    style={{ width: 18, height: 10 }}
+                    style={{ width: 22, height: 14 }}
                   />
                 )}
               </View>
@@ -432,38 +610,36 @@ export default function CampusMap() {
           pinColor="green"
           title="You are here"
         />
-      </MapView>
-      <View>
-        {/* The Modal component is a basic way to present content above an enclosing view.
-        The animationType prop controls how the modal animates. the "slide" value make the modal slides in from the bottom
-        The transparent prop determines whether your modal will fill the entire view. Setting this to true will render the modal over a transparent background.
-        The visible prop determines whether the modal is visible. its value is a state variable that changes to true or false to show or hide the modal.
-        the key prop is used because the modal is inside a map function
-        */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible2}
-          key={parking.id}
+        <MapView.Marker
+          coordinate={{
+            latitude: 25.358924,
+            longitude: 51.480265,
+          }}
         >
-          <View style={{ marginTop: 22 }}>
-            <View
-              style={{ margin: "20%", backgroundColor: "gray", height: 100 }}
-            >
-              {/*Text - A React component for displaying text. 
-              onPress prop determine the function to call on press.*/}
-              <Text onPress={() => setModalVisible2(false)}>Close</Text>
-            </View>
-          </View>
-        </Modal>
-      </View>
+          <Image
+            source={require("../assets/images/1.png")}
+            style={{ width: 36, height: 28 }}
+          />
+        </MapView.Marker>
+        <MapView.Marker
+          coordinate={{
+            latitude: 25.359997,
+            longitude: 51.480268,
+          }}
+        >
+          <Image
+            source={require("../assets/images/blueFlag.png")}
+            style={{ width: 36, height: 28 }}
+          />
+        </MapView.Marker>
+      </MapView>
       <View style={{ marginTop: 22 }}>
         <Modal
           animationType="fade"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
+            setModalVisible(false);
           }}
           key={parking.id}
         >

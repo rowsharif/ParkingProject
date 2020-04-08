@@ -26,15 +26,6 @@ const CRUDhistories = (props) => {
   const [car, setCar] = useState([]);
 
   useEffect(() => {
-    db.collection("Cars").onSnapshot((querySnapshot) => {
-      const car = [""];
-      querySnapshot.forEach((doc) => {
-        car.push({ id: doc.id, ...doc.data() });
-      });
-      setCar([...car]);
-    });
-  }, []);
-  useEffect(() => {
     db.collection("History")
       .where("uid", "==", firebase.auth().currentUser.uid)
       .onSnapshot((querySnapshot) => {

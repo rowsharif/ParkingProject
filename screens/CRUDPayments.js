@@ -15,51 +15,73 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-// const handlehistories = firebase.functions().httpsCallable("handleHistory");
+// const handlePayments = firebase.functions().httpsCallable("handlePayment");
 
-const CRUDhistories = (props) => {
-  const [histories, sethistories] = useState([]);
+const CRUDPayments = (props) => {
+  const [Payments, setPayments] = useState([]);
   const [car, setCar] = useState([]);
 
   useEffect(() => {
-    db.collection("History").onSnapshot((querySnapshot) => {
-      const history = [];
+    db.collection("Payment").onSnapshot((querySnapshot) => {
+      const payments = [];
       querySnapshot.forEach((doc) => {
-        history.push({ id: doc.id, ...doc.data() });
+        payments.push({ id: doc.id, ...doc.data() });
       });
-      sethistories([...history]);
+      setPayments([...payments]);
     });
   }, []);
 
   return (
     <ScrollView>
       <Text style={{ textAlign: "center", fontWeight: "bold" }}>
-        Users history{" "}
+        Users payment{" "}
       </Text>
-      <Text style={{ textAlign: "center", fontWeight: "bold" }}>
-        Cars parked in campus:{" "}
-        {histories.filter((history) => !(history.Duration >= 0)).length}
-      </Text>
-      <Text>Number of histories of users: {histories.length}</Text>
-
-      {histories.map((history, i) => (
+      {Payments.map((payment, i) => (
         <View key={i} style={{ borderColor: "gray", borderWidth: 1 }}>
+          <Text>Car PlateNumber - {payment.Car.PlateNumber}</Text>
+          <Text>Parking Lot - {payment.Parking.name}</Text>
           <Text>
-            Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
-          </Text>
-          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
-          <Text>
-            Date - {history.DateTime.toDate().getDate()}-
-            {history.DateTime.toDate().getMonth()}-
-            {history.DateTime.toDate().getFullYear()}
+            Date - {payment.DateTime.toDate().getDate()}-
+            {payment.DateTime.toDate().getMonth()}-
+            {payment.DateTime.toDate().getFullYear()}
           </Text>
           <Text>
-            Time - {history.DateTime.toDate().getHours()}:
-            {history.DateTime.toDate().getMinutes()}
+            Time - {payment.DateTime.toDate().getHours()}:
+            {payment.DateTime.toDate().getMinutes()}
           </Text>
+          <Text>Services: </Text>
+          {payment.ServicesIds &&
+            payment.ServicesIds.map((service) => (
+              <Text style={{ paddingLeft: 15 }}>
+                {service.name} - {service.price}
+              </Text>
+            ))}
           <Text>
             Duration -{" "}
-            {history.Duration >= 0 ? history.Duration : "Car still in campus"}
+            {payment.Duration >= 0 ? payment.Duration : "Car still in campus"}
+          </Text>
+          <Text>Promotion - %{payment.promotion}</Text>
+          <Text>
+            Total Amount -{" "}
+            {payment.TotalAmount >= 0 ? (
+              <Text>
+                {payment.TotalAmount}
+                {"  "}
+                {payment.promotion > 0 && (
+                  <Text
+                    style={{
+                      textDecorationLine: "line-through",
+                      textDecorationStyle: "solid",
+                      color: "gray",
+                    }}
+                  >
+                    {payment.TotalAmount / (1 - payment.promotion / 100)}
+                  </Text>
+                )}
+              </Text>
+            ) : (
+              "_"
+            )}
           </Text>
         </View>
       ))}
@@ -72,7 +94,7 @@ const CRUDhistories = (props) => {
     </ScrollView>
   );
 };
-CRUDhistories.navigationOptions = {
+CRUDPayments.navigationOptions = {
   headerTitle: (
     <View
       style={{
@@ -120,7 +142,7 @@ CRUDhistories.navigationOptions = {
     fontWeight: "bold",
   },
 };
-export default CRUDhistories;
+export default CRUDPayments;
 
 const styles = StyleSheet.create({
   container: {

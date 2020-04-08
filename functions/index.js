@@ -44,8 +44,25 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.handlePromotion = functions.https.onCall(async (data, context) => {
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots").doc(data.parkingLot.id).delete();
+  } else {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLots);
+  }
+});
+
+exports.handlePromotion = functions.https.onCall(async (data, context) => {
+  console.log("service data befor", data.promotion.endDateTime);
+  data.promotion.endDateTime = new Date(data.promotion.endDateTime);
+  console.log("service data", data.promotion.endDateTime);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -170,6 +187,61 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   response.send("All done ");
 });
 
+exports.handleNearestBuilding = functions.https.onCall(
+  async (data, context) => {
+    console.log("NearestBuilding data", data);
+    // check for things not allowed
+    // only if ok then add message
+    if (data.operation === "add") {
+      db.collection("NearestBuildings").add(data.nearestBuilding);
+    } else if (data.operation === "delete") {
+      db.collection("NearestBuildings").doc(data.nearestBuilding.id).delete();
+    } else {
+      db.collection("NearestBuildings")
+        .doc(data.nearestBuilding.id)
+        .update(data.nearestBuilding);
+    }
+  }
+);
+///////handle handleCRUDParkings
+exports.handleCRUDParkings = functions.https.onCall(async (data, context) => {
+  console.log("parking data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .add(data.Parking);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .delete();
+  } else {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .doc(data.parking.id)
+      .update(data.parking);
+  }
+});
+
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
+  console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots").doc(data.parkingLot.id).delete();
+  } else {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLots);
+  }
+});
+
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
   console.log("handleParkings data", data.uid);
@@ -188,7 +260,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     //add History
     const history = await db.collection("History").add({
       Car: car,
-      ParkingId: data.temp.id,
+      Parking: data.temp,
       DateTime: new Date(),
       Duration: {},
       TotalAmount: {},
@@ -202,7 +274,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     }
     total = sta.reduce(
       (previousScore, currentScore, index) =>
-        previousScore + currentScore.price,
+        previousScore + parseInt(currentScore.price),
       0
     );
     //add UserServices
@@ -214,11 +286,11 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
         .doc(data.crew.id)
         .collection("UserServices")
         .add({
-          CarId: car.id,
-          ServiceId: Service.id,
+          Car: car.PlateNumber,
+          ServiceName: Service.name,
           ParkingId: data.temp.id,
           DateTime: new Date(),
-          EmployeeId: {},
+          EmployeeId: "",
         });
     });
     car.Parking = data.temp;
@@ -242,14 +314,20 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       data.promotion && data.promotion.percent
         ? pTotal - pTotal * data.promotion.percent
         : pTotal;
-    totalAmount = Math.floor(totalAmount);
+    totalAmount = totalAmount.toFixed();
     //add Payment (Services,Promotion, Parking AmountPerHour)
     db.collection("Payment").add({
-      CarId: car.id,
-      ParkingId: data.temp.id,
+      Car: car,
+      Parking: data.temp,
       ServicesIds: data.car.Parking.ServicesToAdd,
       TotalAmount: totalAmount,
       Duration: data.hours,
+      uid: data.uid,
+      DateTime: new Date(),
+      promotion:
+        data.promotion && data.promotion.percent
+          ? data.promotion.percent * 100
+          : 0,
     });
     //update History
     let h = {};

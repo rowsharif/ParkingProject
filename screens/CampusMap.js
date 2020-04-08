@@ -66,12 +66,16 @@ export default function CampusMap() {
     coords: {
       latitude: 25.360766,
       longitude: 51.480378,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
     },
   });
 
   const [goTo, setGoto] = useState({
     latitude: 25.358833,
     longitude: 51.479314,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   });
 
   const [crew, setCrew] = useState();
@@ -172,7 +176,7 @@ export default function CampusMap() {
       setHours(hours);
     }
 
-    setTotal(Math.floor(totalAmount));
+    setTotal(totalAmount.toFixed(2));
   }, [promotionValid]);
 
   useEffect(() => {
@@ -217,7 +221,7 @@ export default function CampusMap() {
     //           const nparkings = [];
     //           allParkings = allParkings.filter(p => p.fk !== doc.id);
     //           querySnapshot.forEach(docP => {
-    //             nparkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+    //             nparkings.push({ fk: doc.id, name: doc.data().name, id: docP.id, ...docP.data() });
     //           });
     //           allParkings = [...allParkings, ...nparkings];
     //           setParkings([...allParkings]);
@@ -234,6 +238,7 @@ export default function CampusMap() {
         querySnapshot.forEach((docP) => {
           parkings.push({
             fk: "kECljqmSifLwfkpX6qPy",
+            name: "C-6",
             id: docP.id,
             ...docP.data(),
           });
@@ -243,10 +248,16 @@ export default function CampusMap() {
   }, []);
 
   const markerClick = (parking) => {
-    setGoto(mapRegion);
+    //setGoto(mapRegion);
+    setGoto({
+      latitude: parking.latitude,
+      longitude: parking.longitude,
+      latitudeDelta: 0.0004,
+      longitudeDelta: 0.0004,
+    });
     setModalVisible(true);
     setParking(parking);
-    console.log("goTo+++++++++++", goTo);
+    setPromotionValid("");
   };
 
   const handleMapType = () => {
@@ -343,22 +354,34 @@ export default function CampusMap() {
       setGoto({
         latitude: car.Parking.latitude,
         longitude: car.Parking.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } else if (x === 2) {
+      setGoto({
+        latitude: 25.360766,
+        longitude: 51.480378,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
       });
     } else {
       getLocation();
       setGoto({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
       });
     }
     setModalVisible2(false);
   };
   const handleMapRegionChange = (mapRegion) => {
     setMapRegion(mapRegion);
+    //setGoto(mapRegion);
   };
   const setmodalVisible2 = () => {
     setModalVisible2(true);
-    setGoto(mapRegion);
+    //setGoto(mapRegion);
   };
 
   return (
@@ -389,7 +412,7 @@ export default function CampusMap() {
                 padding: 10,
               }}
             >
-              {car.Parking && car.Parking.id && (
+              {car.Parking && car.Parking.id ? (
                 <Animatable.View
                   animation="fadeInLeft"
                   iterationCount={1}
@@ -402,6 +425,21 @@ export default function CampusMap() {
                     }}
                   >
                     <Text>Go to my Parking</Text>
+                  </TouchableHighlight>
+                </Animatable.View>
+              ) : (
+                <Animatable.View
+                  animation="fadeInLeft"
+                  iterationCount={1}
+                  direction="alternate"
+                >
+                  <TouchableHighlight
+                    style={styles.buttonGreen}
+                    onPress={() => {
+                      handleGoto(2);
+                    }}
+                  >
+                    <Text>Go to Campus</Text>
                   </TouchableHighlight>
                 </Animatable.View>
               )}
@@ -465,15 +503,15 @@ export default function CampusMap() {
         region={{
           latitude: goTo.latitude,
           longitude: goTo.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: goTo.latitudeDelta,
+          longitudeDelta: goTo.longitudeDelta,
         }}
         mapType={mapType ? "satellite" : "standard"}
         minZoomLevel={18}
+        loadingEnable={true}
         moveOnMarkerPress={false}
-        moveOnMapViewPress={false}
         onLongPress={() => setmodalVisible2(true)}
-        //onRegionChangeComplete={handleMapRegionChange}
+        onRegionChange={() => handleMapRegionChange()}
         //rotateEnabled={false}
         // pitchEnabled={false}
         // toolbarEnabled={false}
@@ -572,8 +610,29 @@ export default function CampusMap() {
           pinColor="green"
           title="You are here"
         />
+        <MapView.Marker
+          coordinate={{
+            latitude: 25.358924,
+            longitude: 51.480265,
+          }}
+        >
+          <Image
+            source={require("../assets/images/1.png")}
+            style={{ width: 36, height: 28 }}
+          />
+        </MapView.Marker>
+        <MapView.Marker
+          coordinate={{
+            latitude: 25.359997,
+            longitude: 51.480268,
+          }}
+        >
+          <Image
+            source={require("../assets/images/blueFlag.png")}
+            style={{ width: 36, height: 28 }}
+          />
+        </MapView.Marker>
       </MapView>
-
       <View style={{ marginTop: 22 }}>
         <Modal
           animationType="fade"

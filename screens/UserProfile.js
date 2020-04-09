@@ -182,7 +182,8 @@ const UserProfile = (props) => {
             borderWidth: 1,
             fontSize: 24,
             margin: "2%",
-            backgroundColor: "#C8C8C8",
+            backgroundColor:"#C8C8C8"
+            //backgroundColor: "#C8C8C8",
           }}
           editable={false}
           onChangeText={setemail}
@@ -451,36 +452,6 @@ const UserProfile = (props) => {
               onPress={() => props.navigation.navigate("CRUDNewsletter")}
             >
               <Text style={styles.buttonText}>Handle Newsletter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDMyPayments")}
-            >
-              <Text style={styles.buttonText}>CRUDMyPayments</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDPayments")}
-            >
-              <Text style={styles.buttonText}>CRUDPayments</Text>
             </TouchableOpacity>
 
             {/* </ScrollView> */}

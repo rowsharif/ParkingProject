@@ -49,7 +49,7 @@ const CRUDParkingLots =(props)=> {
     else {
       // call serverless function instead
       const response2 = await handleParkingLot({
-        parkingLot: {  name, longitude,latitude },
+        parkingLot: {name, longitude,latitude },
         operation: "add"
       });
 

@@ -17,6 +17,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 import { createNativeWrapper } from "react-native-gesture-handler";
+console.disableYellowBox = true;
 
 const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 
@@ -76,7 +77,7 @@ const CRUDEmployees = (props) => {
                       nemployees.push({
                         fkp: doc.id,
                         fk: docP.id,
-                        crewName: docP.name,
+                        crewName: docP.data().name,
                         id: docE.id,
                         ...docE.data(),
                       });

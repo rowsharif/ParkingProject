@@ -12,13 +12,17 @@ import {
   View,
   Picker,
 } from "react-native";
+import IOSPicker from 'react-native-ios-picker';
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
-const CRUDServices = (props) => {
+const CRUDCrew = (props) => {
+  //crews objects as an array to save all the crews we get from the database to display them
   const [crews, setCrews] = useState([]);
   const [parking, setParking] = useState([]);
   const [name, setName] = React.useState("");
@@ -28,6 +32,7 @@ const CRUDServices = (props) => {
   const [pnames, setPnames] = useState([]);
 
   useEffect(() => {
+    //getting all Crews and all ParkingLots
     db.collection("ParkingLots")
       .get()
       .then((querySnapshot) => {
@@ -95,7 +100,9 @@ const CRUDServices = (props) => {
 
     setId(crew.id);
   };
+  //if the user choose to delete the crew the function will be called
   const handleDelete = async (crew) => {
+    //it sends the crew to delete as a parameter to the function and the operation as "delete"
     const response2 = await handleCrew({
       crew: crew,
       operation: "delete",
@@ -103,23 +110,39 @@ const CRUDServices = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      {console.log("------------------------", fkp)}
-      {crews.map((crew, i) => (
-        <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
-          <Text key={i} style={styles.getStartedText}>
-            {crew.name} - {"   "} - {crew.pln} ---
-          </Text>
-          <Button title="Edit" onPress={() => handleEdit(crew)} />
-          <Button title="X" onPress={() => handleDelete(crew)} />
-        </View>
-      ))}
+      {
+        //looping threw all crews array objects; calling the object at the time crew
+        crews.map((crew, i) => (
+          <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
+            <Text key={i} style={styles.getStartedText}>
+              {crew.name} - {"   "} - {crew.pln} ---
+            </Text>
+            <Button title="Edit" onPress={() => handleEdit(crew)} />
+            {/* calling the delete function and sending the crew as a parameter */}
+            <Button title="X" onPress={() => handleDelete(crew)} />
+          </View>
+        ))
+      }
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setName}
         placeholder="Name"
         value={name}
       />
-      <Picker
+      {Platform.OS === "ios" ? 
+       <IOSPicker 
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={pname}
+        onValueChange={(itemValue) => setPname(itemValue)}
+      >
+        {pnames.map((pname, i) => (
+          <Picker.Item label={pname.name} value={pname} />
+        ))}
+      </IOSPicker >
+      
+:
+     <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
         selectedValue={pname}
@@ -129,6 +152,7 @@ const CRUDServices = (props) => {
           <Picker.Item label={pname.name} value={pname} />
         ))}
       </Picker>
+}
       <Button title="Send" onPress={handleSend} />
       <Button
         color="green"
@@ -138,7 +162,7 @@ const CRUDServices = (props) => {
     </ScrollView>
   );
 };
-CRUDServices.navigationOptions = {
+CRUDCrew.navigationOptions = {
   headerTitle: (
     <View
       style={{
@@ -186,7 +210,7 @@ CRUDServices.navigationOptions = {
     fontWeight: "bold",
   },
 };
-export default CRUDServices;
+export default CRUDCrew;
 
 const styles = StyleSheet.create({
   container: {

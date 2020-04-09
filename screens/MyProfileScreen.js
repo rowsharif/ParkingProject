@@ -33,6 +33,8 @@ import CRUDMyPayments from "./CRUDMyPayments";
 import CRUDPayments from "./CRUDPayments";
 console.disableYellowBox = true;
 
+import CRUDUserRole from "./CRUDUserRole"
+import CRUDMyPayments from "./CRUDMyPayments"
 ////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
 ///////////////Below, are different screens that are used within the screens folder. The initial screen is set as the userprofile screen. The userprofile screen then calls the other screens
 ////used within the initial screen using props. defaultNavigationOptions calls objects such as headerstyle, headerTintColor and headerTitleStyle that will reflect on the navigation
@@ -83,6 +85,13 @@ const StackNavigator = createStackNavigator(
     EmployeeServices: {
       screen: EmployeeServices,
     },
+    CRUDUserRole:{
+      screen:CRUDUserRole
+    },
+    
+    CRUDMyPayments:{
+      screen:CRUDMyPayments
+    }
   },
   {
     initialRouteName: "UserProfile",

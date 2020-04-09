@@ -10,16 +10,18 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Picker
 } from "react-native";
-
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-// const handlehistories = firebase.functions().httpsCallable("handleHistory");
+console.disableYellowBox = true;
+
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);
-  const [car, setCar] = useState([]);
+
+  
 
   useEffect(() => {
     db.collection("History").onSnapshot((querySnapshot) => {
@@ -47,7 +49,6 @@ const CRUDhistories = (props) => {
           <Text>
             Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
           </Text>
-          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
           <Text>
             Date - {history.DateTime.toDate().getDate()}-
             {history.DateTime.toDate().getMonth()}-

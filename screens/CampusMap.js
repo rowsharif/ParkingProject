@@ -16,6 +16,8 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
+import { Rating, AirbnbRating } from 'react-native-ratings';
+
 //importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
 import { MonoText } from "../components/StyledText";
@@ -34,18 +36,23 @@ import {
   FontAwesome5,
   FontAwesome5Brands,
 } from "@expo/vector-icons";
+console.disableYellowBox = true;
 
 export default function CampusMap() {
-  // React Hooks are functions that allow the use of React state and a
-  // component's lifecycle methods in a functional component
-  // useState and useEffect are built-in Hooks
+  const [nearestBuildings, setNearestBuildings] = useState([]);
+  const [nearestBuilding, setNearestBuilding] = useState({});
   const [parkings, setParkings] = useState([]);
-  // Above is declare a new state variable, which we'll call "parking" as a const ;
-  // setParkings is a function that we use to change (set) the value of parkings;
-  // the initial value of parkings is []; which is an empty array
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [ParkingLots, setParkingLots] = useState([]);
+  const [modalVisible3, setModalVisible3] = useState(false);
+
+
+  const [rankings, setRankings] = useState([]);
+  const [crews, setCrews] = useState([]);
+  const [number,setNumber]=useState()
+
+
+  //const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState({});
   const [car, setCar] = useState({});
   const [promotion, setPromotion] = useState({});
@@ -70,21 +77,19 @@ export default function CampusMap() {
       longitudeDelta: 0.0421,
     },
   });
-
   const [goTo, setGoto] = useState({
     latitude: 25.358833,
     longitude: 51.479314,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-
   const [crew, setCrew] = useState();
 
-  const setModalvisible = (x) => {
-    setModalVisible(x);
-    setPromotionValid("");
-  };
-  //  serverless function
+  // const setModalvisible = (x) => {
+  //   setModalVisible(x);
+  //   setPromotionValid("");
+  // };
+
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
@@ -92,54 +97,105 @@ export default function CampusMap() {
   const [ServicesToAdd, setServicesToAdd] = useState([]);
 
   const askPermission = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    setHasLocationPermission(status === "granted");
+    const { status } = await Permissions.askAsync(Permissions.LOCATION); 
+    setHasLocationPermission(status === "granted"); 
   };
 
   const getLocation = async () => {
-    const location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    const location = await Location.getCurrentPositionAsync({}); 
+    setLocation(location); 
   };
 
   useEffect(() => {
+    setModalVisible3(true)
+
     askPermission();
     getLocation();
-    setPromotionValid(" ");
     setUid(firebase.auth().currentUser.uid);
   }, []);
 
-  //useEffect Hook tells React that the component needs to do something after render
-  //React will remember the function passed and call it later after performing the updates
-  //placing useEffect inside the component allows access to the state’s variables (parking, crew)
-  //by default, it runs both after the first render and after every update.
-  //The below useEffect will run after the first render and whenever the state variable “parking” changes.
   useEffect(() => {
-    //initializing an local variable “crew” as empty object “{}”
+    db.collection("NearestBuildings").onSnapshot((querySnapshot) => {
+      const nearestBuildings = [];
+      querySnapshot.forEach((doc) => {
+        nearestBuildings.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current nearestBuildings: ", nearestBuildings);
+      setNearestBuildings(nearestBuildings);
+    });
+  }, []);
+
+  useEffect(() => {
     let crew = {};
-    //checking if the state variable “parking” is not empty and that it has a variable “fk”
     parking &&
       parking.fk &&
-      //if the condition is true; we’ll get the crew of the parking parkingLot from firebase and then save it in the local variable crew
       db
         .collection("ParkingLots")
-        .doc(parking.fk)
+        .doc(parking.fk) 
         .collection("Crew")
         .onSnapshot((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            crew = { id: doc.id, ...doc.data() };
+            crew = { id: doc.id, ...doc.data(), fk: parking.fk }; 
           });
-          //using the function setCrew to change the state variable “crew” to the function local variable “crew”
           setCrew(crew);
         });
-    // below is stating when to render; after the state variable “parking” is updated
   }, [parking]);
+
+  ////ranking
+  useEffect(() => {
+    db.collection("ParkingLots")
+      .get()
+      .then((querySnapshot) => {
+        const ParkingLots = [];
+        let allCrews = [];
+        let allranking = [];
+        querySnapshot.forEach((doc) => {
+          ParkingLots.push({ id: doc.id, ...doc.data() });
+          db.collection("ParkingLots")
+            .doc(doc.id)
+            .collection("Crew")
+            .onSnapshot((querySnapshot) => {
+              const ncrews = [];
+              allCrews = allCrews.filter((p) => p.fk !== doc.id);
+              querySnapshot.forEach((docP) => {
+                ncrews.push({ fk: doc.id, id: docP.id, ...docP.data() });
+                db.collection("ParkingLots")
+                  .doc(doc.id)
+                  .collection("Crew")
+                  .doc(docP.id)
+                  .collection("Ranking")
+                  .onSnapshot((querySnapshot) => {
+                    const nrankings = [];
+                    allranking = allranking.filter((p) => p.fk !== docP.id);
+                    querySnapshot.forEach((docE) => {
+                      nrankings.push({
+                        fkp: doc.id,
+                        fk: docP.id,
+                        crewName: docP.data().name,
+                        id: docE.id,
+                        ...docE.data(),
+                      });
+                    });
+                    allranking = [...allranking, ...nrankings];
+                    setRankings([...allranking]);
+                  });
+              });
+              allCrews = [...allCrews, ...ncrews];
+              setCrews([...allCrews]);
+              
+              console.log("Crews", allCrews);
+            });
+        });
+      });
+  }, []);
+
 
   useEffect(() => {
     db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
+      .doc(firebase.auth().currentUser.uid) //the user id
       .collection("Cars")
       .onSnapshot((querySnapshot) => {
-        const Cars = [];
+        const Cars = []; 
         querySnapshot.forEach((doc) => {
           Cars.push({
             fk: firebase.auth().currentUser.uid,
@@ -148,18 +204,17 @@ export default function CampusMap() {
           });
         });
         setCar(Cars.filter((c) => c.current === true)[0]);
-        setPromotionValid(" ");
-        console.log("My car ------", Cars.filter((c) => c.current === true)[0]);
       });
   }, []);
 
   useEffect(() => {
     let totalAmount = 0;
+
     if (
-      car &&
-      car.Parking &&
-      car.Parking.status === 2 &&
-      car.Parking.DateTime
+      car && 
+      car.Parking && 
+      car.Parking.status === 2 && 
+      car.Parking.DateTime 
     ) {
       const hours = Math.floor(
         Math.abs(
@@ -175,8 +230,7 @@ export default function CampusMap() {
       console.log("hours", hours);
       setHours(hours);
     }
-
-    setTotal(totalAmount.toFixed(2));
+    setTotal(Math.round(totalAmount * 100) / 100);
   }, [promotionValid]);
 
   useEffect(() => {
@@ -207,6 +261,7 @@ export default function CampusMap() {
   // }, [location]);
 
   useEffect(() => {
+    //the below code is not used in this stage; it gets all the pakings from all ParkingLots
     // db.collection("ParkingLots")
     //   .get()
     //   .then(querySnapshot => {
@@ -248,7 +303,6 @@ export default function CampusMap() {
   }, []);
 
   const markerClick = (parking) => {
-    //setGoto(mapRegion);
     setGoto({
       latitude: parking.latitude,
       longitude: parking.longitude,
@@ -256,6 +310,7 @@ export default function CampusMap() {
       longitudeDelta: 0.0004,
     });
     setModalVisible(true);
+    setModalVisible3(true)
     setParking(parking);
     setPromotionValid("");
   };
@@ -268,6 +323,14 @@ export default function CampusMap() {
   const handleCarParking = async (i, o) => {
     let temp = parking;
     temp.status = i;
+    //Call the function handleParkings
+    // temp= The parking object involved in operations,
+    // car= The user car object,
+    // promotion= object that contains a discount percentage
+    // ServicesToAdd= services The user want to be completed,
+    //crew= Which crew to add the services to complete to
+    // operation= the operation the user want to do "Leave", "park", "Reserve", or "CancelReservation" of a parking
+    // hours = number of hours the user was parked for
     const response2 = await handleParkings({
       uid,
       temp,
@@ -364,7 +427,8 @@ export default function CampusMap() {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-    } else {
+    }
+    else {
       getLocation();
       setGoto({
         latitude: location.coords.latitude,
@@ -383,17 +447,70 @@ export default function CampusMap() {
     setModalVisible2(true);
     //setGoto(mapRegion);
   };
+ 
+  const ratingCompleted=(rating) =>{
+    
+    console.log("Rating is: " + rating)
+  }
 
   return (
-    //View is a container that supports layout
     <View style={styles.container}>
-      {/* The Modal component is a basic way to present content above an enclosing view.
-        The animationType prop controls how the modal animates. the "slide" value make the modal slides in from the bottom
-        The transparent prop determines whether your modal will fill the entire view. Setting this to true will render the modal over a transparent background.
-        The visible prop determines whether the modal is visible. its value is a state variable that changes to true or false to show or hide the modal.
-        the key prop is used because the modal is inside a map function
-        */}
       <View>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible3}
+          onRequestClose={() => {
+            setModalVisible3(false);
+          }}
+          key={rankings.id}
+        >
+          <View style={{ marginTop: 22 }}>
+  <View
+    style={{
+      margin: "20%",
+      backgroundColor: "white",
+      height: 230,
+      color:"white"
+    }}
+  >
+    
+    {rankings.map((ranking, i) => (
+          <View>
+            <Text style={styles.getStartedText}>Rank our service</Text>
+            <Text style={styles.getStartedText}>
+              {ranking.number} - crew
+              Name:{ranking.crewName}
+            </Text>  
+
+<Text>{number}</Text>
+
+
+<AirbnbRating
+              count={5}
+              reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+              defaultRating="0"
+              minValue={1}
+              size={20}
+              onFinishRating={ratingCompleted}
+            />
+ <TouchableHighlight
+                    style={styles.buttonGreen}
+                    onPress={() => {
+                      setModalVisible3(false);
+                    }}
+                  >
+                    <Text>OK</Text>
+                  </TouchableHighlight>        
+                    </View>
+        ))}
+       
+          
+   
+  </View>
+</View>
+          
+          </Modal>
         <Modal
           animationType="slide"
           transparent={true}
@@ -483,6 +600,41 @@ export default function CampusMap() {
                     justifyContent: "center",
                   }}
                 >
+                  <Text style={{ textAlign: "center" }}>
+                    Go to the parkign lot next to building...{" "}
+                  </Text>
+                  {/* <Picker
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+                    selectedValue={ParkingLot}
+                    onValueChange={(itemValue) => setParkingLot(itemValue)}
+                  >
+                    {ParkingLots.map((ParkingLot, i) => (
+                      <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+                    ))}
+                  </Picker> */}
+                  <TouchableHighlight
+                    style={styles.buttonHide}
+                    onPress={() => {
+                      setModalVisible2(false);
+                    }}
+                  >
+                    <Text style={{ textAlign: "center" }}>Go </Text>
+                  </TouchableHighlight>
+                </View>
+              </Animatable.View>
+              <Animatable.View
+                animation="fadeInUp"
+                iterationCount={1}
+                direction="alternate"
+              >
+                <View
+                  style={{
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <TouchableHighlight
                     style={styles.buttonHide}
                     onPress={() => {
@@ -516,92 +668,102 @@ export default function CampusMap() {
         // pitchEnabled={false}
         // toolbarEnabled={false}
       >
-        {parkings &&
-          parkings.map((parking) => (
-            <MapView.Marker
-              key={parking.id + parking.fk}
-              coordinate={{
-                latitude: parking.latitude,
-                longitude: parking.longitude,
-              }}
-              pinColor="green"
-              onPress={() => markerClick(parking)}
-            >
-              <View
-                style={[
-                  parking.type !== "normal"
-                    ? {
-                        borderColor:
-                          parking.type === "gold" ? "#FFD700" : "#ffffff",
-                        borderWidth: 2,
-                        backgroundColor:
-                          parking.type === "gold" ? "#FFD700" : "#ffffff",
-                      }
-                    : {
-                        borderColor: "black",
-                        borderWidth: 2,
-                        backgroundColor: "white",
-                      },
-                ]}
+        {/* <MapViewDirections
+          origin={location}
+          destination={{ latitude: "25.360785", longitude: "51.478388" }}
+          apikey={"AIzaSyBRHnzLFv5McdodhkYLZ2sjxOxuO-mzatw"}
+          // strokeWidth={3}
+          // strokeColor="hotpink"
+        /> */}
+        {
+          parkings &&
+            parkings.map((parking) => (
+              <MapView.Marker
+                key={parking.id + parking.fk}
+                coordinate={{
+                  latitude: parking.latitude,
+                  longitude: parking.longitude,
+                }}
+                pinColor="green"
+                onPress={() => markerClick(parking)}
               >
-                {parking.status === 2 ? (
-                  car &&
-                  car.Parking &&
-                  car.Parking.id &&
-                  car.Parking.id === parking.id ? (
-                    //Using Animatable.View To animate the element
-                    //choosing the name of the animation inside the prop "animation"
-                    //choosing how many times to run the animation inside the prop "iterationCount", useing "infinite" for looped animations.
-                    //choosing direction of animation, which is especially useful for repeating animations inside the prop "direction"
-                    <Animatable.View
-                      animation="rubberBand"
-                      iterationCount="infinite"
-                      direction="alternate"
-                    >
-                      {/* The element to be animated is an icon "MaterialCommunityIcons" */}
-                      <MaterialCommunityIcons
-                        name="car-brake-parking"
-                        size={24}
-                        color="purple"
+                <View
+                  style={[
+                    parking.type !== "normal"
+                      ? {
+                          borderColor:
+                            parking.type === "gold"
+                              ? "#FFD700"
+                              : 
+                                "#ffffff",
+                          borderWidth: 2,
+                          backgroundColor:
+                            parking.type === "gold" ? "#FFD700" : "#ffffff",
+                        }
+                      : 
+                        {
+                          borderColor: "black",
+                          borderWidth: 2,
+                          backgroundColor: "white",
+                        },
+                  ]}
+                >
+                  {
+                    parking.status === 2 ? (
+                      car &&
+                      car.Parking &&
+                      car.Parking.id &&
+                      car.Parking.id === parking.id ? (
+                        <Animatable.View
+                          animation="rubberBand"
+                          iterationCount="infinite"
+                          direction="alternate"
+                        >
+                          <MaterialCommunityIcons
+                            name="car-brake-parking"
+                            size={24}
+                            color="purple"
+                          />
+                        </Animatable.View>
+                      ) : (
+                        
+                        <Image
+                          source={require("../assets/images/red.png")}
+                          style={{ width: 22, height: 14 }}
+                        />
+                      )
+                    ) : 
+                    parking.status === 0 ? (
+                      <Image
+                        source={require("../assets/images/green.png")}
+                        style={{ width: 22, height: 14 }}
                       />
-                    </Animatable.View> //closing tag for Animatable
-                  ) : (
-                    //Image is a React component for displaying different types of images
-                    //source prop The image source (either a remote URL or a local file resource). in this case local file
-                    <Image
-                      source={require("../assets/images/red.png")}
-                      style={{ width: 22, height: 14 }}
-                    />
-                  )
-                ) : parking.status === 0 ? (
-                  <Image
-                    source={require("../assets/images/green.png")}
-                    style={{ width: 22, height: 14 }}
-                  />
-                ) : car &&
-                  car.Parking &&
-                  car.Parking.id &&
-                  car.Parking.id === parking.id ? (
-                  <Animatable.View
-                    animation="flash"
-                    iterationCount="infinite"
-                    direction="alternate"
-                  >
-                    <MaterialCommunityIcons
-                      name="registered-trademark"
-                      size={24}
-                      color="purple"
-                    />
-                  </Animatable.View>
-                ) : (
-                  <Image
-                    source={require("../assets/images/yellow.png")}
-                    style={{ width: 22, height: 14 }}
-                  />
-                )}
-              </View>
-            </MapView.Marker>
-          ))}
+                    ) : 
+                    car.Parking &&
+                      car.Parking.id &&
+                      car.Parking.id === parking.id ? (
+                      <Animatable.View
+                        animation="flash"
+                        iterationCount="infinite"
+                        direction="alternate"
+                      >
+                        <MaterialCommunityIcons
+                          name="registered-trademark"
+                          size={24}
+                          color="purple"
+                        />
+                      </Animatable.View>
+                    ) : (
+                      <Image
+                        source={require("../assets/images/yellow.png")}
+                        style={{ width: 22, height: 14 }}
+                      />
+                    )
+                  }
+                </View>
+              </MapView.Marker>
+            ))
+        }
         <MapView.Marker
           coordinate={{
             latitude: location.coords.latitude,
@@ -695,11 +857,7 @@ export default function CampusMap() {
                         direction="alternate"
                       >
                         <View>
-                          {/*A wrapper for making views respond properly to touches 
-                           On press down, the opacity of the wrapped view is decreased, which allows the underlay color to show through, darkening or tinting the view.
-                           TouchableHighlight must have one child in this case a text component
-                           the prop onPress determine the function to use when the TouchableHighlight is pressed
-                           the prop style  determine the style of the TouchableHighlight*/}
+                         
                           <TouchableHighlight
                             style={styles.buttonGreen}
                             onPress={() => {
@@ -743,7 +901,6 @@ export default function CampusMap() {
                         width: "100%",
                       }}
                     >
-                      {/*TextInput A foundational component for inputting text into the app via a keyboard. */}
                       <TextInput
                         style={{
                           height: 40,
@@ -795,33 +952,32 @@ export default function CampusMap() {
                         </Text>
                       )}
                       <View style={{ alignItems: "center" }}>
-                        {Services &&
-                          Services.map((Service) => (
-                            // CheckBox is from React Native elements
-                            // the prop "center" aligns checkbox to center
-                            //the prop "title" is the title of checkbox
-                            //the prop "checkedIcon" is the checked icon set to "dot-circle-o"
-                            //the prop "uncheckedIcon" is the checked icon set to "circle-o"
-                            //the prop "checked" is the status of checkbox; true for checked and false for unchecked; checking if the element is inside the state array "ServicesToAdd"
-                            //the prop "onPress" is the  function to call when the checkbox is pressed (the function change the value of checked true-false)
-                            <CheckBox
-                              center
-                              title={
-                                <Text style={{ width: "90%" }}>
-                                  {Service.name}
-                                  <Text>: {Service.price} QR</Text>
-                                </Text>
-                              }
-                              key={Service.id}
-                              checkedIcon="dot-circle-o"
-                              uncheckedIcon="circle-o"
-                              checked={
-                                ServicesToAdd.filter((s) => s.id === Service.id)
-                                  .length !== 0
-                              }
-                              onPress={() => handleServicesToAdd(Service)}
-                            />
-                          ))}
+                        {
+                          //if there is an array of Services
+                          Services &&
+                            //maping through all Services and giving the user a way to choose which service to add /request
+                            Services.map((Service) => (
+                              <CheckBox
+                                center
+                                title={
+                                  <Text style={{ width: "90%" }}>
+                                    {Service.name}
+                                    <Text>: {Service.price} QR</Text>
+                                  </Text>
+                                }
+                                key={Service.id}
+                                checkedIcon="dot-circle-o"
+                                uncheckedIcon="circle-o"
+                                checked={
+                                  //check if the Service exist in the ServicesToAdd array (services the user chaos ); true or false
+                                  ServicesToAdd.filter(
+                                    (s) => s.id === Service.id
+                                  ).length !== 0
+                                }
+                                onPress={() => handleServicesToAdd(Service)} //when clicked it goes to the function handleServicesToAdd to add or delete the service
+                              />
+                            ))
+                        }
                       </View>
                       <View
                         style={{
@@ -935,7 +1091,6 @@ function handleHelpPress() {
   );
 }
 
-//A StyleSheet is an abstraction similar to CSS StyleSheets
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",

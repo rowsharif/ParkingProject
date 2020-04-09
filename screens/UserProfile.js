@@ -8,11 +8,16 @@ import {
   Button,
   ImageBackground,
   ProgressBarAndroid,
+  Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { Avatar } from "react-native-elements";
 
 import "firebase/functions";
 import db from "../db";
@@ -61,31 +66,35 @@ const UserProfile = (props) => {
   }, []);
 
   const handleSave = async () => {
+    setView(false);
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     // );
 
-    if (phoneNumber.length === 12) {
+    if(phoneNumber.length===12){
+      
       const updateUser = firebase.functions().httpsCallable("updateUser");
-      const response2 = await updateUser({
-        uid,
-        displayName,
-        photoURL: uri,
-        email,
-        phoneNumber: phoneNumber,
-      });
-      showMessage({
-        title: "Saved!",
-        message: "You will see changes in the next login",
-        type: "success",
-        backgroundColor: "#841584",
-        duration: 2300,
-      });
-
-      setPhonevalidate(true);
-    } else {
-      setPhonevalidate(false);
+    const response2 = await updateUser({
+      uid,
+      displayName,
+      photoURL: uri,
+      email,
+      phoneNumber: phoneNumber,
+    });
+    showMessage({
+      title: "Saved!",
+      message: "You will see changes in the next login",
+      type: "success",
+      backgroundColor:"#75213d",
+      duration:2300
+    });
+    
+    
+      setPhonevalidate(true)
+    }
+    else{
+      setPhonevalidate(false)
       alert(
         "Enter atleast 11 digits of phone number with the country code starting with a +",
         [
@@ -103,9 +112,10 @@ const UserProfile = (props) => {
         { cancelable: false }
       );
     }
-    console.log("ppppppphhhhhhhh", phoneNumber.length);
-    console.log("uuuuuuuuu", phoneNumber);
-
+    // console.log("ppppppphhhhhhhh",phoneNumber.length)
+    // console.log("uuuuuuuuu", phoneNumber);
+    
+   
     // console.log("new displayName", firebase.auth().currentUser.displayName);
   };
 
@@ -160,6 +170,12 @@ const UserProfile = (props) => {
   }, [time]);
 
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.Os == "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    
     <View style={styles.container}>
       <ImageBackground
         source={require("../assets/images/bg11.jpeg")}
@@ -532,6 +548,8 @@ const UserProfile = (props) => {
         </ScrollView>
       </ImageBackground>
     </View>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -590,7 +608,6 @@ export default UserProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   buttonText: {
     textAlign: "center",

@@ -26,7 +26,6 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = (props) => {
-  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
@@ -48,9 +47,20 @@ const UserProfile = (props) => {
     setHasCameraRollPermission(status === "granted");
   };
 
+ 
   useEffect(() => {
     setuid(firebase.auth().currentUser.uid);
-    askPermission();
+    db.collection("users")
+.doc()
+.onSnapshot((querySnapshot) => {
+  let user = {};
+  querySnapshot.forEach((doc) => {
+    user={ id: doc.id,...doc.data() };
+  });
+  setUser({user});
+  
+});
+console.log(users)
   }, []);
 
   const handleSet = () => {

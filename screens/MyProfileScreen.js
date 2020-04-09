@@ -31,6 +31,7 @@ import CRUDParkingLots from "./CRUDParkingLots";
 import CRUDNearestBuildings from "./CRUDNearestBuildings";
 import CRUDMyPayments from "./CRUDMyPayments";
 import CRUDPayments from "./CRUDPayments";
+console.disableYellowBox = true;
 
 ////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
 ///////////////Below, are different screens that are used within the screens folder. The initial screen is set as the userprofile screen. The userprofile screen then calls the other screens

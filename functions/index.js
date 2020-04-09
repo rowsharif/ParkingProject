@@ -59,17 +59,20 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   }
 });
 
+
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
-  console.log("service data befor", data.promotion.endDateTime);
+  console.log("promotion data before", data.promotion.endDateTime);
   data.promotion.endDateTime = new Date(data.promotion.endDateTime);
-  console.log("service data", data.promotion.endDateTime);
-  // check for things not allowed
-  // only if ok then add message
+  console.log("promotion data", data.promotion.endDateTime);
   if (data.operation === "add") {
     db.collection("Promotions").add(data.promotion);
-  } else if (data.operation === "delete") {
+  }
+   else if 
+   (data.operation === "delete") {
     db.collection("Promotions").doc(data.promotion.id).delete();
-  } else {
+  } 
+  else 
+   {
     db.collection("Promotions").doc(data.promotion.id).update(data.promotion);
   }
 });

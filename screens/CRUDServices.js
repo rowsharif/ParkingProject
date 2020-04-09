@@ -16,6 +16,8 @@ import * as Animatable from 'react-native-animatable';
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 const handleServices = firebase.functions().httpsCallable("handleServices");
 
 

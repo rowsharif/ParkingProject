@@ -22,6 +22,8 @@ import db from "../db.js";
 import { Avatar } from "react-native-elements";
 
 import Message from "./Message.js";
+console.disableYellowBox = true;
+
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(true);

@@ -6,6 +6,7 @@ import {
   FontAwesome 
 } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable';
+console.disableYellowBox = true;
 
 
 export default function NewsletterScreen() {

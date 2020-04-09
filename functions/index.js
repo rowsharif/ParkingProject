@@ -30,26 +30,25 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
   db.collection("messages").add(data);
 });
 
-/////////handleservices method takes two parameters: data, and optional context
 exports.handleServices = functions.https.onCall(async (data, context) => {
-  ///the method first checks if the operation is "add"
   if (data.operation === "add") {
-    ///then the data object will be added to the database using the query
     db.collection("Services").add(data.service);
   }
-  
-  ///if not, the it will check if the data operation is "delete" 
 else if (data.operation === "delete") {
-  //it will delete the object from the database refering to the id(document) of the object called using a query
     db.collection("Services").doc(data.service.id).delete();
   } 
-  ///if none of the above conditions match
-
   else {
-    ///then it will edit the object existing in the database by refering the id(document) in the database and send back the new edited object to the database using a query
     db.collection("Services").doc(data.service.id).update(data.service);
   }
 });
+
+exports.handleRole = functions.https.onCall(async (data, context) => {
+  
+    db.collection("users").doc(data.user.id).update(data.user);
+  
+});
+
+
 
 exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);

@@ -12,10 +12,13 @@ import {
   View,
   Picker,
 } from "react-native";
+import IOSPicker from 'react-native-ios-picker';
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
 const CRUDCrew = (props) => {
@@ -107,7 +110,6 @@ const CRUDCrew = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      {console.log("------------------------", fkp)}
       {
         //looping threw all crews array objects; calling the object at the time crew
         crews.map((crew, i) => (
@@ -127,7 +129,20 @@ const CRUDCrew = (props) => {
         placeholder="Name"
         value={name}
       />
-      <Picker
+      {Platform.OS === "ios" ? 
+       <IOSPicker 
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={pname}
+        onValueChange={(itemValue) => setPname(itemValue)}
+      >
+        {pnames.map((pname, i) => (
+          <Picker.Item label={pname.name} value={pname} />
+        ))}
+      </IOSPicker >
+      
+:
+     <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
         selectedValue={pname}
@@ -137,6 +152,7 @@ const CRUDCrew = (props) => {
           <Picker.Item label={pname.name} value={pname} />
         ))}
       </Picker>
+}
       <Button title="Send" onPress={handleSend} />
       <Button
         color="green"

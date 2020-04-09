@@ -16,34 +16,16 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 
 const CRUDrankings = (props) => {
   const [rankings, setRankings] = useState([]);
   const [crews, setCrews] = useState([]);
   const [crew, setCrew] = useState({});
-  const [displayName, setDisplayName] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("+974");
-  const [email, setemail] = useState("");
-  const [parking, setParking] = useState([]);
-  const [type, setType] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [identifier, setIdentifier] = React.useState("");
-  const [id, setId] = React.useState("");
-  const [fkp, setFkp] = useState();
-  const [fk, setFk] = useState();
-  const [services, setServices] = useState([]);
-  // const [crewName,setCrewName]=useState()
-  useEffect(() => {
-    db.collection("Services").onSnapshot((querySnapshot) => {
-      const services = [];
-      querySnapshot.forEach((doc) => {
-        services.push({ id: doc.id, ...doc.data() });
-      });
-      console.log(" Current services: ", services);
-      setServices([...services]);
-    });
-  }, []);
+  
+  const [number,setNumber]=useState()
+  
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -61,7 +43,6 @@ const CRUDrankings = (props) => {
               allCrews = allCrews.filter((p) => p.fk !== doc.id);
               querySnapshot.forEach((docP) => {
                 ncrews.push({ fk: doc.id, id: docP.id, ...docP.data() });
-
                 db.collection("ParkingLots")
                   .doc(doc.id)
                   .collection("Crew")
@@ -74,7 +55,7 @@ const CRUDrankings = (props) => {
                       nrankings.push({
                         fkp: doc.id,
                         fk: docP.id,
-                        crewName: docP.name,
+                        crewName: docP.data().name,
                         id: docE.id,
                         ...docE.data(),
                       });
@@ -85,98 +66,61 @@ const CRUDrankings = (props) => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
+              
               console.log("Crews", allCrews);
             });
         });
       });
   }, []);
 
+  const ratingCompleted=(rating) =>{
+    
+    console.log("Rating is: " + rating)
+  }
   const handleSend = async () => {
-    if (id) {
-      if (crew.id === fk) {
-        const response2 = await handleEmployee({
-          employee: { id, type, name, identifier, fk, fkp },
-          operation: "update",
-        });
-      } else {
-        const response2 = await handleEmployee({
-          employee: { id, type, name, identifier, fk, fkp },
-          operation: "delete",
-        });
-        const response3 = await handleEmployee({
-          employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
-          operation: "add",
-        });
-      }
-    } else {
+   
       // call serverless function instead
       const response2 = await handleEmployee({
-        employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
+        employee: { number, fk: crew.id, fkp: crew.fk },
         operation: "add",
       });
-    }
-    setType("");
-    setName("");
-    setId("");
-    setIdentifier("");
-    // setCrew("")
-  };
+      };
 
   
   
   return (
     <ScrollView>
       <View style={styles.container}>
-        {rankings.map((employee, i) => (
+        {rankings.map((ranking, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {employee.identifier} - {employee.name} - {employee.type} - crew
-              Name:{employee.crewName}
-            </Text>
+              {ranking.number} - crew
+              Name:{ranking.crewName}
+            </Text>  
+
+<Text>{number}</Text>
+
+
+<AirbnbRating
+              count={5}
+              reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+              defaultRating="0"
+              minValue={1}
+              size={20}
+              onFinishRating={ratingCompleted}
+            />
+
           </View>
         ))}
-        <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={setIdentifier}
-          placeholder="Identifier"
-          value={identifier}
-        />
-
-        <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={type}
-          onValueChange={(itemValue) => setType(itemValue)}
-        >
-          {services.map((service, i) => (
-            <Picker.Item label={service.name} value={service.name} />
-          ))}
-        </Picker>
-
-        <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={setName}
-          placeholder="Name"
-          value={name}
-        />
-
-        <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={crew}
-          onValueChange={(itemValue) => setCrew(itemValue)}
-        >
-          {crews.map((crew, i) => (
-            <Picker.Item label={crew.name} value={crew} />
-          ))}
-        </Picker>
-
-        <Button title="Send" onPress={handleSend} />
+       
+       
+    
+        {/* <Button title="Send" onPress={handleSend} />
         <Button
           color="green"
           title="Cancel"
           onPress={() => props.navigation.goBack()}
-        ></Button>
+        ></Button> */}
       </View>
     </ScrollView>
   );

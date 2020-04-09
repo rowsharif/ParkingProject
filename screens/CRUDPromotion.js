@@ -119,8 +119,6 @@ const [startingdate,setStartingdate]=useState("");
         value={percent}
       />
 
-
-
       <TextInput
         style={{ margin:5,width:300,height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setCode}
@@ -142,7 +140,7 @@ const [startingdate,setStartingdate]=useState("");
          mode="date"
          placeholder={endDateTime}
          format="YYYY-MM-DD"
-         minDate="2020-01-01"
+         minDate={startingdate}
          maxDate="2022-06-01"
          confirmBtnText="Confirm"
          cancelBtnText="Cancel"

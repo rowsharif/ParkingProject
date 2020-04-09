@@ -21,7 +21,6 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = (props) => {
-  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
@@ -34,14 +33,22 @@ const UserProfile = (props) => {
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
   const [phonevalidate, setPhonevalidate] = useState(false);
-  const askPermission = async () => {
-    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-    setHasCameraRollPermission(status === "granted");
-  };
+const[users,setUsers]=useState([])
 
+ 
   useEffect(() => {
     setuid(firebase.auth().currentUser.uid);
-    askPermission();
+    db.collection("users")
+.where("id", "==", firebase.auth().currentUser.uid)
+.onSnapshot((querySnapshot) => {
+  const users = [];
+  querySnapshot.forEach((doc) => {
+    users.push({ id: doc.id, role:doc.data().role,...doc.data() });
+  });
+  setUsers([...users]);
+  
+});
+console.log(users)
   }, []);
 
   const handleSet = () => {
@@ -278,8 +285,17 @@ const UserProfile = (props) => {
             >
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
-
-            {/* props.navigation.navigate is a prop that is used in a screen component to navigate between screens withing the toplevel stack. .navigate() function goes to another screen and figures out the action that is needed to take along  */}
+            </View>
+            
+{users.role=="manager"?
+ <View
+ style={{
+   flexDirection: "row",
+   flex: 2,
+   flexWrap: "wrap",
+   justifyContent: "center",
+ }}
+>
             <TouchableOpacity
               style={{
                 borderWidth: 1,
@@ -323,11 +339,40 @@ const UserProfile = (props) => {
                 alignSelf: "center",
                 padding: "3%",
               }}
-              onPress={() => props.navigation.navigate("CRUDMyProfile")}
+              onPress={() => props.navigation.navigate("CRUDPromotion")}
             >
-              <Text style={styles.buttonText}>My Profile</Text>
+              <Text style={styles.buttonText}>Handle Promotion</Text>
+            </TouchableOpacity> 
+             <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                textAlign: "center",
+                borderColor: "blue",
+                backgroundColor: "#d6fffc",
+                width: "auto",
+                margin: "3%",
+                alignSelf: "center",
+                padding: "3%",
+              }}
+              onPress={() => props.navigation.navigate("CRUDEmployee")}
+            >
+              <Text style={styles.buttonText}>Handle Employee</Text>
             </TouchableOpacity>
-
+             <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                textAlign: "center",
+                borderColor: "blue",
+                backgroundColor: "#d6fffc",
+                width: "auto",
+                margin: "1%",
+                alignSelf: "center",
+                padding: "3%",
+              }}
+              onPress={() => props.navigation.navigate("EmployeeServices")}
+            >
+              <Text style={styles.buttonText}>EmployeeServices</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={{
                 borderWidth: 1,
@@ -339,10 +384,63 @@ const UserProfile = (props) => {
                 alignSelf: "center",
                 padding: "3%",
               }}
-              onPress={() => props.navigation.navigate("CRUDPromotion")}
+              onPress={() => props.navigation.navigate("CRUDCrew")}
             >
-              <Text style={styles.buttonText}>Handle Promotion</Text>
+              <Text style={styles.buttonText}>Handle Crew</Text>
             </TouchableOpacity>
+
+          
+          
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                textAlign: "center",
+                borderColor: "blue",
+                backgroundColor: "#d6fffc",
+                width: "auto",
+                margin: "1%",
+                alignSelf: "center",
+                padding: "3%",
+              }}
+              onPress={() => props.navigation.navigate("CRUDNewsletter")}
+            >
+              <Text style={styles.buttonText}>Handle Newsletter</Text>
+            </TouchableOpacity>
+             </View>
+:users.role=="student"?
+<View
+            style={{
+              flexDirection: "row",
+              flex: 2,
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          > 
+          <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                textAlign: "center",
+                borderColor: "blue",
+                backgroundColor: "#d6fffc",
+                width: "auto",
+                margin: "3%",
+                alignSelf: "center",
+                padding: "3%",
+              }}
+              onPress={() => props.navigation.navigate("CRUDMyProfile")}
+            >
+              <Text style={styles.buttonText}>My Profile</Text>
+            </TouchableOpacity>
+            </View>
+           :
+           <View
+            style={{
+              flexDirection: "row",
+              flex: 2,
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          > 
             <TouchableOpacity
               style={{
                 borderWidth: 1,
@@ -391,70 +489,11 @@ const UserProfile = (props) => {
               <Text style={styles.buttonText}>Handle NearestBuildings</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDCrew")}
-            >
-              <Text style={styles.buttonText}>Handle Crew</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDEmployee")}
-            >
-              <Text style={styles.buttonText}>Handle Employee</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("EmployeeServices")}
-            >
-              <Text style={styles.buttonText}>EmployeeServices</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDNewsletter")}
-            >
-              <Text style={styles.buttonText}>Handle Newsletter</Text>
-            </TouchableOpacity>
-
+            
+            </View>
+}
             {/* </ScrollView> */}
-          </View>
+          
         </ScrollView>
       </ImageBackground>
     </View>

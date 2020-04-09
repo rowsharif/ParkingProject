@@ -19,17 +19,8 @@ import db from "../db.js";
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);
-  const [car, setCar] = useState([]);
 
-  useEffect(() => {
-    db.collection("Cars").onSnapshot((querySnapshot) => {
-      const car = [""];
-      querySnapshot.forEach((doc) => {
-        car.push({ id: doc.id, ...doc.data() });
-      });
-      setCar([...car]);
-    });
-  }, []);
+  
 
   useEffect(() => {
     db.collection("History").onSnapshot((querySnapshot) => {
@@ -57,7 +48,6 @@ const CRUDhistories = (props) => {
           <Text>
             Total Amount - {history.TotalAmount > 0 ? history.TotalAmount : "_"}
           </Text>
-          <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
           <Text>
             Date - {history.DateTime.toDate().getDate()}-
             {history.DateTime.toDate().getMonth()}-

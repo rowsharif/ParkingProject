@@ -28,6 +28,7 @@ import {
   FontAwesome5, 
 } from "@expo/vector-icons";
 import Message from "./Message.js";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(true);
@@ -42,7 +43,7 @@ export default function HomeScreen() {
   const [currentUser, setCurrentUser] = useState({});
   const [welcome, setWelcome] = useState(true);
 
-
+  const s = welcome.sort
   // useEffect(() => {
   //   db.collection("messages").onSnapshot(querySnapshot => {
   //     const messages = [];
@@ -138,6 +139,14 @@ export default function HomeScreen() {
     console.log("Cars", Cars);
     setModalVisible(false);
     setCar(c);
+    
+    showMessage({
+      title: `Welcome!`,
+      message:`Welcome ${currentUser.displayName}!`,
+      type: "success",
+      backgroundColor:"#75213d",
+      duration:2300,
+    });
   };
 
   return (
@@ -146,14 +155,15 @@ export default function HomeScreen() {
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={{height:"100%", backgroundColor:"gray"}}>
+    <View style={{height:"100%" }}>
     <View style={styles.container}>
       <ImageBackground
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
-      >   
-        { welcome &&
-          <View style={{backgroundColor:"#519c5a", height:25, flexDirection:"row", alignItems:"center"}}>
+      > 
+      <View style={{ height:"100%"}}> 
+        {/* { welcome &&
+          <View style={{backgroundColor:"#75213d", height:25, flexDirection:"row", alignItems:"center"}}>
           <Text style={{color:"white", textAlign:"center", width:"90%", paddingLeft:"7%"}}>
             Welcome {currentUser.displayName}!
           </Text>
@@ -161,11 +171,11 @@ export default function HomeScreen() {
             <Feather  name="x" size={15} color="white" onPress={()=> setWelcome(false)} />
           </View>         
           </View>  
-        }   
-        <Text style={{paddingTop:2, marginLeft:"5%", marginTop:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
+        }    */}
+        {/* <Text style={{paddingTop:2, marginLeft:"5%", marginTop:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
           <MaterialCommunityIcons  name="account" size={25} color="black" />
-        </Text>
-        <View style={{marginTop:0,backgroundColor:"lightgray", margin:"5%", height:"30%", flexDirection:"row"}}>          
+        </Text> */}
+        <View style={{marginTop:"18%",backgroundColor:"lightgray", margin:"5%", height:"30%", flexDirection:"row"}}>          
           <View style={{width:"30%", justifyContent:"center", alignItems:"center"}}>
             <Avatar
               rounded
@@ -184,16 +194,26 @@ export default function HomeScreen() {
             
           </View>   
         </View>
-        <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
+        {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
           <FontAwesome5  name="car-side" size={25} color="black" />
-        </Text>
-        <View style={{backgroundColor:"lightgray", margin:"5%", height:"25%",marginTop:0}}>
-          <View style={{height:"80%", justifyContent:"center", alignItems:"center"}}>
-            <Text style={{ fontSize: 17}}>Plate No: {Car && Car.PlateNumber}</Text>
+        </Text> */}
+        <View style={{backgroundColor:"lightgray", margin:"5%", height:"30%"}}>
+          <View style={{flexDirection:"row", height:"80%"}}>
+            <View style={{width:"30%", height:"100%", justifyContent:"center", alignItems:"center"}}>
+              <Avatar
+                rounded
+                source={require("../assets/images/caricon.png")}
+                size="large"
+              />
+            </View>
+            <View style={{width:"70%",height:"100%", justifyContent:"center", alignItems:"flex-start", paddingLeft:20}}>
+                <Text style={{ fontSize: 17}}>Plate No: {Car && Car.PlateNumber}</Text>
+            </View>
           </View>
+          
           <View style={{height:"20%", alignItems:"center"}}>
             <TouchableOpacity
-              style={{backgroundColor:"#276b9c", width:"100%", height:"120%", justifyContent:"center"}}
+              style={{backgroundColor:"#276b9c", width:"100%", height:"150%", justifyContent:"center"}}
               onPress={() => setModalVisible(true)}
             >
               <Text style={styles.buttonText}>Change Car</Text>
@@ -202,14 +222,15 @@ export default function HomeScreen() {
           
         </View>
         
+        
         <View style={{ marginTop: 0 }}>
           <Modal
             animationType="fade"
             transparent={true}
             visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(false);
-            }}
+            // onRequestClose={() => {
+            //   setModalVisible(false);
+            // }}
           >
             
             <View style={{ marginTop: 22, ...Platform.select({ios: {marginTop:45},android: {},})}}>
@@ -309,7 +330,7 @@ export default function HomeScreen() {
             
           </Modal>
         </View>
-        
+        </View> 
       </ImageBackground>
     </View>
     <View style={{justifyContent:"flex-end"}}>

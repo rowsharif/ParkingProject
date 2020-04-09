@@ -51,8 +51,6 @@ else if (data.operation === "delete") {
   }
 });
 
-
-
 exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
 
@@ -61,15 +59,16 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   } else if (data.operation === "delete") {
     db.collection("ParkingLots").doc(data.parkingLot.id).delete();
   } else {
-    db.collection("ParkingLots").doc(data.parkingLot.id).update(data.parkingLots);
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLots);
   }
 });
 
-
-
-
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
-  console.log("service data", data);
+  console.log("service data befor", data.promotion.endDateTime);
+  data.promotion.endDateTime = new Date(data.promotion.endDateTime);
+  console.log("service data", data.promotion.endDateTime);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -267,7 +266,7 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     //add History
     const history = await db.collection("History").add({
       Car: car,
-      ParkingId: data.temp.id,
+      Parking: data.temp,
       DateTime: new Date(),
       Duration: {},
       TotalAmount: {},
@@ -321,14 +320,20 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
       data.promotion && data.promotion.percent
         ? pTotal - pTotal * data.promotion.percent
         : pTotal;
-    totalAmount = Math.floor(totalAmount);
+    totalAmount = totalAmount.toFixed();
     //add Payment (Services,Promotion, Parking AmountPerHour)
     db.collection("Payment").add({
-      CarId: car.id,
-      ParkingId: data.temp.id,
+      Car: car,
+      Parking: data.temp,
       ServicesIds: data.car.Parking.ServicesToAdd,
       TotalAmount: totalAmount,
       Duration: data.hours,
+      uid: data.uid,
+      DateTime: new Date(),
+      promotion:
+        data.promotion && data.promotion.percent
+          ? data.promotion.percent * 100
+          : 0,
     });
     //update History
     let h = {};

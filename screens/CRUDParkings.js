@@ -78,7 +78,7 @@ const CRUDParkings =(props)=> {
     } else {
       
       const response2 = await handleCRUDParkings({
-        parking: { id, longitude, latitude,amountperhour,type },
+        parking: { longitude, latitude,amountperhour,type },
         operation: "add"
       });
     }

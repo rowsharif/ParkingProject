@@ -6099,6 +6099,14 @@ react-native-animatable@^1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
+<<<<<<< HEAD
+react-native-collapse-view@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-collapse-view/-/react-native-collapse-view-1.0.0.tgz#6f730aceb2ecfeecc6ff8b265ba05c4aee63a2ef"
+  integrity sha1-b3MKzrLs/uzG/4smW6BcSu5jou8=
+  dependencies:
+    prop-types "^15.5.10"
+=======
 react-native-date-picker@^2.7.9:
   version "2.7.9"
   resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-2.7.9.tgz#f662d8741a3f78148eccf492d70a1740b035024b"
@@ -6112,6 +6120,7 @@ react-native-datepicker@^1.7.2:
   integrity sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0=
   dependencies:
     moment "^2.22.0"
+>>>>>>> 1197d919d1aaeefbbb9335992e3b80d0a5f09cfa
 
 react-native-elements@^1.2.7:
   version "1.2.7"
@@ -6145,6 +6154,13 @@ react-native-gesture-handler@~1.5.0:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-ios-picker@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-ios-picker/-/react-native-ios-picker-1.0.0.tgz#a2cdf43871b4c932dda9758a50d2c2c4dad02c86"
+  integrity sha512-/QDeij2wxGWwPD9EaFqHXdfB7zQsxHpknBqH5Mxmnetj3zQPZ4OzQf2k+WM+9MYXZUyIsMKGb2NBvHP5MIkLOA==
+  dependencies:
+    react-native-collapse-view "1.0.0"
 
 react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"

@@ -19,117 +19,170 @@ import db from "../db.js";
 const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
 const EmployeeServices = (props) => {
-  const [crews, setCrews] = useState([]);
-  const [parking, setParking] = useState([]);
-  const [name, setName] = React.useState("");
-  const [id, setId] = React.useState("");
-  const [fkp, setFkp] = useState();
-  const [pname, setPname] = useState();
-  const [pnames, setPnames] = useState([]);
+  const [employee, setEmployee] = useState({});
+  const [services, setServices] = useState([]);
+  const [completedServices, setCompletedServices] = useState([]);
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
       .then((querySnapshot) => {
-        const ParkingLots = [];
-        let allCrews = [];
+        let Employee = {};
         querySnapshot.forEach((doc) => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
           db.collection("ParkingLots")
             .doc(doc.id)
             .collection("Crew")
             .onSnapshot((querySnapshot) => {
-              const ncrews = [];
-              allCrews = allCrews.filter((p) => p.fkp !== doc.id);
               querySnapshot.forEach((docP) => {
-                ncrews.push({
-                  fkp: doc.id,
-                  pln: doc.data().name,
-                  id: docP.id,
-                  ...docP.data(),
-                });
+                db.collection("ParkingLots")
+                  .doc(doc.id)
+                  .collection("Crew")
+                  .doc(docP.id)
+                  .collection("Employee")
+                  .onSnapshot((querySnapshot) => {
+                    querySnapshot.forEach((docE) => {
+                      if (
+                        docE.data().identifier ===
+                        firebase.auth().currentUser.email.toString()
+                      ) {
+                        Employee = {
+                          id: docE.id,
+                          ...docE.data(),
+                        };
+                        setEmployee(Employee);
+                        console.log("Employee", Employee);
+                        db.collection("ParkingLots")
+                          .doc(Employee.fkp)
+                          .collection("Crew")
+                          .doc(Employee.fk)
+                          .collection("UserServices")
+                          .onSnapshot((querySnapshot) => {
+                            const services = [];
+                            querySnapshot.forEach((doc) => {
+                              services.push({
+                                id: doc.id,
+                                ...doc.data(),
+                              });
+                            });
+                            setServices([
+                              ...services.filter((s) => s.EmployeeId === ""),
+                            ]);
+                            setCompletedServices([
+                              ...services.filter(
+                                (s) => s.EmployeeId === Employee.id
+                              ),
+                            ]);
+                          });
+                      }
+                    });
+                  });
               });
-              allCrews = [...allCrews, ...ncrews];
-              setCrews([...allCrews]);
-              // console.log("Crews", allCrews);
-              // console.log("Pnames",pnames.name)
-              setPnames([...ParkingLots]);
             });
         });
       });
   }, []);
-
-  const handleSend = async () => {
-    if (id) {
-      if (fkp === pname.id) {
-        const response2 = await handleCrew({
-          crew: { id, name, fkp },
-          operation: "update",
-        });
-      } else {
-        const response2 = await handleCrew({
-          crew: { id, name, fkp },
-          operation: "delete",
-        });
-        const response3 = await handleCrew({
-          crew: { name, fkp: pname.id },
-          operation: "add",
-        });
-      }
-    } else {
-      // call serverless function instead
-      const response2 = await handleCrew({
-        crew: { name, fkp: pname.id },
-        operation: "add",
-      });
-    }
-
-    setName("");
-
-    setId("");
+  const completeService = (service) => {
+    let s = service;
+    s.EmployeeId = employee.id;
+    db.collection("ParkingLots")
+      .doc(employee.fkp)
+      .collection("Crew")
+      .doc(employee.fk)
+      .collection("UserServices")
+      .doc(service.id)
+      .update(s);
   };
 
-  const handleEdit = (crew) => {
-    setName(crew.name);
-    setFkp(crew.fkp);
-
-    setId(crew.id);
-  };
-  const handleDelete = async (crew) => {
-    const response2 = await handleCrew({
-      crew: crew,
-      operation: "delete",
-    });
-  };
   return (
     <ScrollView style={styles.container}>
-      {console.log("------------------------", fkp)}
-      {crews.map((crew, i) => (
-        <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
-          <Text key={i} style={styles.getStartedText}>
-            {crew.name} - {"   "} - {crew.pln} ---
-          </Text>
-          <Button title="Edit" onPress={() => handleEdit(crew)} />
-          <Button title="X" onPress={() => handleDelete(crew)} />
-        </View>
-      ))}
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setName}
-        placeholder="Name"
-        value={name}
-      />
-      <Picker
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        selectedValue={pname}
-        onValueChange={(itemValue) => setPname(itemValue)}
-      >
-        {pnames.map((pname, i) => (
-          <Picker.Item label={pname.name} value={pname} />
-        ))}
-      </Picker>
-      <Button title="Send" onPress={handleSend} />
+      <View style={{ paddingTop: 50, flexDirection: "row" }}>
+        <Text style={styles.getStartedText}>
+          Name: {employee.name} - Type: {employee.type} - Email:{" "}
+          {employee.identifier}
+        </Text>
+      </View>
+      {completed
+        ? completedServices.map((service, i) => (
+            <View
+              key={i}
+              style={{
+                paddingTop: 10,
+                paddingBottom: 10,
+                flexDirection: "row",
+                borderColor: "gray",
+                borderWidth: 1,
+              }}
+            >
+              <Text key={i} style={styles.getStartedText}>
+                Car Plate: {service.Car} - Service: {service.ServiceName}
+              </Text>
+            </View>
+          ))
+        : services.map(
+            (service, i) =>
+              service.ServiceName === employee.type && (
+                <View
+                  key={i}
+                  style={{
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    flexDirection: "row",
+                    borderColor: "gray",
+                    borderWidth: 1,
+                  }}
+                >
+                  <Text key={i} style={styles.getStartedText}>
+                    Car Plate: {service.Car} - Service: {service.ServiceName}
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      borderWidth: 1,
+                      textAlign: "center",
+                      borderColor: "blue",
+                      backgroundColor: "#d6fffc",
+                      width: "20%",
+                      margin: "1%",
+                      padding: "1%",
+                    }}
+                    onPress={() => completeService(service)}
+                  >
+                    <Text style={styles.buttonText}> Complete </Text>
+                  </TouchableOpacity>
+                </View>
+              )
+          )}
+
+      <View style={{ width: "100%", flexDirection: "row" }}>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            textAlign: "center",
+            borderColor: "blue",
+            backgroundColor: "#d6fffc",
+            width: "47%",
+            margin: "1%",
+            padding: "3%",
+          }}
+          onPress={() => setCompleted(false)}
+        >
+          <Text style={styles.buttonText}> Services to Complete </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            textAlign: "center",
+            borderColor: "blue",
+            backgroundColor: "#d6fffc",
+            width: "47%",
+            margin: "1%",
+            padding: "3%",
+          }}
+          onPress={() => setCompleted(true)}
+        >
+          <Text style={styles.buttonText}>Completed Services</Text>
+        </TouchableOpacity>
+      </View>
       <Button
         color="green"
         title="Back"

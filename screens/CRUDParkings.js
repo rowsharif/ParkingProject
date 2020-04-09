@@ -78,7 +78,7 @@ const CRUDParkings =(props)=> {
     } else {
       
       const response2 = await handleCRUDParkings({
-        parking: { id, longitude, latitude,amountperhour,type },
+        parking: { longitude, latitude,amountperhour,type },
         operation: "add"
       });
     }
@@ -110,7 +110,7 @@ const CRUDParkings =(props)=> {
         keyboardShouldPersistTaps="always"
       >
         {parkings.map((parking, i) => (
-          <View style={{ paddingTop: 50, flexDirection: "row" }}>
+          <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
               {parking.latitude} - {parking.longitude} - {parking.amountperhour} - {parking.type}
             </Text>
@@ -155,6 +155,8 @@ const CRUDParkings =(props)=> {
         </Picker>
         
       <Button title="Send" onPress={handleSend} />
+      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
+
     </View>
   );
 }

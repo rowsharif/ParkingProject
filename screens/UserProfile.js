@@ -49,7 +49,6 @@ const UserProfile = (props) => {
   };
 
   useEffect(() => {
-
     setuid(firebase.auth().currentUser.uid);
     askPermission();
   }, []);
@@ -61,13 +60,10 @@ const UserProfile = (props) => {
     setemail(user.email);
     setPhotoURL(user.photoURL);
     setUri(user.photoURL);
-    
   };
 
   useEffect(() => {
     handleSet();
-   
-    
   }, []);
 
   const handleSave = async () => {
@@ -101,14 +97,21 @@ const UserProfile = (props) => {
     else{
       setPhonevalidate(false)
       alert(
-        'Enter atleast 11 digits of phone number with the country code starting with a +',
+        "Enter atleast 11 digits of phone number with the country code starting with a +",
         [
-          {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
+          {
+            text: "Ask me later",
+            onPress: () => console.log("Ask me later pressed"),
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
         ],
         { cancelable: false }
-      )
+      );
     }
     // console.log("ppppppphhhhhhhh",phoneNumber.length)
     // console.log("uuuuuuuuu", phoneNumber);

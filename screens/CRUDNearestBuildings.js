@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -18,52 +18,49 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
 //import { handleParkings } from "../functions";
-const handleNearestBuilding = firebase.functions().httpsCallable("handleNearestBuilding");
+const handleNearestBuilding = firebase
+  .functions()
+  .httpsCallable("handleNearestBuilding");
 
-const CRUDNearestBuildings = (props)=> {
+const CRUDNearestBuildings = (props) => {
   const [nearestBuilding, setNearestBuilding] = useState([]);
   const [number, setNumber] = useState("");
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
-  const [ParkingLot,setParkingLot] = useState([]);
-  const [ParkingLots, setParkingLots] =useState([]);
+  const [ParkingLot, setParkingLot] = useState([]);
+  const [ParkingLots, setParkingLots] = useState([]);
 
   useEffect(() => {
-    db.collection("ParkingLots")
-      .get()
-      .then(querySnapshot => {
-        const ParkingLots = [];
-        let allNearestBuildings = [];
-        querySnapshot.forEach(doc => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
-          db.collection("ParkingLots")
-            .doc(doc.id)
-            .collection("NearestBuildings")
-            .onSnapshot(querySnapshot => {
-              const nNearestBuildings = [];
-              allNearestBuildings = allNearestBuildings.filter(p => p.fk !== doc.id);
-              querySnapshot.forEach(docP => {
-                nNearestBuildings.push({ fk: doc.id, id: docP.id, ...docP.data() });
-              });
-              allNearestBuildings = [...allNearestBuildings, ...nNearestBuildings];
-              setNearestBuilding([...allNearestBuildings]);
-            });
-        });
-        setParkingLots([...ParkingLots]);
+    db.collection("ParkingLots").onSnapshot((querySnapshot) => {
+      const parkingLots = [];
+      querySnapshot.forEach((doc) => {
+        parkingLots.push({ id: doc.id, ...doc.data() });
       });
-    },[]);
+      console.log(" Current parkingLots: ", parkingLots);
+      setParkingLots([...parkingLots]);
+    });
+
+    db.collection("NearestBuildings").onSnapshot((querySnapshot) => {
+      const nearestBuilding = [];
+      querySnapshot.forEach((doc) => {
+        nearestBuilding.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current nearestBuilding: ", nearestBuilding);
+      setNearestBuilding(nearestBuilding);
+    });
+  }, []);
 
   const handleSend = async () => {
     if (id) {
       const response2 = await handleNearestBuilding({
-        nearestBuilding: { id, name, number },
-        operation: "update"
+        nearestBuilding: { id, name, number, ParkingLot },
+        operation: "update",
       });
     } else {
       // call serverless function instead
       const response2 = await handleNearestBuilding({
-        nearestBuilding: { id, name, number },
-        operation: "add"
+        nearestBuilding: { name, number, ParkingLot },
+        operation: "add",
       });
     }
     setName("");
@@ -71,15 +68,18 @@ const CRUDNearestBuildings = (props)=> {
     setId("");
   };
 
-  const handleEdit = nearestBuilding => {
+  const handleEdit = (nearestBuilding) => {
     setName(nearestBuilding.name);
     setNumber(nearestBuilding.number);
     setId(nearestBuilding.id);
+    setParkingLot(
+      ParkingLots.filter((p) => p.id === nearestBuilding.ParkingLot.id)[0]
+    );
   };
-  const handleDelete = async nearestBuilding => {
+  const handleDelete = async (nearestBuilding) => {
     const response2 = await handleNearestBuilding({
       nearestBuilding: nearestBuilding,
-      operation: "delete"
+      operation: "delete",
     });
   };
   return (
@@ -92,7 +92,7 @@ const CRUDNearestBuildings = (props)=> {
         {nearestBuilding.map((nearestBuilding, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {nearestBuilding.name} - {nearestBuilding.number} 
+              {nearestBuilding.name} - {nearestBuilding.number}
             </Text>
             <Button title="Edit" onPress={() => handleEdit(nearestBuilding)} />
             <Button title="X" onPress={() => handleDelete(nearestBuilding)} />
@@ -112,27 +112,32 @@ const CRUDNearestBuildings = (props)=> {
         value={`${number}`}
       />
       <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={ParkingLot}
-          onValueChange={(itemValue) => setParkingLot(itemValue)}
-        >
-          {ParkingLots.map((ParkingLot, i) => (
-            <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-          ))}
-        </Picker>
-       
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={ParkingLot}
+        onValueChange={(itemValue) => setParkingLot(itemValue)}
+      >
+        {ParkingLots.map((ParkingLot, i) => (
+          <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+        ))}
+      </Picker>
+
       <Button title="Send" onPress={handleSend} />
+      <Button
+        color="green"
+        title="Cancel"
+        onPress={() => props.navigation.goBack()}
+      ></Button>
     </View>
   );
-}
+};
 
 CRUDNearestBuildings.navigationOptions = {
   headerTitle: (
     <View
       style={{
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -142,14 +147,14 @@ CRUDNearestBuildings.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         MyProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 2,
         }}
       ></View>
 
@@ -159,7 +164,7 @@ CRUDNearestBuildings.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -168,30 +173,29 @@ CRUDNearestBuildings.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 export default CRUDNearestBuildings;
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-     
-      //alignItems: 'center',
-      //justifyContent: "center",
-    
+    flex: 1,
+
+    //alignItems: 'center',
+    //justifyContent: "center",
   },
   picker: {
     width: 200,
-    backgroundColor: '#FFF0E0',
-    borderColor: 'black',
+    backgroundColor: "#FFF0E0",
+    borderColor: "black",
     borderWidth: 1,
   },
   pickerItem: {
-    color: 'red'
+    color: "red",
   },
-}); 
+});

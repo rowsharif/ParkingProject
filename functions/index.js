@@ -44,8 +44,25 @@ exports.handleServices = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.handlePromotion = functions.https.onCall(async (data, context) => {
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots").doc(data.parkingLot.id).delete();
+  } else {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLots);
+  }
+});
+
+exports.handlePromotion = functions.https.onCall(async (data, context) => {
+  console.log("service data befor", data.promotion.endDateTime);
+  data.promotion.endDateTime = new Date(data.promotion.endDateTime);
+  console.log("service data", data.promotion.endDateTime);
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
@@ -59,18 +76,17 @@ exports.handlePromotion = functions.https.onCall(async (data, context) => {
 
 exports.handleCrew = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
-  // check for things not allowed
-  // only if ok then add message
   if (data.operation === "add") {
     db.collection("ParkingLots")
       .doc(data.crew.fkp)
       .collection("Crew")
       .add(data.crew);
-  } else if (data.operation === "delete") {
+  } //if the operation is delete
+  else if (data.operation === "delete") {
     db.collection("ParkingLots")
-      .doc(data.crew.fkp)
+      .doc(data.crew.fkp) // the id of the Crew's ParkingLot; the variable data.crew.fkp came as a parameter to the function
       .collection("Crew")
-      .doc(data.crew.id)
+      .doc(data.crew.id) // the id of the Crew; the variable data.crew.id came as a parameter to the function
       .delete();
   } else {
     db.collection("ParkingLots")
@@ -170,109 +186,198 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   response.send("All done ");
 });
 
+exports.handleNearestBuilding = functions.https.onCall(
+  async (data, context) => {
+    console.log("NearestBuilding data", data);
+    // check for things not allowed
+    // only if ok then add message
+    if (data.operation === "add") {
+      db.collection("NearestBuildings").add(data.nearestBuilding);
+    } else if (data.operation === "delete") {
+      db.collection("NearestBuildings").doc(data.nearestBuilding.id).delete();
+    } else {
+      db.collection("NearestBuildings")
+        .doc(data.nearestBuilding.id)
+        .update(data.nearestBuilding);
+    }
+  }
+);
+///////handle handleCRUDParkings
+exports.handleCRUDParkings = functions.https.onCall(async (data, context) => {
+  console.log("parking data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .add(data.Parking);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .delete();
+  } else {
+    db.collection("ParkingsLots")
+      .doc(data.parking.fk)
+      .collection("Parkings")
+      .doc(data.parking.id)
+      .update(data.parking);
+  }
+});
+
+exports.handleParkingLot = functions.https.onCall(async (data, context) => {
+  console.log("service data", data);
+  // check for things not allowed
+  // only if ok then add message
+  if (data.operation === "add") {
+    db.collection("ParkingLots").add(data.parkingLot);
+  } else if (data.operation === "delete") {
+    db.collection("ParkingLots").doc(data.parkingLot.id).delete();
+  } else {
+    db.collection("ParkingLots")
+      .doc(data.parkingLot.id)
+      .update(data.parkingLots);
+  }
+});
+
 // 2
 exports.handleParkings = functions.https.onCall(async (data, context) => {
   console.log("handleParkings data", data.uid);
-  // temp,
-  // car,
-  // promotion
-  // ServicesToAdd,
-  //crew,
-  // operation
-  // hours
-  let total = 0;
+  //bellow are the data variables coming from the database
+  // temp= The parking object involved in operations,
+  // car= The user car object,
+  // promotion= object that contains a discount percentage
+  // ServicesToAdd= services The user want to be completed,
+  //crew= Which crew to add the services to complete to
+  // operation= the operation the user want to do "Leave", "park", "Reserve", or "CancelReservation" of a parking
+  // hours = number of hours the user was parked for
 
+  //Setting the initial value of total to 0
+  let total = 0;
+  //Making the variable car equal to the car object coming from the database; For easy usage
   let car = data.car;
+  // Setting the variable sta to include all the services that the user choses to be entered to the database as (UserServices collection) in a later stage
   let sta = [];
+
+  //If the user "Park"
   if (data.operation === "Park") {
-    //add History
+    //add History to the database
+    //await: used to make the function wait until the operation add to be compleated (until the promise settles)
     const history = await db.collection("History").add({
-      Car: car,
-      ParkingId: data.temp.id,
-      DateTime: new Date(),
-      Duration: {},
-      TotalAmount: {},
-      uid: data.uid,
+      Car: car, //save car object
+      Parking: data.temp, //save Parking object
+      DateTime: new Date(), //current date and time
+      Duration: {}, //Left as an empty object to determine that the user is still on campus
+      TotalAmount: {}, //Left as an empty object to determine that the user is still on campus
+      uid: data.uid, //The id of the user
     });
 
+    //If the status of the parking is 0 that means its empty, 1 is reserved, and 2 is full
     if (data.car.Parking.status === 1) {
+      //set the variable sta to the services that are saved in the parking object inside the car object (because the parking was reserved and that where the services were restored)
       sta = car.Parking.ServicesToAdd;
     } else {
+      //set the variable sta to the services that came from the parameter data
       sta = data.ServicesToAdd;
     }
+    //seting the total to the sum of the services price
     total = sta.reduce(
       (previousScore, currentScore, index) =>
-        previousScore + currentScore.price,
+        previousScore + parseInt(currentScore.price),
       0
     );
-    //add UserServices
+    //add UserServices objects to the collection "UserServices"
     sta.map((Service) => {
       return db
         .collection("ParkingLots")
-        .doc(data.temp.fk)
+        .doc(data.temp.fk) // the parking lot of the parking
         .collection("Crew")
-        .doc(data.crew.id)
+        .doc(data.crew.id) // the crew of that parking
         .collection("UserServices")
         .add({
-          CarId: car.id,
-          ServiceId: Service.id,
+          Car: car.PlateNumber,
+          ServiceName: Service.name,
           ParkingId: data.temp.id,
           DateTime: new Date(),
-          EmployeeId: {},
+          EmployeeId: "", //Determines that none of the employees completed this service
         });
     });
-    car.Parking = data.temp;
-    // save for later
-    car.Parking["DateTime"] = new Date();
-    car.Parking["HistoryId"] = history.id;
-    car.Parking["TotalAmount"] = total;
-    car.Parking["ServicesToAdd"] = sta;
-  } else if (data.operation === "Reserve") {
-    car.Parking = data.temp;
-    // save for later
-    car.Parking["ServicesToAdd"] = data.ServicesToAdd;
-  } else if (data.operation === "CancelReservation") {
-    car.Parking = {};
-  } else {
-    //Leave
+    car.Parking = data.temp; //setting the parking from the parameter to the user car object
+    // save for later use ("Leave" operation)
+    car.Parking["DateTime"] = new Date(); //the date and the time when the user parked
+    car.Parking["HistoryId"] = history.id; //the History Id to use later for update
+    car.Parking["TotalAmount"] = total; // the total amount of all requested services
+    car.Parking["ServicesToAdd"] = sta; //save all requested services to the car->parking object
 
+    //If the user "Reserve" a parking
+  } else if (data.operation === "Reserve") {
+    car.Parking = data.temp; //setting the parking from the parameter to the user car object
+    // save for later use ("Park" operation)
+    car.Parking["ServicesToAdd"] = data.ServicesToAdd; //save all requested services came through the function parameter to the car->parking object
+  }
+  //If the user "CancelReservation" of a parking
+  else if (data.operation === "CancelReservation") {
+    //setting the car->parking object to an empty object to etermine that the car is not parked in any cnaq parking
+    car.Parking = {};
+  }
+  //If the user "Leave" a parking
+  else {
+    // pTotal is temp variable used to store the total amount of the parking and services;
+    //it equals the number of hours the user spent on the parking multiplied by the parking amount per an hour plus the total amount of all services requested by the user.
     let pTotal =
       data.hours * car.Parking.amountperhour + car.Parking.TotalAmount;
+    // the totalAmount variable is used to store the total amount after discount if there is any; otherwise it equals to the ptotal variable
     let totalAmount =
       data.promotion && data.promotion.percent
         ? pTotal - pTotal * data.promotion.percent
         : pTotal;
-    totalAmount = Math.floor(totalAmount);
-    //add Payment (Services,Promotion, Parking AmountPerHour)
+    //rounding the totalAmount to 2 decimal places
+    totalAmount = Math.round(totalAmount * 100) / 100;
+    // When leaving the parking a payment object will be created in the “payment” collection in the database
     db.collection("Payment").add({
-      CarId: car.id,
-      ParkingId: data.temp.id,
-      ServicesIds: data.car.Parking.ServicesToAdd,
-      TotalAmount: totalAmount,
-      Duration: data.hours,
+      Car: car, // the user car object
+      Parking: data.temp, // the parking object
+      ServicesIds: data.car.Parking.ServicesToAdd, //All requested services
+      TotalAmount: totalAmount, //the total amount
+      Duration: data.hours, // the Duration
+      uid: data.uid, // the user Id
+      DateTime: new Date(), //the date and time when the user left
+      // the promotion percent if there is any, otherwise "0"
+      promotion:
+        data.promotion && data.promotion.percent
+          ? data.promotion.percent * 100
+          : 0,
     });
-    //update History
+
+    //update the History object in the History collection in the database
     let h = {};
     let dHistory = db
       .collection("History")
-      .doc(car.Parking.HistoryId)
+      .doc(car.Parking.HistoryId) //useing the id saved earlier in the car->parking object to get the History object
       .get((snapshot) => {
         snapshot.forEach((doc) => {
-          h = doc.data();
+          h = doc.data(); //saving the History object in the temp variable "h"
         });
       });
-    h.id = car.Parking.HistoryId;
-    h.TotalAmount = totalAmount;
-    h.Duration = data.hours;
-    db.collection("History").doc(car.Parking.HistoryId).update(h);
+    h.id = car.Parking.HistoryId; // adding the id to the "h" variable since it dose not come with doc.data()
+    h.TotalAmount = totalAmount; // adding the total Amount
+    h.Duration = data.hours; // adding Duration
+    db.collection("History").doc(car.Parking.HistoryId).update(h); // updating the History object in the database by setting it to variable "h"
+    //setting the car->parking object to an empty object to etermine that the car is not parked in any cnaq parking
     car.Parking = {};
   }
-
+  //  updating the Parking object in the "Parkings" collection in the database by setting it to the parking variable that came from the parameter "temp"
   db.collection("ParkingLots")
-    .doc(data.temp.fk)
+    .doc(data.temp.fk) //the ParkingLot id saved in temp object as fk
     .collection("Parkings")
-    .doc(data.temp.id)
+    .doc(data.temp.id) //the Parking id
     .update(data.temp);
 
-  db.collection("users").doc(car.fk).collection("Cars").doc(car.id).update(car);
+  // updating the Car object in the "Cars" collection in the database by setting it to the car variable "car"
+  db.collection("users")
+    .doc(car.fk) //the user id saved in car object as fk
+    .collection("Cars")
+    .doc(car.id) //the car id
+    .update(car);
 });

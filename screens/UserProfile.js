@@ -33,19 +33,19 @@ const UserProfile = (props) => {
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
   const [phonevalidate, setPhonevalidate] = useState(false);
-const[users,setUsers]=useState([])
+const[users,setUser]=useState()
 
  
   useEffect(() => {
     setuid(firebase.auth().currentUser.uid);
     db.collection("users")
-.where("id", "==", firebase.auth().currentUser.uid)
+.doc()
 .onSnapshot((querySnapshot) => {
-  const users = [];
+  let user = {};
   querySnapshot.forEach((doc) => {
-    users.push({ id: doc.id, role:doc.data().role,...doc.data() });
+    user={ id: doc.id,...doc.data() };
   });
-  setUsers([...users]);
+  setUser({user});
   
 });
 console.log(users)

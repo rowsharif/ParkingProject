@@ -41,7 +41,7 @@ function CNAQ_Parking_App() {
       
         <Text style={styles.titleText} >About Us</Text>
         <ScrollView>
-        <Text style={{fontSize:20,margin:"12%"}}>CNA-Q Parking App is designed for the students and faculty members of CNA-Q by the group RANA,
+        <Text style={{fontSize:20,margin:"12%",textAlign:"justify"}}>CNA-Q Parking App is designed for the students and faculty members of CNA-Q by the group RANA,
          allowing useful functionality supporting the needs of people parking at CNA-Q.</Text>
       </ScrollView>
       </View>

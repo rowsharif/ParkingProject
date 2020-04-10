@@ -20,19 +20,17 @@ import { FontAwesome, Octicons } from "@expo/vector-icons";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-////calls the handleServices method from the firebase functions folder,index.js file
-/// httpsCallable is a reference to a "callable" http actions in firebase Functions.
+console.disableYellowBox = true;
+
 const handleServices = firebase.functions().httpsCallable("handleServices");
 
 const CRUDServices = (props) => {
   //////////usestate hook that allows to have state variables in a functional component.
   //////////created an array of services and set it to empty array as an initial value
   const [services, setServices] = useState([]);
-  ////////created a price variable and set the initial value of the price as 0
   const [price, setPrice] = React.useState(0);
   ////created name component and set the initial value as an empty string
   const [name, setName] = React.useState("");
-  ///created id component and set the initial value as an empty string.
   const [id, setId] = React.useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -50,10 +48,8 @@ const CRUDServices = (props) => {
       querySnapshot.forEach((doc) => {
         services.push({ id: doc.id, ...doc.data() });
       });
-      ///// the temporary array will now be carrying objects of Services collections
 
       console.log(" Current services: ", services);
-      //// the useState setservices array will then recieve all the temporary services objects using setServices by filling all the rendered objects
 
       setServices([...services]);
     });
@@ -65,7 +61,6 @@ const CRUDServices = (props) => {
     ///// it checks if there is an id sent,
 
     if (id) {
-      ///then call the handleServices method from the firebase functions folder, index.js. An await is used to wait to get a return from the database since it takes long time to get a return
       const response2 = await handleServices({
         //// sends the service object
         service: { id, name, price },
@@ -75,7 +70,6 @@ const CRUDServices = (props) => {
     }
     ////else if there isnt any id sent
     else {
-      ///then call the handleServices method from the firebase functions folder, index.js. An await is used to wait to get a return from the database since it takes long time to get a return
       const response2 = await handleServices({
         //// creates a new service object
         service: { name, price },
@@ -84,7 +78,6 @@ const CRUDServices = (props) => {
         operation: "add",
       });
     }
-    /// then it sets back the input value to empty string
     setName("");
     setPrice("");
     setId("");
@@ -94,7 +87,6 @@ const CRUDServices = (props) => {
     ///sets the original, before edit name value to the useState
     setName(service.name);
 
-    ///sets the original, before edit price value to the useState
     setPrice(service.price);
 
     ///sets the original, before edit id value to the useState
@@ -106,7 +98,6 @@ const CRUDServices = (props) => {
     ///then call the handleServices method from the firebase functions folder, index.js. An await is used to wait to get a return from the database since it takes long time to get a return
 
     const response2 = await handleServices({
-      ///the service object is recognized
       service: service,
       ////and finally returns the delete operation to check the add query from the method in the firebase function folder
       operation: "delete",

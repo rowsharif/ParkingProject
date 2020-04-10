@@ -6,7 +6,7 @@ import {
   View,
   Button,
   ShadowPropTypesIOS,
-  Image
+  Image,
 } from "react-native";
 import {
   Ionicons,
@@ -17,7 +17,6 @@ import {
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator } from "react-navigation-drawer";
-
 
 import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
@@ -35,6 +34,11 @@ import CRUDParkingLots from "./CRUDParkingLots";
 import CRUDNearestBuildings from "./CRUDNearestBuildings";
 import CRUDMyPayments from "./CRUDMyPayments";
 import CRUDPayments from "./CRUDPayments";
+import FAQ from "./FAQ";
+console.disableYellowBox = true;
+
+import CRUDUserRole from "./CRUDUserRole";
+//import CRUDMyPayments from "./CRUDMyPayments"
 ////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
 ///////////////Below, are different screens that are used within the screens folder. The initial screen is set as the userprofile screen. The userprofile screen then calls the other screens
 ////used within the initial screen using props. defaultNavigationOptions calls objects such as headerstyle, headerTintColor and headerTitleStyle that will reflect on the navigation
@@ -54,6 +58,9 @@ const StackNavigator = createStackNavigator(
     },
     CRUDParkings: {
       screen: CRUDParkings,
+    },
+    FAQ: {
+      screen: FAQ,
     },
     CRUDParkingLots: {
       screen: CRUDParkingLots,
@@ -78,6 +85,9 @@ const StackNavigator = createStackNavigator(
     },
     EmployeeServices: {
       screen: EmployeeServices,
+    },
+    CRUDUserRole: {
+      screen: CRUDUserRole,
     },
   },
   {
@@ -150,8 +160,7 @@ const MyDrawerNavigator = createDrawerNavigator({
   EmployeeServices: {
     screen: EmployeeServices,
   },
-}
-);
+});
 // createAppContainer is a function that is responsible to manage the app and link with the top level container components to take as a parameter (Maintabnavigation)
 const AppContainer = createAppContainer(StackNavigator);
 

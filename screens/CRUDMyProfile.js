@@ -15,7 +15,7 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-// const handlehistories = firebase.functions().httpsCallable("handleHistory");
+console.disableYellowBox = true;
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);

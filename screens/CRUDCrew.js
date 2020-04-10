@@ -16,6 +16,8 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 const handleCrew = firebase.functions().httpsCallable("handleCrew");
 
 const CRUDCrew = (props) => {
@@ -25,7 +27,7 @@ const CRUDCrew = (props) => {
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
-  const [pname, setPname] = useState();
+  const [pname, setPname] = useState("");
   const [pnames, setPnames] = useState([]);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ const CRUDCrew = (props) => {
 
   const handleSend = async () => {
     if (id) {
-      if (fkp === pname.id) {
+      if (fkp === pname) {
         const response2 = await handleCrew({
           crew: { id, name, fkp },
           operation: "update",
@@ -74,27 +76,27 @@ const CRUDCrew = (props) => {
           operation: "delete",
         });
         const response3 = await handleCrew({
-          crew: { name, fkp: pname.id },
+          crew: { name, fkp: pname },
           operation: "add",
         });
       }
     } else {
       // call serverless function instead
       const response2 = await handleCrew({
-        crew: { name, fkp: pname.id },
+        crew: { name, fkp: pname },
         operation: "add",
       });
     }
 
     setName("");
-
+    setPname("");
     setId("");
   };
 
   const handleEdit = (crew) => {
     setName(crew.name);
     setFkp(crew.fkp);
-
+    setPname(crew.fkp);
     setId(crew.id);
   };
   //if the user choose to delete the crew the function will be called
@@ -107,7 +109,6 @@ const CRUDCrew = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      {console.log("------------------------", fkp)}
       {
         //looping threw all crews array objects; calling the object at the time crew
         crews.map((crew, i) => (
@@ -127,6 +128,7 @@ const CRUDCrew = (props) => {
         placeholder="Name"
         value={name}
       />
+
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -134,7 +136,7 @@ const CRUDCrew = (props) => {
         onValueChange={(itemValue) => setPname(itemValue)}
       >
         {pnames.map((pname, i) => (
-          <Picker.Item label={pname.name} value={pname} />
+          <Picker.Item label={pname.name} value={pname.id} />
         ))}
       </Picker>
       <Button title="Send" onPress={handleSend} />

@@ -21,6 +21,7 @@ import db from "../db.js";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+console.disableYellowBox = true;
 
 const handleNewsletter = firebase.functions().httpsCallable("handleNewsletter");
 

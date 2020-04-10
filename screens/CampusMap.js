@@ -16,6 +16,8 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
+import { Rating, AirbnbRating } from "react-native-ratings";
+
 //importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
 import { MonoText } from "../components/StyledText";
@@ -24,7 +26,7 @@ import "firebase/auth";
 import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
-import { CheckBox } from "react-native-elements";
+import { CheckBox, Badge } from "react-native-elements";
 import { Notifications } from "expo";
 import {
   Ionicons,
@@ -34,45 +36,38 @@ import {
   FontAwesome5,
   FontAwesome5Brands,
 } from "@expo/vector-icons";
+console.disableYellowBox = true;
 
 export default function CampusMap() {
   const [nearestBuildings, setNearestBuildings] = useState([]);
-  const [nearestBuilding, setNearestBuilding] = useState({});
+  const [nearestBuilding, setNearestBuilding] = useState({ name: "select" });
   //Parkings objects as an array to save all the parkings we get from the database to display them
   const [parkings, setParkings] = useState([]);
-  //View or not the model that askes the user what service they want and what operation to perform (park, reserve, leave)
   const [modalVisible, setModalVisible] = useState(false);
-  //View or not the model that askes the user where the map should go (campus, thire car or their location)
   const [modalVisible2, setModalVisible2] = useState(false);
-  //const [ParkingLots, setParkingLots] = useState([]);
-  //Parking object to store the parking the user is viewing
+  const [modalVisible3, setModalVisible3] = useState(false);
+  const [number, setNumber] = useState(1);
+  const [ratings, setRatings] = useState([]);
+  const [crews, setCrews] = useState([]);
+
+  const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState({});
-  //Car object to store the user's current car
   const [car, setCar] = useState({});
-  //Promotion object to save the promotion object if user enters the correct code for it
   const [promotion, setPromotion] = useState({});
-  //Promotions objects as an array to save all the Promotions we get from the database to use as comparison
   const [Promotions, setPromotions] = useState([]);
-  //the code string that the user enters
   const [code, setCode] = useState("");
-  // Wither the promotion is valid or not
   const [promotionValid, setPromotionValid] = useState("");
-  //To store the total amount of the services and the parking amount per hour multiplied with the duration
   const [total, setTotal] = useState(0);
-  //To store the duration in houers of the time the user spent in the parking
   const [hours, setHours] = useState(0);
-  //to store the user Id
   const [uid, setUid] = useState("");
-  //for the user to choose the map Type; eather  "standard" or "satellite"
+  const [user, setUser] = useState({});
   const [mapType, setMapType] = useState(true);
-  // to store the new region of the map
   const [mapRegion, setMapRegion] = useState({
     latitude: 25.358833,
     longitude: 51.479314,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  // to store the user location
   const [location, setLocation] = useState({
     coords: {
       latitude: 25.360766,
@@ -81,53 +76,51 @@ export default function CampusMap() {
       longitudeDelta: 0.0421,
     },
   });
-  // to store the coords of where the user wantes to go to
   const [goTo, setGoto] = useState({
     latitude: 25.358833,
     longitude: 51.479314,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  // to store the crew of the parking lot of the parking the user chooses
   const [crew, setCrew] = useState();
 
-  // const setModalvisible = (x) => {
-  //   setModalVisible(x);
-  //   setPromotionValid("");
-  // };
-
-  //  serverless function
-  const handleParkings = firebase.functions().httpsCallable("handleParkings");
-
-  // if the user aggres or not to give the app their location
-  const [hasLocationPermission, setHasLocationPermission] = useState(false);
-  //stors all the Services from the database
-  const [Services, setServices] = useState([]);
-  //to store the Services the user selects
-  const [ServicesToAdd, setServicesToAdd] = useState([]);
-
-  // asking the user permition to get thier location
-  const askPermission = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION); //await for the user respond
-    setHasLocationPermission(status === "granted"); //set true if status is granted
+  const setModalvisible = (x) => {
+    setModalVisible(x);
+    setPromotionValid("");
   };
 
-  //geting the user location
+  const handleParkings = firebase.functions().httpsCallable("handleParkings");
+
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [Services, setServices] = useState([]);
+  const [ServicesToAdd, setServicesToAdd] = useState([]);
+
+  const askPermission = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    setHasLocationPermission(status === "granted");
+  };
+
   const getLocation = async () => {
-    const location = await Location.getCurrentPositionAsync({}); //await for the getCurrentPositionAsync function to get the location
-    setLocation(location); //setting the user location to the useState variable location
+    const location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
   };
 
   useEffect(() => {
-    //calling the function askPermission
+    setPromotionValid(" ");
     askPermission();
-    //calling the function getLocation
     getLocation();
-    //seting the user id
     setUid(firebase.auth().currentUser.uid);
   }, []);
 
   useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
     db.collection("NearestBuildings").onSnapshot((querySnapshot) => {
       const nearestBuildings = [];
       querySnapshot.forEach((doc) => {
@@ -139,109 +132,99 @@ export default function CampusMap() {
   }, []);
 
   useEffect(() => {
-    //initializing an local variable “crew” as empty object “{}”
     let crew = {};
-    //checking if the state variable “parking” is not empty and that it has a variable “fk”
     parking &&
       parking.fk &&
-      //if the condition is true; it will get the crew of the user chosen parking-> parkingLot from firebase and then save it in the local variable crew
       db
         .collection("ParkingLots")
-        .doc(parking.fk) // the ParkingLots of the parking
+        .doc(parking.fk)
         .collection("Crew")
         .onSnapshot((querySnapshot) => {
-          //onSnapshot Guaranties getting the latest data from the database and keeping the app real-time
           querySnapshot.forEach((doc) => {
-            crew = { id: doc.id, ...doc.data(), fk: parking.fk }; // to only store the last crew comming from the database
+            crew = { id: doc.id, ...doc.data(), fk: parking.fk };
           });
-          //using the function setCrew to change the state variable “crew” to the function local variable “crew”
           setCrew(crew);
         });
-    // below is stating when to render; after the state variable “parking” is updated
   }, [parking]);
 
+  ////ranking
   useEffect(() => {
-    //getting the current car the user is useing
+    db.collection("Ratings").onSnapshot((querySnapshot) => {
+      const ratings = [];
+      querySnapshot.forEach((doc) => {
+        ratings.push({ id: doc.id, ...doc.data() });
+      });
+      console.log(" Current ratings: ", ratings);
+      setRatings([...ratings]);
+    });
+  }, []);
+
+  useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid) //the user id
       .collection("Cars")
       .onSnapshot((querySnapshot) => {
-        //Guaranties real-time app
-        const Cars = []; // To temporarily store all user cars
+        const Cars = [];
         querySnapshot.forEach((doc) => {
-          // to add each car to the array while saving the user id as fk
           Cars.push({
             fk: firebase.auth().currentUser.uid,
             id: doc.id,
             ...doc.data(),
           });
         });
-        //filtering all the cars came from the database to where the current variable is true; [0] to get the first one. p.s previous code guaranties that only one car can has current as true
         setCar(Cars.filter((c) => c.current === true)[0]);
-        //console.log("My car ------", Cars.filter((c) => c.current === true)[0]);
+        setPromotionValid(" ");
       });
   }, []);
 
   useEffect(() => {
-    //seting the variable totalAmount; this total amount is only for displaying; it will not go to the database
     let totalAmount = 0;
 
     if (
-      car && //if the user has a current car
-      car.Parking && // and the car has Parking
-      car.Parking.status === 2 && // and the Parking.status is 2 Meaning full
-      car.Parking.DateTime // and that the car->parking object has a DateTime object
+      car &&
+      car.Parking &&
+      car.Parking.status === 2 &&
+      car.Parking.DateTime
     ) {
-      //Calculating the Duration in hours by subtracting the current date and time from the date and time when the user parked
       const hours = Math.floor(
         Math.abs(
           new Date().getTime() - car.Parking.DateTime.toDate().getTime()
         ) / 36e5
       );
-      // pTotal is temp variable used to store the total amount of the parking and services;
-      //it equals the number of hours the user spent on the parking multiplied by the parking amount per an hour plus the total amount of all services requested by the user.
-      let pTotal = hours * car.Parking.amountperhour + car.Parking.TotalAmount;
-      //
-      //if the promotionValid is true the totalAmount variable is used to store the totalAmount after discount; otherwise it equals to the ptotal variable
+      let pTotal =
+        user.role === "staff" ? hours * car.Parking.amountperhour : 0;
+
+      pTotal = pTotal + car.Parking.TotalAmount;
+
       if (promotionValid === true) {
         totalAmount = pTotal - pTotal * promotion.percent;
       } else {
         totalAmount = pTotal;
       }
       console.log("hours", hours);
-      //save the Duration
       setHours(hours);
     }
-    //save the total rounded to too dicemal places
     setTotal(Math.round(totalAmount * 100) / 100);
-    //update when ever the promotionValid changes
   }, [promotionValid]);
 
   useEffect(() => {
-    //getting all services from database
     db.collection("Services").onSnapshot((querySnapshot) => {
       const Services = [];
       querySnapshot.forEach((doc) => {
-        //Guaranties real-time app
         Services.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Services: ", Services);
-      //setting the Services to the state variable Services
       setServices([...Services]);
     });
   }, []);
 
   useEffect(() => {
-    //getting all Promotions from the database
     db.collection("Promotions").onSnapshot((querySnapshot) => {
-      //real-time app
       const Promotions = [];
       querySnapshot.forEach((doc) => {
-        // to add each Promotion to the array
         Promotions.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current Promotions: ", Promotions);
-      //setting the Promotions to the state variable Promotions
       setPromotions([...Promotions]);
     });
   }, []);
@@ -276,15 +259,12 @@ export default function CampusMap() {
     //     setParkingLots([...ParkingLots]);
     //   });
 
-    //getting all the pakings for a specific ParkingLot
     db.collection("ParkingLots")
       .doc("kECljqmSifLwfkpX6qPy")
       .collection("Parkings")
       .onSnapshot((querySnapshot) => {
-        //real-time app
         const parkings = [];
         querySnapshot.forEach((docP) => {
-          // to add each Parking to the array whith the ParkingLot id as fk, and name to store the ParkingLot name
           parkings.push({
             fk: "kECljqmSifLwfkpX6qPy",
             name: "C-6",
@@ -292,39 +272,39 @@ export default function CampusMap() {
             ...docP.data(),
           });
         });
-        //setting the parkings to the state variable parkings
         setParkings([...parkings]);
       });
+    db.collection("ParkingLots").onSnapshot((querySnapshot) => {
+      const ParkingLots = [];
+      querySnapshot.forEach((doc) => {
+        ParkingLots.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      console.log(" Current ParkingLots: ", ParkingLots);
+      setParkingLots([...ParkingLots]);
+    });
   }, []);
 
-  //what to perform when the marker is clicked
   const markerClick = (parking) => {
-    //setGoto(mapRegion);
     setGoto({
       latitude: parking.latitude,
       longitude: parking.longitude,
       latitudeDelta: 0.0004,
       longitudeDelta: 0.0004,
     });
-    //close the 1st Modal
-    setModalVisible(true);
-    //set the parking variable to the parking the user clicked on
+    setModalvisible(true);
     setParking(parking);
-    //change the PromotionValid to empty. this help with the delay of getting the car-parking object from the database
-    setPromotionValid("");
   };
 
   const handleMapType = () => {
-    //changing the map type
     setMapType(!mapType);
     setModalVisible2(false);
   };
 
   const handleCarParking = async (i, o) => {
-    // making a temp variable equal to the parking object the user chaos
     let temp = parking;
-    //Changing the state of the parking passed on the operation the user requested
-    //0 means Leave or CancelReservation and the parking will be empty status 0, 1 means Reserve status 1, and 2 means Park status 2 parking is full
     temp.status = i;
     //Call the function handleParkings
     // temp= The parking object involved in operations,
@@ -336,6 +316,7 @@ export default function CampusMap() {
     // hours = number of hours the user was parked for
     const response2 = await handleParkings({
       uid,
+      role: user.role,
       temp,
       car,
       ServicesToAdd,
@@ -351,12 +332,10 @@ export default function CampusMap() {
           ? "Reserve"
           : "Park",
     });
-    //close the 1st Modal
     setModalVisible(false);
-    //I did not do this part
+    i === 0 && o && setModalVisible3(true);
     handleLocalNotification(i, o);
   };
-  //I did not do this part
   const handleLocalNotification = (i, o) => {
     let title = "";
     let body = "";
@@ -394,21 +373,15 @@ export default function CampusMap() {
     Notifications.presentLocalNotificationAsync(localNotification);
   };
 
-  //adding the Services to the requested user Services
   const handleServicesToAdd = (Service) => {
-    //if the service dose not exist in the array
     if (ServicesToAdd.filter((s) => s.id === Service.id).length === 0) {
-      //then add it
       setServicesToAdd([...ServicesToAdd, Service]);
     } else {
-      //Otherwise  delete it
       setServicesToAdd(ServicesToAdd.filter((s) => s.id !== Service.id));
     }
   };
 
   const handlePromotion = (code) => {
-    //if the code the user enterd matches any code in the promotions came from the database
-    //and that the current date and time  is less than the expiry date and time
     if (
       Promotions.filter((p) => p.code === code).length > 0 &&
       new Date().getTime() <
@@ -416,20 +389,15 @@ export default function CampusMap() {
           .endDateTime.toDate()
           .getTime()
     ) {
-      //then set the PromotionValid to true
       setPromotionValid(true);
-      // and set the Promotion object to the firet object in the array Promotions that has the same code
       setPromotion(Promotions.filter((p) => p.code === code)[0]);
     } else {
-      //Otherwise set the PromotionValid to false
       setPromotionValid(false);
-      // and set the Promotion object to empty
       setPromotion({});
     }
   };
 
   const handleGoto = (x) => {
-    //if 0 go to the user parking
     if (x === 0) {
       setGoto({
         latitude: car.Parking.latitude,
@@ -437,7 +405,6 @@ export default function CampusMap() {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-      //if x is 2 go to the campus
     } else if (x === 2) {
       setGoto({
         latitude: 25.360766,
@@ -445,9 +412,14 @@ export default function CampusMap() {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-    }
-    //  Otherwise go to the user location
-    else {
+    } else if (x === 3) {
+      setGoto({
+        latitude: nearestBuilding.ParkingLot.latitude,
+        longitude: nearestBuilding.ParkingLot.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } else {
       getLocation();
       setGoto({
         latitude: location.coords.latitude,
@@ -456,23 +428,106 @@ export default function CampusMap() {
         longitudeDelta: 0.0421,
       });
     }
-    //close the 2ed Modal
     setModalVisible2(false);
   };
   const handleMapRegionChange = (mapRegion) => {
-    //change the current mapRegion
     setMapRegion(mapRegion);
     //setGoto(mapRegion);
   };
   const setmodalVisible2 = () => {
-    //when called it opens the 2ed Modal
     setModalVisible2(true);
     //setGoto(mapRegion);
+  };
+
+  const ratingCompleted = (rating) => {
+    console.log("Rating is: " + rating);
+    setNumber(rating);
+  };
+  const submitRating = async () => {
+    const response = await fetch(
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/handleRating?number=${number}&id=${crew.id}&fk=${crew.fk}&name=${crew.name}`
+    );
+    setModalVisible3(false);
   };
 
   return (
     <View style={styles.container}>
       <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible3}
+          onRequestClose={() => {
+            setModalVisible3(false);
+          }}
+          key={ratings.id}
+        >
+          <View style={{ marginTop: 22 }}>
+            {/* <View
+    style={{
+      margin: "20%",
+      backgroundColor: "white",
+      height: 230,
+      color:"white"
+    }}
+  > */}
+
+            <View
+              style={{
+                //marginTop: 15,
+                backgroundColor: "#3c78a3",
+                margin: "15%",
+                //padding: "5%",
+                //paddingTop: "1%",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 10,
+                    margin: "25%",
+                    minHeight: 300,
+                    width: "60%",
+                  },
+                  android: {
+                    minHeight: 227,
+                  },
+                }),
+              }}
+            >
+              <View style={{ alignSelf: "flex-end", width: "10%" }}>
+                <TouchableHighlight
+                  style={[styles.buttonHide, { width: "90%", marginTop: 0 }]}
+                  onPress={() => {
+                    setModalVisible3(false);
+                  }}
+                >
+                  <Text>X</Text>
+                </TouchableHighlight>
+              </View>
+              <Text style={styles.getStartedText}>Rate Our Crew</Text>
+
+              <AirbnbRating
+                count={5}
+                reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+                defaultRating="1"
+                minValue={1}
+                size={20}
+                onFinishRating={ratingCompleted}
+              />
+              <TouchableHighlight
+                style={styles.buttonGreen}
+                onPress={() => {
+                  submitRating();
+                }}
+              >
+                <Text>Submit</Text>
+              </TouchableHighlight>
+            </View>
+
+            {/* </View> */}
+          </View>
+        </Modal>
         <Modal
           animationType="slide"
           transparent={true}
@@ -485,9 +540,9 @@ export default function CampusMap() {
           <View style={{ marginTop: 22 }}>
             <View
               style={{
-                margin: "20%",
+                margin: "10%",
                 backgroundColor: "gray",
-                height: 230,
+                height: 440,
                 padding: 10,
               }}
             >
@@ -565,25 +620,39 @@ export default function CampusMap() {
                   <Text style={{ textAlign: "center" }}>
                     Go to the parkign lot next to building...{" "}
                   </Text>
-                  <Picker
-                    style={styles.picker}
-                    itemStyle={styles.pickerItem}
-                    selectedValue={ParkingLot}
-                    onValueChange={(itemValue) => setParkingLot(itemValue)}
-                  >
-                    {ParkingLots.map((ParkingLot, i) => (
-                      <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-                    ))}
-                  </Picker>
-                  <TouchableHighlight
-                    style={styles.buttonHide}
-                    onPress={() => {
-                      setModalVisible2(false);
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      padding: 15,
+                      justifyContent: "center",
                     }}
                   >
-                    <Text style={{ textAlign: "center" }}>Go </Text>
-                  </TouchableHighlight>
+                    {nearestBuildings.map((nearestBuilding, i) => (
+                      <View
+                        key={i}
+                        style={{ width: "14%", height: 25, padding: 0 }}
+                      >
+                        <Badge
+                          containerStyle={{ position: "absolute" }}
+                          value={<Text>{nearestBuilding.number}</Text>}
+                          status="warning"
+                          onPress={() => setNearestBuilding(nearestBuilding)}
+                        />
+                      </View>
+                    ))}
+                  </View>
                 </View>
+                {nearestBuilding.ParkingLot && (
+                  <TouchableHighlight
+                    style={styles.buttonYellow}
+                    onPress={() => {
+                      handleGoto(3);
+                    }}
+                  >
+                    <Text>Go: {nearestBuilding.name}</Text>
+                  </TouchableHighlight>
+                )}
               </Animatable.View>
               <Animatable.View
                 animation="fadeInUp"
@@ -637,104 +706,84 @@ export default function CampusMap() {
           // strokeWidth={3}
           // strokeColor="hotpink"
         /> */}
-        {
-          // if there is parkings array
-          parkings &&
-            //display them by looping through the array one object at a time calling it “parking”
-            parkings.map((parking) => (
-              //Displaying the parking in a marker
-              <MapView.Marker
-                key={parking.id + parking.fk}
-                coordinate={{
-                  latitude: parking.latitude,
-                  longitude: parking.longitude,
-                }}
-                pinColor="green"
-                onPress={() => markerClick(parking)}
+        {parkings &&
+          parkings.map((parking) => (
+            <MapView.Marker
+              key={parking.id + parking.fk}
+              coordinate={{
+                latitude: parking.latitude,
+                longitude: parking.longitude,
+              }}
+              pinColor="green"
+              onPress={() => markerClick(parking)}
+            >
+              <View
+                style={[
+                  parking.type !== "normal"
+                    ? {
+                        borderColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
+                        borderWidth: 2,
+                        backgroundColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
+                      }
+                    : {
+                        borderColor: "black",
+                        borderWidth: 2,
+                        backgroundColor: "white",
+                      },
+                ]}
               >
-                <View
-                  style={[
-                    //if the parking type is not normal
-                    parking.type !== "normal"
-                      ? {
-                          borderColor:
-                            //if the parking type is gold; show this color
-                            parking.type === "gold"
-                              ? "#FFD700"
-                              : //if the parking type is silver; show this color
-                                "#ffffff",
-                          borderWidth: 2,
-                          backgroundColor:
-                            parking.type === "gold" ? "#FFD700" : "#ffffff",
-                        }
-                      : //if the parking type is  normal
-                        {
-                          borderColor: "black",
-                          borderWidth: 2,
-                          backgroundColor: "white",
-                        },
-                  ]}
-                >
-                  {
-                    //if the parking.status is full
-                    parking.status === 2 ? (
-                      //if the user has a car & car.Parking is true & car.Parking has id & if the user car.Parking.id equals the current parking id
-                      car &&
-                      car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id ? (
-                        <Animatable.View
-                          animation="rubberBand"
-                          iterationCount="infinite"
-                          direction="alternate"
-                        >
-                          {/* display an icon  */}
-                          <MaterialCommunityIcons
-                            name="car-brake-parking"
-                            size={24}
-                            color="purple"
-                          />
-                        </Animatable.View>
-                      ) : (
-                        //otherwise display red image
-                        <Image
-                          source={require("../assets/images/red.png")}
-                          style={{ width: 22, height: 14 }}
-                        />
-                      )
-                    ) : //if the parking.status is empty display green image
-                    parking.status === 0 ? (
-                      <Image
-                        source={require("../assets/images/green.png")}
-                        style={{ width: 22, height: 14 }}
+                {parking.status === 2 ? (
+                  car &&
+                  car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                    <Animatable.View
+                      animation="rubberBand"
+                      iterationCount="infinite"
+                      direction="alternate"
+                    >
+                      <MaterialCommunityIcons
+                        name="car-brake-parking"
+                        size={24}
+                        color="purple"
                       />
-                    ) : //if the user has a car & car.Parking is true & car.Parking has id & if the user car.Parking.id equals the current parking id car &&
-                    car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id ? (
-                      <Animatable.View
-                        animation="flash"
-                        iterationCount="infinite"
-                        direction="alternate"
-                      >
-                        <MaterialCommunityIcons
-                          name="registered-trademark"
-                          size={24}
-                          color="purple"
-                        />
-                      </Animatable.View>
-                    ) : (
-                      //if the parking.status is reserved display yellow image
-                      <Image
-                        source={require("../assets/images/yellow.png")}
-                        style={{ width: 22, height: 14 }}
-                      />
-                    )
-                  }
-                </View>
-              </MapView.Marker>
-            ))
-        }
+                    </Animatable.View>
+                  ) : (
+                    <Image
+                      source={require("../assets/images/red.png")}
+                      style={{ width: 22, height: 14 }}
+                    />
+                  )
+                ) : parking.status === 0 ? (
+                  <Image
+                    source={require("../assets/images/green.png")}
+                    style={{ width: 22, height: 14 }}
+                  />
+                ) : car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                  <Animatable.View
+                    animation="flash"
+                    iterationCount="infinite"
+                    direction="alternate"
+                  >
+                    <MaterialCommunityIcons
+                      name="registered-trademark"
+                      size={24}
+                      color="purple"
+                    />
+                  </Animatable.View>
+                ) : (
+                  <Image
+                    source={require("../assets/images/yellow.png")}
+                    style={{ width: 22, height: 14 }}
+                  />
+                )}
+              </View>
+            </MapView.Marker>
+          ))}
         <MapView.Marker
           coordinate={{
             latitude: location.coords.latitude,
@@ -743,17 +792,52 @@ export default function CampusMap() {
           pinColor="green"
           title="You are here"
         />
-        <MapView.Marker
-          coordinate={{
-            latitude: 25.358924,
-            longitude: 51.480265,
-          }}
-        >
-          <Image
-            source={require("../assets/images/1.png")}
-            style={{ width: 36, height: 28 }}
-          />
-        </MapView.Marker>
+        {ParkingLots &&
+          ParkingLots.map((ParkingLot, i) => (
+            <MapView.Marker
+              coordinate={{
+                latitude: ParkingLot.latitude,
+                longitude: ParkingLot.longitude,
+              }}
+            >
+              <Image
+                source={{ uri: ParkingLot.img }}
+                style={{ width: 40, height: 30 }}
+              />
+              {ratings.filter((r) => r.crew.fk === ParkingLot.id).length >
+                0 && (
+                <Rating
+                  imageSize={10}
+                  readonly
+                  fractions="{1}"
+                  startingValue={
+                    ratings
+                      .filter((r) => r.crew.fk === ParkingLot.id)
+                      .reduce(
+                        (previousScore, currentScore, index) =>
+                          previousScore + parseInt(currentScore.number),
+                        0
+                      ) /
+                    ratings.filter((r) => r.crew.fk === ParkingLot.id).length
+                  }
+                />
+              )}
+            </MapView.Marker>
+          ))}
+        {nearestBuildings &&
+          nearestBuildings.map((nearestBuilding) => (
+            <MapView.Marker
+              coordinate={{
+                latitude: nearestBuilding.latitude,
+                longitude: nearestBuilding.longitude,
+              }}
+            >
+              <Image
+                source={{ uri: nearestBuilding.img }}
+                style={{ width: 40, height: 30 }}
+              />
+            </MapView.Marker>
+          ))}
         <MapView.Marker
           coordinate={{
             latitude: 25.359997,
@@ -828,11 +912,6 @@ export default function CampusMap() {
                         direction="alternate"
                       >
                         <View>
-                          {/*A wrapper for making views respond properly to touches 
-                           On press down, the opacity of the wrapped view is decreased, which allows the underlay color to show through, darkening or tinting the view.
-                           TouchableHighlight must have one child in this case a text component
-                           the prop onPress determine the function to use when the TouchableHighlight is pressed
-                           the prop style  determine the style of the TouchableHighlight*/}
                           <TouchableHighlight
                             style={styles.buttonGreen}
                             onPress={() => {
@@ -876,7 +955,6 @@ export default function CampusMap() {
                         width: "100%",
                       }}
                     >
-                      {/*TextInput A foundational component for inputting text into the app via a keyboard. */}
                       <TextInput
                         style={{
                           height: 40,
@@ -922,10 +1000,35 @@ export default function CampusMap() {
                   car.Parking &&
                   !car.Parking.id && (
                     <View>
-                      {Services && (
-                        <Text style={{ textAlign: "center" }}>
-                          Add Services:{" "}
-                        </Text>
+                      {Services && crew && (
+                        <View>
+                          <Text style={{ textAlign: "center" }}>
+                            Crew Rating
+                          </Text>
+                          {ratings.filter((r) => r.crew.id === crew.id).length >
+                            0 && (
+                            <Rating
+                              imageSize={20}
+                              readonly
+                              fractions="{1}"
+                              startingValue={
+                                ratings
+                                  .filter((r) => r.crew.id === crew.id)
+                                  .reduce(
+                                    (previousScore, currentScore, index) =>
+                                      previousScore +
+                                      parseInt(currentScore.number),
+                                    0
+                                  ) /
+                                ratings.filter((r) => r.crew.id === crew.id)
+                                  .length
+                              }
+                            />
+                          )}
+                          <Text style={{ textAlign: "center" }}>
+                            Add Services:{" "}
+                          </Text>
+                        </View>
                       )}
                       <View style={{ alignItems: "center" }}>
                         {
@@ -1067,7 +1170,6 @@ function handleHelpPress() {
   );
 }
 
-//A StyleSheet is an abstraction similar to CSS StyleSheets
 const styles = StyleSheet.create({
   buttonGreen: {
     backgroundColor: "#5dba68",
@@ -1169,12 +1271,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingHorizontal: 4,
   },
-  getStartedText: {
-    fontSize: 24,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center",
-  },
+  // getStartedText: {
+  //   fontSize: 24,
+  //   color: "rgba(96,100,109, 1)",
+  //   lineHeight: 24,
+  //   textAlign: "center",
+  // },
   tabBarInfoContainer: {
     position: "absolute",
     bottom: 0,

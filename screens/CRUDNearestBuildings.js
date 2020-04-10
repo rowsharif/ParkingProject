@@ -12,11 +12,14 @@ import {
   View,
   Picker,
 } from "react-native";
+//import IOSPicker from "react-native-ios-picker";
 
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 //import { handleParkings } from "../functions";
 const handleNearestBuilding = firebase
   .functions()
@@ -26,8 +29,10 @@ const CRUDNearestBuildings = (props) => {
   const [nearestBuilding, setNearestBuilding] = useState([]);
   const [number, setNumber] = useState("");
   const [name, setName] = React.useState("");
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
   const [id, setId] = React.useState("");
-  const [ParkingLot, setParkingLot] = useState([]);
+  const [ParkingLot, setParkingLot] = useState("");
   const [ParkingLots, setParkingLots] = useState([]);
 
   useEffect(() => {
@@ -53,28 +58,44 @@ const CRUDNearestBuildings = (props) => {
   const handleSend = async () => {
     if (id) {
       const response2 = await handleNearestBuilding({
-        nearestBuilding: { id, name, number, ParkingLot },
+        nearestBuilding: {
+          id,
+          name,
+          number,
+          ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+        },
         operation: "update",
       });
     } else {
       // call serverless function instead
       const response2 = await handleNearestBuilding({
-        nearestBuilding: { name, number, ParkingLot },
+        nearestBuilding: {
+          name,
+          number,
+          ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+        },
         operation: "add",
       });
     }
     setName("");
     setNumber("");
     setId("");
+    setParkingLot("");
+    setLongitude(0);
+    setLatitude(0);
   };
 
   const handleEdit = (nearestBuilding) => {
     setName(nearestBuilding.name);
     setNumber(nearestBuilding.number);
     setId(nearestBuilding.id);
-    setParkingLot(
-      ParkingLots.filter((p) => p.id === nearestBuilding.ParkingLot.id)[0]
-    );
+    setParkingLot(nearestBuilding.ParkingLot.id);
+    setLatitude(nearestBuilding.latitude);
+    setLongitude(nearestBuilding.longitude);
   };
   const handleDelete = async (nearestBuilding) => {
     const response2 = await handleNearestBuilding({
@@ -111,6 +132,32 @@ const CRUDNearestBuildings = (props) => {
         placeholder="number"
         value={`${number}`}
       />
+      <TextInput
+        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setLatitude}
+        placeholder="latitude"
+        //value={latitude}
+        value={`${latitude}`}
+      />
+      <TextInput
+        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setLongitude}
+        placeholder="longitude"
+        //value={longitude}
+        value={`${longitude}`}
+      />
+      {/* {Platform.OS === "ios" ? (
+         <IOSPicker
+         style={styles.picker}
+         itemStyle={styles.pickerItem}
+         selectedValue={ParkingLot}
+         onValueChange={(itemValue) => setParkingLot(itemValue)}
+       >
+         {ParkingLots.map((ParkingLot, i) => (
+           <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+         ))}
+       </IOSPicker>
+        ) : ( */}
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -118,9 +165,10 @@ const CRUDNearestBuildings = (props) => {
         onValueChange={(itemValue) => setParkingLot(itemValue)}
       >
         {ParkingLots.map((ParkingLot, i) => (
-          <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+          <Picker.Item label={ParkingLot.name} value={ParkingLot.id} />
         ))}
       </Picker>
+      {/* )} */}
 
       <Button title="Send" onPress={handleSend} />
       <Button

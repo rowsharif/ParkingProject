@@ -160,6 +160,9 @@ const MyDrawerNavigator = createDrawerNavigator({
   EmployeeServices: {
     screen: EmployeeServices,
   },
+  FAQ: {
+    screen: FAQ,
+  },
 });
 // createAppContainer is a function that is responsible to manage the app and link with the top level container components to take as a parameter (Maintabnavigation)
 const AppContainer = createAppContainer(StackNavigator);
@@ -190,7 +193,7 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        Profile
+        Settings
       </Text>
       <View
         style={{

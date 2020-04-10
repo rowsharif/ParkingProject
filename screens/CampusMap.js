@@ -809,7 +809,7 @@ export default function CampusMap() {
                 <Rating
                   imageSize={10}
                   readonly
-                  fractions="{1}"
+                  fractions={1}
                   startingValue={
                     ratings
                       .filter((r) => r.crew.fk === ParkingLot.id)
@@ -828,8 +828,8 @@ export default function CampusMap() {
           nearestBuildings.map((nearestBuilding) => (
             <MapView.Marker
               coordinate={{
-                latitude: nearestBuilding.latitude,
-                longitude: nearestBuilding.longitude,
+                latitude: parseFloat(nearestBuilding.latitude),
+                longitude: parseFloat(nearestBuilding.longitude),
               }}
             >
               <Image

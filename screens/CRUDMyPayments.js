@@ -36,7 +36,7 @@ const CRUDPayments = (props) => {
     db.collection("Payment")
       .where("uid", "==", firebase.auth().currentUser.uid)
       .onSnapshot((querySnapshot) => {
-        const payments = [];
+        let payments = [];
         querySnapshot.forEach((doc) => {
           payments.push({ id: doc.id, ...doc.data() });
         });

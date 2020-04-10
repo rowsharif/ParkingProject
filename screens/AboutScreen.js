@@ -113,7 +113,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -142,7 +142,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -200,7 +200,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -234,7 +234,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -267,7 +267,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginRight: 15,
                     },
                   }),
                 },
@@ -292,7 +292,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -321,7 +321,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -349,7 +349,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -370,7 +370,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -399,7 +399,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -427,7 +427,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginRight: 15,
                     },
                   }),
                 },
@@ -458,7 +458,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                      marginLeft: 15,
                     },
                   }),
                 },
@@ -487,7 +487,7 @@ function Guide() {
                     },
                     android: {
                       marginTop: 15,
-                      margin: 15,
+                       marginLeft: 15,
                     },
                   }),
                 },

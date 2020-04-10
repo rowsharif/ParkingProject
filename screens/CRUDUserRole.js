@@ -91,6 +91,7 @@ const CRUDUserRole = (props) => {
         <Picker.Item label="student" value="student" />
         <Picker.Item label="staff" value="staff" />
         <Picker.Item label="manager" value="manager" />
+        <Picker.Item label="vip" value="vip" />
       </Picker>
 
       <Button title="Send" onPress={handleSend} />

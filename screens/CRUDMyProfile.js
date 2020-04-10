@@ -52,7 +52,7 @@ const CRUDhistories = (props) => {
           <Text>Car PlateNumber - {history.Car.PlateNumber}</Text>
           <Text>
             Date - {history.DateTime.toDate().getDate()}-
-            {history.DateTime.toDate().getMonth()}-
+            {history.DateTime.toDate().getMonth() + 1}-
             {history.DateTime.toDate().getFullYear()}
           </Text>
           <Text>

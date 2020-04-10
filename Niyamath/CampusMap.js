@@ -192,9 +192,7 @@ export default function CampusMap() {
         ) / 36e5
       );
       let pTotal =
-        user.role === "staff" || user.role === "vip"
-          ? hours * car.Parking.amountperhour
-          : 0;
+        user.role === "staff" ? hours * car.Parking.amountperhour : 0;
 
       pTotal = pTotal + car.Parking.TotalAmount;
 
@@ -507,9 +505,7 @@ export default function CampusMap() {
                   <Text>X</Text>
                 </TouchableHighlight>
               </View>
-              <Text style={[styles.getStartedText, { color: "white" }]}>
-                Rate Our Crew
-              </Text>
+              <Text style={styles.getStartedText}>Rate Our Crew</Text>
 
               <AirbnbRating
                 count={5}
@@ -621,7 +617,7 @@ export default function CampusMap() {
                     justifyContent: "center",
                   }}
                 >
-                  <Text style={{ textAlign: "center", color: "white" }}>
+                  <Text style={{ textAlign: "center" }}>
                     Go to the parkign lot next to building...{" "}
                   </Text>
                   <View
@@ -726,17 +722,12 @@ export default function CampusMap() {
                   parking.type !== "normal"
                     ? {
                         borderColor:
-                          parking.type === "vip"
-                            ? "#fc8a32"
-                            : parking.type === "employee"
-                            ? "#7232fc"
-                            : parking.type === "gold"
-                            ? "#FFD700"
-                            : "#ffffff",
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
                         borderWidth: 2,
+                        backgroundColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
                       }
-                    : //7232fc purble
-                      {
+                    : {
                         borderColor: "black",
                         borderWidth: 2,
                         backgroundColor: "white",
@@ -847,7 +838,7 @@ export default function CampusMap() {
               />
             </MapView.Marker>
           ))}
-        {/* <MapView.Marker
+        <MapView.Marker
           coordinate={{
             latitude: 25.359997,
             longitude: 51.480268,
@@ -857,7 +848,7 @@ export default function CampusMap() {
             source={require("../assets/images/blueFlag.png")}
             style={{ width: 36, height: 28 }}
           />
-        </MapView.Marker> */}
+        </MapView.Marker>
       </MapView>
       <View style={{ marginTop: 22 }}>
         <Modal
@@ -893,8 +884,8 @@ export default function CampusMap() {
                 }),
               }}
             >
-              <Text style={{ color: "white" }}>
-                This "{parking.type}" Parking is{" "}
+              <Text>
+                This Parking is{" "}
                 {parking.status === 0
                   ? "Empty"
                   : parking.status === 1
@@ -980,13 +971,9 @@ export default function CampusMap() {
                         value={code}
                       />
                       {promotionValid === true ? (
-                        <Text style={{ color: "white" }}>
-                          The promotion is valid
-                        </Text>
+                        <Text>The promotion is valid</Text>
                       ) : promotionValid === false ? (
-                        <Text style={{ color: "white" }}>
-                          The promotion is NOT valid
-                        </Text>
+                        <Text>The promotion is NOT valid</Text>
                       ) : (
                         <Text></Text>
                       )}
@@ -1011,17 +998,11 @@ export default function CampusMap() {
                   )
                 : car &&
                   car.Parking &&
-                  !car.Parking.id &&
-                  ((parking.type !== "vip" && parking.type !== "employee") ||
-                    (parking.type === "vip" && user.role === "vip") ||
-                    (parking.type === "employee" &&
-                      (user.role === "staff" ||
-                        user.role === "manager" ||
-                        user.role === "admin"))) && (
+                  !car.Parking.id && (
                     <View>
                       {Services && crew && (
                         <View>
-                          <Text style={{ textAlign: "center", color: "white" }}>
+                          <Text style={{ textAlign: "center" }}>
                             Crew Rating
                           </Text>
                           {ratings.filter((r) => r.crew.id === crew.id).length >
@@ -1044,7 +1025,7 @@ export default function CampusMap() {
                               }
                             />
                           )}
-                          <Text style={{ textAlign: "center", color: "white" }}>
+                          <Text style={{ textAlign: "center" }}>
                             Add Services:{" "}
                           </Text>
                         </View>
@@ -1290,12 +1271,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingHorizontal: 4,
   },
-  getStartedText: {
-    fontSize: 24,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center",
-  },
+  // getStartedText: {
+  //   fontSize: 24,
+  //   color: "rgba(96,100,109, 1)",
+  //   lineHeight: 24,
+  //   textAlign: "center",
+  // },
   tabBarInfoContainer: {
     position: "absolute",
     bottom: 0,

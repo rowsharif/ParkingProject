@@ -31,6 +31,7 @@ import {
   FontAwesome5Brands,
 } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import { Linking } from "expo";
 
 console.disableYellowBox = true;
 
@@ -59,6 +60,21 @@ function CNAQ_Parking_App() {
             CNA-Q Parking App is designed for the students and faculty members
             of CNA-Q by the group RANA, allowing useful functionality supporting
             the needs of people parking at CNA-Q.
+          </Text>
+          <Text
+            style={{
+              color: "blue",
+              fontSize: 14,
+              margin: "5%",
+              textAlign: "justify",
+            }}
+            onPress={() =>
+              Linking.openURL(
+                "https://www.cna-qatar.com/currentstudents/campusmapdirectory"
+              )
+            }
+          >
+            More About CNA-Q Campus
           </Text>
         </ScrollView>
       </View>
@@ -90,7 +106,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -108,7 +135,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -125,7 +163,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -144,7 +193,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -167,7 +227,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -189,7 +260,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -203,7 +285,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -221,7 +314,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -238,7 +342,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#bfbfbf", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#bfbfbf",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             ></View>
@@ -248,7 +363,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -266,7 +392,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -283,7 +420,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -303,7 +451,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -321,7 +480,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -338,7 +508,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -373,7 +554,18 @@ function Payment() {
         <View style={styles.container3}>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -391,7 +583,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -409,7 +612,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -427,7 +641,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -443,7 +668,18 @@ function Payment() {
         <View style={styles.container3}>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -456,7 +692,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -469,7 +716,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >

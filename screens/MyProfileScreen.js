@@ -8,15 +8,19 @@ import {
   ShadowPropTypesIOS,
   Image,
 } from "react-native";
-import {
-  Ionicons,
-  FontAwesome,
-  MaterialIcons,
-  Feather,
-} from "@expo/vector-icons";
+
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator } from "react-navigation-drawer";
+import {
+  Ionicons,
+  AntDesign,
+  FontAwesome,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+  FontAwesome5Brands,
+} from "@expo/vector-icons";
 
 import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
@@ -193,7 +197,8 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        Settings
+        {" "}
+        <AntDesign name="menu-fold" size={24} color="white" /> Settings
       </Text>
       <View
         style={{

@@ -137,14 +137,16 @@ exports.handleEmployee = functions.https.onCall(async (data, context) => {
 /////////handle newsletter
 exports.handleNewsletter = functions.https.onCall(async (data, context) => {
   console.log("Newsletter data", data);
+  newsletter = data.newsletter;
+  newsletter.DateTime = new Date();
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
-    db.collection("newsletter").add(data.newsletter);
+    db.collection("newsletter").add(newsletter);
   } else if (data.operation === "delete") {
-    db.collection("newsletter").doc(data.newsletter.id).delete();
+    db.collection("newsletter").doc(newsletter.id).delete();
   } else {
-    db.collection("newsletter").doc(data.newsletter.id).update(data.newsletter);
+    db.collection("newsletter").doc(newsletter.id).update(newsletter);
   }
 });
 
@@ -351,7 +353,9 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     // pTotal is temp variable used to store the total amount of the parking and services;
     //it equals the number of hours the user spent on the parking multiplied by the parking amount per an hour plus the total amount of all services requested by the user.
     let pTotal =
-      data.role === "staff" ? data.hours * car.Parking.amountperhour : 0;
+      data.role === "staff" || data.role === "vip"
+        ? data.hours * car.Parking.amountperhour
+        : 0;
 
     pTotal = pTotal + car.Parking.TotalAmount;
     // the totalAmount variable is used to store the total amount after discount if there is any; otherwise it equals to the ptotal variable

@@ -37,7 +37,7 @@ export default function HomeScreen() {
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
   const [id, setId] = useState("");
-
+  const [errorOnDelete, setErrorOnDelete] = React.useState(false);
   const [Cars, setCars] = useState([]);
   const [Car, setCar] = useState({});
   const [PlateNumber, setPlateNumber] = useState("");

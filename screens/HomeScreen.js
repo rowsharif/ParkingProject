@@ -29,9 +29,12 @@ import {
   FontAwesome5, 
 } from "@expo/vector-icons";
 import Message from "./Message.js";
+console.disableYellowBox = true;
+
 import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function HomeScreen() {
+  const [errorOnDelete, setErrorOnDelete] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");

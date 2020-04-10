@@ -12,6 +12,7 @@ import {
   View,
   Picker,
 } from "react-native";
+import IOSPicker from 'react-native-ios-picker';
 
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
@@ -113,6 +114,18 @@ const CRUDNearestBuildings = (props) => {
         placeholder="number"
         value={`${number}`}
       />
+       {Platform.OS === "ios" ? (
+         <IOSPicker
+         style={styles.picker}
+         itemStyle={styles.pickerItem}
+         selectedValue={ParkingLot}
+         onValueChange={(itemValue) => setParkingLot(itemValue)}
+       >
+         {ParkingLots.map((ParkingLot, i) => (
+           <Picker.Item label={ParkingLot.name} value={ParkingLot} />
+         ))}
+       </IOSPicker>
+        ) : (
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -123,6 +136,7 @@ const CRUDNearestBuildings = (props) => {
           <Picker.Item label={ParkingLot.name} value={ParkingLot} />
         ))}
       </Picker>
+        )}
 
       <Button title="Send" onPress={handleSend} />
       <Button

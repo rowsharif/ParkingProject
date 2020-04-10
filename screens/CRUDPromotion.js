@@ -24,14 +24,22 @@ console.disableYellowBox = true;
 const handlePromotion = firebase.functions().httpsCallable("handlePromotion");
 
 const CRUDPromotion = (props) => {
+   
   const [promotions, setPromotions] = useState([]);
+
   const [code, setCode] = React.useState("");
+ 
   const [percent, setPercent] = React.useState("");
+  
   const [id, setId] = React.useState("");
+  
   const [endDateTime, setendDateTime] = React.useState(new Date());
+  
   const [startdate, setStartDate] = useState("");
+  
   const [startingdate, setStartingdate] = useState("");
 
+ 
   useEffect(() => {
     var today = new Date();
     var date =
@@ -63,12 +71,10 @@ const CRUDPromotion = (props) => {
       });
       console.log(" Current promotion: ", promotions);
       setPromotions([...promotions]);
-      // console.log(
-      //   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      //   firebase.firestore.Timestamp.toDate(promotions[0].endDateTime)
-      // );
+      
     });
   }, []);
+
 
   const handleSend = async () => {
     if (id) {
@@ -107,6 +113,7 @@ const CRUDPromotion = (props) => {
     setId(promotion.id);
     setendDateTime(promotion.endDateTime);
   };
+ 
   const handleDelete = async (promotion) => {
     const response2 = await handlePromotion({
       promotion: promotion,
@@ -115,7 +122,9 @@ const CRUDPromotion = (props) => {
   };
   return (
     <View style={styles.container}>
+      
       <ScrollView>
+        
         {promotions.map((promotion, i) => (
           <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text>

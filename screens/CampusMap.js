@@ -15,8 +15,9 @@ import {
   View,
   Dimensions,
   Modal,
+  Picker,
 } from "react-native";
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { Rating, AirbnbRating } from "react-native-ratings";
 
 //importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
@@ -26,7 +27,7 @@ import "firebase/auth";
 import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
-import { CheckBox } from "react-native-elements";
+import { CheckBox, Badge } from "react-native-elements";
 import { Notifications } from "expo";
 import {
   Ionicons,
@@ -40,17 +41,16 @@ console.disableYellowBox = true;
 
 export default function CampusMap() {
   const [nearestBuildings, setNearestBuildings] = useState([]);
-  const [nearestBuilding, setNearestBuilding] = useState({});
+  const [nearestBuilding, setNearestBuilding] = useState({ name: "select" });
+  //Parkings objects as an array to save all the parkings we get from the database to display them
   const [parkings, setParkings] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
 
-
   const [rankings, setRankings] = useState([]);
   const [crews, setCrews] = useState([]);
-  const [number,setNumber]=useState()
-
+  const [number, setNumber] = useState();
 
   //const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState({});
@@ -97,17 +97,17 @@ export default function CampusMap() {
   const [ServicesToAdd, setServicesToAdd] = useState([]);
 
   const askPermission = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION); 
-    setHasLocationPermission(status === "granted"); 
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    setHasLocationPermission(status === "granted");
   };
 
   const getLocation = async () => {
-    const location = await Location.getCurrentPositionAsync({}); 
-    setLocation(location); 
+    const location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
   };
 
   useEffect(() => {
-    setModalVisible3(true)
+    setModalVisible3(true);
 
     askPermission();
     getLocation();
@@ -131,11 +131,11 @@ export default function CampusMap() {
       parking.fk &&
       db
         .collection("ParkingLots")
-        .doc(parking.fk) 
+        .doc(parking.fk)
         .collection("Crew")
         .onSnapshot((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            crew = { id: doc.id, ...doc.data(), fk: parking.fk }; 
+            crew = { id: doc.id, ...doc.data(), fk: parking.fk };
           });
           setCrew(crew);
         });
@@ -182,20 +182,19 @@ export default function CampusMap() {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
-              
+
               console.log("Crews", allCrews);
             });
         });
       });
   }, []);
 
-
   useEffect(() => {
     db.collection("users")
       .doc(firebase.auth().currentUser.uid) //the user id
       .collection("Cars")
       .onSnapshot((querySnapshot) => {
-        const Cars = []; 
+        const Cars = [];
         querySnapshot.forEach((doc) => {
           Cars.push({
             fk: firebase.auth().currentUser.uid,
@@ -211,10 +210,10 @@ export default function CampusMap() {
     let totalAmount = 0;
 
     if (
-      car && 
-      car.Parking && 
-      car.Parking.status === 2 && 
-      car.Parking.DateTime 
+      car &&
+      car.Parking &&
+      car.Parking.status === 2 &&
+      car.Parking.DateTime
     ) {
       const hours = Math.floor(
         Math.abs(
@@ -310,7 +309,7 @@ export default function CampusMap() {
       longitudeDelta: 0.0004,
     });
     setModalVisible(true);
-    setModalVisible3(true)
+    setModalVisible3(true);
     setParking(parking);
     setPromotionValid("");
   };
@@ -427,8 +426,14 @@ export default function CampusMap() {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
-    }
-    else {
+    } else if (x === 3) {
+      setGoto({
+        latitude: nearestBuilding.ParkingLot.latitude,
+        longitude: nearestBuilding.ParkingLot.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } else {
       getLocation();
       setGoto({
         latitude: location.coords.latitude,
@@ -447,16 +452,15 @@ export default function CampusMap() {
     setModalVisible2(true);
     //setGoto(mapRegion);
   };
- 
-  const ratingCompleted=(rating) =>{
-    
-    console.log("Rating is: " + rating)
-  }
+
+  const ratingCompleted = (rating) => {
+    console.log("Rating is: " + rating);
+  };
 
   return (
     <View style={styles.container}>
       <View>
-      <Modal
+        <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible3}
@@ -466,51 +470,68 @@ export default function CampusMap() {
           key={rankings.id}
         >
           <View style={{ marginTop: 22 }}>
-  <View
+            {/* <View
     style={{
       margin: "20%",
       backgroundColor: "white",
       height: 230,
       color:"white"
     }}
-  >
-    
-    {rankings.map((ranking, i) => (
-          <View>
-            <Text style={styles.getStartedText}>Rank our service</Text>
-            <Text style={styles.getStartedText}>
-              {ranking.number} - crew
-              Name:{ranking.crewName}
-            </Text>  
+  > */}
 
-<Text>{number}</Text>
+            {rankings.map((ranking, i) => (
+              <View
+                style={{
+                  marginTop: 15,
+                  backgroundColor: "#3c78a3",
+                  margin: "15%",
+                  //padding: "5%",
+                  paddingTop: "1%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 5,
+                  ...Platform.select({
+                    ios: {
+                      paddingTop: 50,
+                      margin: "25%",
+                      minHeight: 300,
+                      width: "60%",
+                    },
+                    android: {
+                      minHeight: 227,
+                    },
+                  }),
+                }}
+              >
+                <Text style={styles.getStartedText}>Rate Our Crew</Text>
+                <Text style={styles.getStartedText}>
+                  {ranking.number} - crew Name:{ranking.crewName}
+                </Text>
 
+                <Text>{number}</Text>
 
-<AirbnbRating
-              count={5}
-              reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
-              defaultRating="0"
-              minValue={1}
-              size={20}
-              onFinishRating={ratingCompleted}
-            />
- <TouchableHighlight
-                    style={styles.buttonGreen}
-                    onPress={() => {
-                      setModalVisible3(false);
-                    }}
-                  >
-                    <Text>OK</Text>
-                  </TouchableHighlight>        
-                    </View>
-        ))}
-       
-          
-   
-  </View>
-</View>
-          
-          </Modal>
+                <AirbnbRating
+                  count={5}
+                  reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+                  defaultRating="0"
+                  minValue={1}
+                  size={20}
+                  onFinishRating={ratingCompleted}
+                />
+                <TouchableHighlight
+                  style={styles.buttonGreen}
+                  onPress={() => {
+                    setModalVisible3(false);
+                  }}
+                >
+                  <Text>OK</Text>
+                </TouchableHighlight>
+              </View>
+            ))}
+
+            {/* </View> */}
+          </View>
+        </Modal>
         <Modal
           animationType="slide"
           transparent={true}
@@ -523,9 +544,9 @@ export default function CampusMap() {
           <View style={{ marginTop: 22 }}>
             <View
               style={{
-                margin: "20%",
+                margin: "10%",
                 backgroundColor: "gray",
-                height: 230,
+                height: 440,
                 padding: 10,
               }}
             >
@@ -603,25 +624,39 @@ export default function CampusMap() {
                   <Text style={{ textAlign: "center" }}>
                     Go to the parkign lot next to building...{" "}
                   </Text>
-                  {/* <Picker
-                    style={styles.picker}
-                    itemStyle={styles.pickerItem}
-                    selectedValue={ParkingLot}
-                    onValueChange={(itemValue) => setParkingLot(itemValue)}
-                  >
-                    {ParkingLots.map((ParkingLot, i) => (
-                      <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-                    ))}
-                  </Picker> */}
-                  <TouchableHighlight
-                    style={styles.buttonHide}
-                    onPress={() => {
-                      setModalVisible2(false);
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      padding: 15,
+                      justifyContent: "center",
                     }}
                   >
-                    <Text style={{ textAlign: "center" }}>Go </Text>
-                  </TouchableHighlight>
+                    {nearestBuildings.map((nearestBuilding, i) => (
+                      <View
+                        key={i}
+                        style={{ width: "14%", height: 25, padding: 0 }}
+                      >
+                        <Badge
+                          containerStyle={{ position: "absolute" }}
+                          value={<Text>{nearestBuilding.number}</Text>}
+                          status="warning"
+                          onPress={() => setNearestBuilding(nearestBuilding)}
+                        />
+                      </View>
+                    ))}
+                  </View>
                 </View>
+                {nearestBuilding.ParkingLot && (
+                  <TouchableHighlight
+                    style={styles.buttonYellow}
+                    onPress={() => {
+                      handleGoto(3);
+                    }}
+                  >
+                    <Text>Go: {nearestBuilding.name}</Text>
+                  </TouchableHighlight>
+                )}
               </Animatable.View>
               <Animatable.View
                 animation="fadeInUp"
@@ -675,95 +710,84 @@ export default function CampusMap() {
           // strokeWidth={3}
           // strokeColor="hotpink"
         /> */}
-        {
-          parkings &&
-            parkings.map((parking) => (
-              <MapView.Marker
-                key={parking.id + parking.fk}
-                coordinate={{
-                  latitude: parking.latitude,
-                  longitude: parking.longitude,
-                }}
-                pinColor="green"
-                onPress={() => markerClick(parking)}
+        {parkings &&
+          parkings.map((parking) => (
+            <MapView.Marker
+              key={parking.id + parking.fk}
+              coordinate={{
+                latitude: parking.latitude,
+                longitude: parking.longitude,
+              }}
+              pinColor="green"
+              onPress={() => markerClick(parking)}
+            >
+              <View
+                style={[
+                  parking.type !== "normal"
+                    ? {
+                        borderColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
+                        borderWidth: 2,
+                        backgroundColor:
+                          parking.type === "gold" ? "#FFD700" : "#ffffff",
+                      }
+                    : {
+                        borderColor: "black",
+                        borderWidth: 2,
+                        backgroundColor: "white",
+                      },
+                ]}
               >
-                <View
-                  style={[
-                    parking.type !== "normal"
-                      ? {
-                          borderColor:
-                            parking.type === "gold"
-                              ? "#FFD700"
-                              : 
-                                "#ffffff",
-                          borderWidth: 2,
-                          backgroundColor:
-                            parking.type === "gold" ? "#FFD700" : "#ffffff",
-                        }
-                      : 
-                        {
-                          borderColor: "black",
-                          borderWidth: 2,
-                          backgroundColor: "white",
-                        },
-                  ]}
-                >
-                  {
-                    parking.status === 2 ? (
-                      car &&
-                      car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id ? (
-                        <Animatable.View
-                          animation="rubberBand"
-                          iterationCount="infinite"
-                          direction="alternate"
-                        >
-                          <MaterialCommunityIcons
-                            name="car-brake-parking"
-                            size={24}
-                            color="purple"
-                          />
-                        </Animatable.View>
-                      ) : (
-                        
-                        <Image
-                          source={require("../assets/images/red.png")}
-                          style={{ width: 22, height: 14 }}
-                        />
-                      )
-                    ) : 
-                    parking.status === 0 ? (
-                      <Image
-                        source={require("../assets/images/green.png")}
-                        style={{ width: 22, height: 14 }}
+                {parking.status === 2 ? (
+                  car &&
+                  car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                    <Animatable.View
+                      animation="rubberBand"
+                      iterationCount="infinite"
+                      direction="alternate"
+                    >
+                      <MaterialCommunityIcons
+                        name="car-brake-parking"
+                        size={24}
+                        color="purple"
                       />
-                    ) : 
-                    car.Parking &&
-                      car.Parking.id &&
-                      car.Parking.id === parking.id ? (
-                      <Animatable.View
-                        animation="flash"
-                        iterationCount="infinite"
-                        direction="alternate"
-                      >
-                        <MaterialCommunityIcons
-                          name="registered-trademark"
-                          size={24}
-                          color="purple"
-                        />
-                      </Animatable.View>
-                    ) : (
-                      <Image
-                        source={require("../assets/images/yellow.png")}
-                        style={{ width: 22, height: 14 }}
-                      />
-                    )
-                  }
-                </View>
-              </MapView.Marker>
-            ))
-        }
+                    </Animatable.View>
+                  ) : (
+                    <Image
+                      source={require("../assets/images/red.png")}
+                      style={{ width: 22, height: 14 }}
+                    />
+                  )
+                ) : parking.status === 0 ? (
+                  <Image
+                    source={require("../assets/images/green.png")}
+                    style={{ width: 22, height: 14 }}
+                  />
+                ) : car.Parking &&
+                  car.Parking.id &&
+                  car.Parking.id === parking.id ? (
+                  <Animatable.View
+                    animation="flash"
+                    iterationCount="infinite"
+                    direction="alternate"
+                  >
+                    <MaterialCommunityIcons
+                      name="registered-trademark"
+                      size={24}
+                      color="purple"
+                    />
+                  </Animatable.View>
+                ) : (
+                  <Image
+                    source={require("../assets/images/yellow.png")}
+                    style={{ width: 22, height: 14 }}
+                  />
+                )}
+              </View>
+            </MapView.Marker>
+          ))}
         <MapView.Marker
           coordinate={{
             latitude: location.coords.latitude,
@@ -857,7 +881,6 @@ export default function CampusMap() {
                         direction="alternate"
                       >
                         <View>
-                         
                           <TouchableHighlight
                             style={styles.buttonGreen}
                             onPress={() => {
@@ -1192,12 +1215,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingHorizontal: 4,
   },
-  getStartedText: {
-    fontSize: 24,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center",
-  },
+  // getStartedText: {
+  //   fontSize: 24,
+  //   color: "rgba(96,100,109, 1)",
+  //   lineHeight: 24,
+  //   textAlign: "center",
+  // },
   tabBarInfoContainer: {
     position: "absolute",
     bottom: 0,

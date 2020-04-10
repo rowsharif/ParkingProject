@@ -15,6 +15,8 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 // const handlePayments = firebase.functions().httpsCallable("handlePayment");
 
 const CRUDPayments = (props) => {

@@ -31,8 +31,10 @@ import CRUDParkingLots from "./CRUDParkingLots";
 import CRUDNearestBuildings from "./CRUDNearestBuildings";
 import CRUDMyPayments from "./CRUDMyPayments";
 import CRUDPayments from "./CRUDPayments";
-import CRUDUserRole from "./CRUDUserRole"
+import FAQ from "./FAQ";
+console.disableYellowBox = true;
 
+import CRUDUserRole from "./CRUDUserRole"
 const StackNavigator = createStackNavigator(
   {
     UserProfile: {
@@ -53,6 +55,9 @@ const StackNavigator = createStackNavigator(
     },
     CRUDParkings: {
       screen: CRUDParkings,
+    },
+    FAQ: {
+      screen: FAQ,
     },
     CRUDParkingLots: {
       screen: CRUDParkingLots,
@@ -81,10 +86,10 @@ const StackNavigator = createStackNavigator(
     CRUDUserRole:{
       screen:CRUDUserRole
     },
-    
     CRUDMyPayments:{
       screen:CRUDMyPayments
     }
+   
   },
   {
     initialRouteName: "UserProfile",

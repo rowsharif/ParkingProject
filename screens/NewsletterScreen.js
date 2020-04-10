@@ -6,6 +6,7 @@ import {
   FontAwesome 
 } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable';
+console.disableYellowBox = true;
 
 
 export default function NewsletterScreen() {
@@ -74,6 +75,9 @@ export default function NewsletterScreen() {
           transparent={true}
           visible={modalVisible}          
           key={news.id}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
         >
           <View style={{margin: "5%", backgroundColor: "#c7c7c7", height:"80%", borderRadius: 10, ...Platform.select({
                 ios: {

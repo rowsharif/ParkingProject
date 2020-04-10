@@ -18,31 +18,31 @@ import "firebase/auth";
 import db from "../db.js";
 console.disableYellowBox = true;
 
-const handleServices = firebase.functions().httpsCallable("handleServices");
+const handleFAQ = firebase.functions().httpsCallable("handleFAQ");
 
 
 
-const CRUDServices = (props) => {
+const FAQ = (props) => {
 
-  const [services, setServices] = useState([]);
-  const [price, setPrice] = React.useState(0);
-  const [name, setName] = React.useState("");
+  const [faqs, setFaqs] = useState([]);
+  const [question, setQuestion] = React.useState("");
+  const [answer, setAnswer] = React.useState("");
   const [id, setId] = React.useState("");
 
 
 
   useEffect(() => {
 
-    db.collection("Services").onSnapshot(querySnapshot => {
+    db.collection("FAQs").onSnapshot(querySnapshot => {
 
-      const services = [];
+      const faqs = [];
       querySnapshot.forEach(doc => {
-        services.push({ id: doc.id, ...doc.data() });
+        faqs.push({ id: doc.id, ...doc.data() });
       });
 
-      console.log(" Current services: ", services);
+      console.log(" Current faqs: ", faqs);
 
-      setServices([...services]);
+      setFaqs([...faqs]);
     });
   }, []);
 
@@ -51,73 +51,73 @@ const CRUDServices = (props) => {
   const handleSend = async () => {
 
     if (id) {
-      const response2 = await handleServices({
-        service: { id, name, price },
+      const response2 = await handleFAQ({
+        faq: { id, question, answer },
         operation: "update"
       });
     } 
 
     else {
-      const response2 = await handleServices({
+      const response2 = await handleFAQ({
 
-        service: { name, price },
+        faq: { question, answer },
 
         operation: "add"
       });
     }
-    setName("");
-    setPrice("");
+    setQuestion("");
+    setAnswer("");
     setId("");
   };
-  const handleEdit = service => {
-    setName(service.name);
+  const handleEdit = faq => {
+    setQuestion(faq.question);
 
-    setPrice(service.price);
+    setAnswer(faq.answer);
 
-    setId(service.id);
+    setId(faq.id);
   };
 
-  const handleDelete = async service => {
+  const handleDelete = async faq => {
 
-    const response2 = await handleServices({
-      service: service,
+    const response2 = await handleFAQ({
+        faq: faq,
         operation: "delete"
     });
   };
   return (
     <View style={styles.container}>
-        {services.map((service, i) => (
+        {faqs.map((faq, i) => (
           <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
 
             <Text style={styles.getStartedText}>
-              {service.name} - 
+              {faq.question} - 
 
-              {service.price}
+              {faq.answer}
             </Text>
 
-            <Animatable.View animation="shake" iterationCount={3} style={{ textAlign: 'center' }}><Button title="Edit" onPress={() => handleEdit(service)} /></Animatable.View>
+            <Button title="Edit" onPress={() => handleEdit(faq)} />
 
-            <Animatable.View animation="shake" iterationCount={3} style={{ textAlign: 'center' }}><Button title="X" onPress={() => handleDelete(service)} /></Animatable.View>
+            <Button title="X" onPress={() => handleDelete(faq)} />
           </View>
         ))}
 
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setName}
-        placeholder="Name"
-        value={name}
+        onChangeText={setQuestion}
+        placeholder="Question"
+        value={question}
       />
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setPrice}
-        placeholder="Price"
-        value={price}
+        onChangeText={setAnswer}
+        placeholder="Answer"
+        value={answer}
       />
 
 
-<Animatable.View animation="bounceIn" iterationCount={3} style={{ textAlign: 'center' }}><Button title="Send" onPress={handleSend} /></Animatable.View>
+<Button title="Send" onPress={handleSend} />
 
-<Animatable.View animation="bounceIn" iterationCount={3} style={{ textAlign: 'center' }}><Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button></Animatable.View>
+<Button  color="green" title="Back" onPress={() => props.navigation.goBack()} ></Button>
 
     </View>
   );
@@ -126,7 +126,7 @@ const CRUDServices = (props) => {
 
 
 
-CRUDServices.navigationOptions = {
+FAQ.navigationOptions = {
     headerTitle: (
       <View
         style={{
@@ -174,7 +174,7 @@ CRUDServices.navigationOptions = {
       fontWeight: "bold"
     }
   };
-  export default CRUDServices;
+  export default FAQ;
 
 const styles = StyleSheet.create({
     container: {

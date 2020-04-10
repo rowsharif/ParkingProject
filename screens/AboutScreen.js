@@ -24,6 +24,7 @@ import {
 } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable';
 
+console.disableYellowBox = true;
 
 function CNAQ_Parking_App() {
   const navigationOptions = {

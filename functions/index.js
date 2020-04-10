@@ -1,3 +1,4 @@
+// firebase functions to create cloud functions and setup an action.
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
@@ -20,8 +21,7 @@ exports.welcomeUser = functions.firestore
 // 2
 exports.sendMessage = functions.https.onCall(async (data, context) => {
   console.log("sendMessage data", data);
-  // check for things not allowed
-  // only if ok then add message
+  
   if (data.text === "") {
     console.log("empty message");
     return;
@@ -30,24 +30,41 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
   db.collection("messages").add(data);
 });
 
-/////////handle services
 exports.handleServices = functions.https.onCall(async (data, context) => {
-  console.log("service data", data);
-  // check for things not allowed
-  // only if ok then add message
   if (data.operation === "add") {
     db.collection("Services").add(data.service);
-  } else if (data.operation === "delete") {
+  }
+else if (data.operation === "delete") {
     db.collection("Services").doc(data.service.id).delete();
-  } else {
+  } 
+  else {
     db.collection("Services").doc(data.service.id).update(data.service);
   }
 });
 
+exports.handleFAQ = functions.https.onCall(async (data, context) => {
+  if (data.operation === "add") {
+    db.collection("FAQs").add(data.faq);
+  }
+else if (data.operation === "delete") {
+    db.collection("FAQs").doc(data.faq.id).delete();
+  } 
+  else {
+    db.collection("FAQs").doc(data.faq.id).update(data.faq);
+  }
+});
+
+exports.handleRole = functions.https.onCall(async (data, context) => {
+  
+    db.collection("users").doc(data.user.id).update(data.user);
+  
+});
+
+
+
 exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
-  // check for things not allowed
-  // only if ok then add message
+
   if (data.operation === "add") {
     db.collection("ParkingLots").add(data.parkingLot);
   } else if (data.operation === "delete") {
@@ -59,17 +76,20 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   }
 });
 
+
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
-  console.log("service data befor", data.promotion.endDateTime);
+  console.log("promotion data before", data.promotion.endDateTime);
   data.promotion.endDateTime = new Date(data.promotion.endDateTime);
-  console.log("service data", data.promotion.endDateTime);
-  // check for things not allowed
-  // only if ok then add message
+  console.log("promotion data", data.promotion.endDateTime);
   if (data.operation === "add") {
     db.collection("Promotions").add(data.promotion);
-  } else if (data.operation === "delete") {
+  }
+   else if 
+   (data.operation === "delete") {
     db.collection("Promotions").doc(data.promotion.id).delete();
-  } else {
+  } 
+  else 
+   {
     db.collection("Promotions").doc(data.promotion.id).update(data.promotion);
   }
 });

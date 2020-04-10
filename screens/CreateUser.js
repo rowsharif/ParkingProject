@@ -6,6 +6,7 @@ import { TextInput } from 'react-native-paper';
 import db from "../db.js";
 import firebase from "firebase/app";
 import "firebase/auth";
+console.disableYellowBox = true;
 
 const CreateUser = (props) => {
     const [name,setName]=useState("");

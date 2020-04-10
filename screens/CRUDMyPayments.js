@@ -15,7 +15,7 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-// const handlePayments = firebase.functions().httpsCallable("handleHistory");
+console.disableYellowBox = true;
 
 const CRUDPayments = (props) => {
   const [Payments, setPayments] = useState([]);

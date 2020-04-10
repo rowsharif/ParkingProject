@@ -18,6 +18,8 @@ import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
+console.disableYellowBox = true;
+
 const handleCRUDParkings = firebase.functions().httpsCallable("handleCRUDParkings");
 
 const CRUDParkings =(props)=> {

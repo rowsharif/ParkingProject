@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, ShadowPropTypesIOS,Image } from 'react-native';
 import { AntDesign, FontAwesome, MaterialIcons, Feather } from "@expo/vector-icons";
-
+console.disableYellowBox = true;
 
 const UpdateUser = (props) => {
 

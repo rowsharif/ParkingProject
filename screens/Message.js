@@ -16,6 +16,7 @@ import { MonoText } from "../components/StyledText";
 import db from "../db.js";
 import firebase from "firebase/app";
 import "firebase/auth";
+console.disableYellowBox = true;
 
 export default ({ message, handleEdit }) => {
   const handleDelete = message => {

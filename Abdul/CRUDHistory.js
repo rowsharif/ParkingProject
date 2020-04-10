@@ -16,11 +16,10 @@ import {
 } from "react-native";
 import { FontAwesome, Octicons } from "@expo/vector-icons";
 
-import { Picker } from "react-native";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-console.disableYellowBox = true;
+// const handlehistories = firebase.functions().httpsCallable("handleHistory");
 
 const CRUDhistories = (props) => {
   const [histories, sethistories] = useState([]);

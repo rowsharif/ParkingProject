@@ -15,7 +15,6 @@ import {
   View,
   Dimensions,
   Modal,
-  Picker,
 } from "react-native";
 import { Rating, AirbnbRating } from "react-native-ratings";
 
@@ -47,12 +46,11 @@ export default function CampusMap() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible3, setModalVisible3] = useState(false);
-
-  const [rankings, setRankings] = useState([]);
+  const [number, setNumber] = useState(1);
+  const [ratings, setRatings] = useState([]);
   const [crews, setCrews] = useState([]);
-  const [number, setNumber] = useState();
 
-  //const [ParkingLots, setParkingLots] = useState([]);
+  const [ParkingLots, setParkingLots] = useState([]);
   const [parking, setParking] = useState({});
   const [car, setCar] = useState({});
   const [promotion, setPromotion] = useState({});
@@ -62,6 +60,7 @@ export default function CampusMap() {
   const [total, setTotal] = useState(0);
   const [hours, setHours] = useState(0);
   const [uid, setUid] = useState("");
+  const [user, setUser] = useState({});
   const [mapType, setMapType] = useState(true);
   const [mapRegion, setMapRegion] = useState({
     latitude: 25.358833,
@@ -85,10 +84,10 @@ export default function CampusMap() {
   });
   const [crew, setCrew] = useState();
 
-  // const setModalvisible = (x) => {
-  //   setModalVisible(x);
-  //   setPromotionValid("");
-  // };
+  const setModalvisible = (x) => {
+    setModalVisible(x);
+    setPromotionValid("");
+  };
 
   const handleParkings = firebase.functions().httpsCallable("handleParkings");
 
@@ -107,14 +106,21 @@ export default function CampusMap() {
   };
 
   useEffect(() => {
-    setModalVisible3(true);
-
+    setPromotionValid(" ");
     askPermission();
     getLocation();
     setUid(firebase.auth().currentUser.uid);
   }, []);
 
   useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
     db.collection("NearestBuildings").onSnapshot((querySnapshot) => {
       const nearestBuildings = [];
       querySnapshot.forEach((doc) => {
@@ -143,50 +149,14 @@ export default function CampusMap() {
 
   ////ranking
   useEffect(() => {
-    db.collection("ParkingLots")
-      .get()
-      .then((querySnapshot) => {
-        const ParkingLots = [];
-        let allCrews = [];
-        let allranking = [];
-        querySnapshot.forEach((doc) => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
-          db.collection("ParkingLots")
-            .doc(doc.id)
-            .collection("Crew")
-            .onSnapshot((querySnapshot) => {
-              const ncrews = [];
-              allCrews = allCrews.filter((p) => p.fk !== doc.id);
-              querySnapshot.forEach((docP) => {
-                ncrews.push({ fk: doc.id, id: docP.id, ...docP.data() });
-                db.collection("ParkingLots")
-                  .doc(doc.id)
-                  .collection("Crew")
-                  .doc(docP.id)
-                  .collection("Ranking")
-                  .onSnapshot((querySnapshot) => {
-                    const nrankings = [];
-                    allranking = allranking.filter((p) => p.fk !== docP.id);
-                    querySnapshot.forEach((docE) => {
-                      nrankings.push({
-                        fkp: doc.id,
-                        fk: docP.id,
-                        crewName: docP.data().name,
-                        id: docE.id,
-                        ...docE.data(),
-                      });
-                    });
-                    allranking = [...allranking, ...nrankings];
-                    setRankings([...allranking]);
-                  });
-              });
-              allCrews = [...allCrews, ...ncrews];
-              setCrews([...allCrews]);
-
-              console.log("Crews", allCrews);
-            });
-        });
+    db.collection("Ratings").onSnapshot((querySnapshot) => {
+      const ratings = [];
+      querySnapshot.forEach((doc) => {
+        ratings.push({ id: doc.id, ...doc.data() });
       });
+      console.log(" Current ratings: ", ratings);
+      setRatings([...ratings]);
+    });
   }, []);
 
   useEffect(() => {
@@ -203,6 +173,7 @@ export default function CampusMap() {
           });
         });
         setCar(Cars.filter((c) => c.current === true)[0]);
+        setPromotionValid(" ");
       });
   }, []);
 
@@ -220,7 +191,11 @@ export default function CampusMap() {
           new Date().getTime() - car.Parking.DateTime.toDate().getTime()
         ) / 36e5
       );
-      let pTotal = hours * car.Parking.amountperhour + car.Parking.TotalAmount;
+      let pTotal =
+        user.role === "staff" ? hours * car.Parking.amountperhour : 0;
+
+      pTotal = pTotal + car.Parking.TotalAmount;
+
       if (promotionValid === true) {
         totalAmount = pTotal - pTotal * promotion.percent;
       } else {
@@ -299,6 +274,17 @@ export default function CampusMap() {
         });
         setParkings([...parkings]);
       });
+    db.collection("ParkingLots").onSnapshot((querySnapshot) => {
+      const ParkingLots = [];
+      querySnapshot.forEach((doc) => {
+        ParkingLots.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      console.log(" Current ParkingLots: ", ParkingLots);
+      setParkingLots([...ParkingLots]);
+    });
   }, []);
 
   const markerClick = (parking) => {
@@ -308,10 +294,8 @@ export default function CampusMap() {
       latitudeDelta: 0.0004,
       longitudeDelta: 0.0004,
     });
-    setModalVisible(true);
-    setModalVisible3(true);
+    setModalvisible(true);
     setParking(parking);
-    setPromotionValid("");
   };
 
   const handleMapType = () => {
@@ -332,6 +316,7 @@ export default function CampusMap() {
     // hours = number of hours the user was parked for
     const response2 = await handleParkings({
       uid,
+      role: user.role,
       temp,
       car,
       ServicesToAdd,
@@ -348,6 +333,7 @@ export default function CampusMap() {
           : "Park",
     });
     setModalVisible(false);
+    i === 0 && o && setModalVisible3(true);
     handleLocalNotification(i, o);
   };
   const handleLocalNotification = (i, o) => {
@@ -455,6 +441,13 @@ export default function CampusMap() {
 
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
+    setNumber(rating);
+  };
+  const submitRating = async () => {
+    const response = await fetch(
+      `https://us-central1-parkingapp-a7028.cloudfunctions.net/handleRating?number=${number}&id=${crew.id}&fk=${crew.fk}&name=${crew.name}`
+    );
+    setModalVisible3(false);
   };
 
   return (
@@ -467,7 +460,7 @@ export default function CampusMap() {
           onRequestClose={() => {
             setModalVisible3(false);
           }}
-          key={rankings.id}
+          key={ratings.id}
         >
           <View style={{ marginTop: 22 }}>
             {/* <View
@@ -479,55 +472,58 @@ export default function CampusMap() {
     }}
   > */}
 
-            {rankings.map((ranking, i) => (
-              <View
-                style={{
-                  marginTop: 15,
-                  backgroundColor: "#3c78a3",
-                  margin: "15%",
-                  //padding: "5%",
-                  paddingTop: "1%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: 5,
-                  ...Platform.select({
-                    ios: {
-                      paddingTop: 50,
-                      margin: "25%",
-                      minHeight: 300,
-                      width: "60%",
-                    },
-                    android: {
-                      minHeight: 227,
-                    },
-                  }),
-                }}
-              >
-                <Text style={styles.getStartedText}>Rate Our Crew</Text>
-                <Text style={styles.getStartedText}>
-                  {ranking.number} - crew Name:{ranking.crewName}
-                </Text>
-
-                <Text>{number}</Text>
-
-                <AirbnbRating
-                  count={5}
-                  reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
-                  defaultRating="0"
-                  minValue={1}
-                  size={20}
-                  onFinishRating={ratingCompleted}
-                />
+            <View
+              style={{
+                //marginTop: 15,
+                backgroundColor: "#3c78a3",
+                margin: "15%",
+                //padding: "5%",
+                //paddingTop: "1%",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                ...Platform.select({
+                  ios: {
+                    paddingTop: 10,
+                    margin: "25%",
+                    minHeight: 300,
+                    width: "60%",
+                  },
+                  android: {
+                    minHeight: 227,
+                  },
+                }),
+              }}
+            >
+              <View style={{ alignSelf: "flex-end", width: "10%" }}>
                 <TouchableHighlight
-                  style={styles.buttonGreen}
+                  style={[styles.buttonHide, { width: "90%", marginTop: 0 }]}
                   onPress={() => {
                     setModalVisible3(false);
                   }}
                 >
-                  <Text>OK</Text>
+                  <Text>X</Text>
                 </TouchableHighlight>
               </View>
-            ))}
+              <Text style={styles.getStartedText}>Rate Our Crew</Text>
+
+              <AirbnbRating
+                count={5}
+                reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+                defaultRating="1"
+                minValue={1}
+                size={20}
+                onFinishRating={ratingCompleted}
+              />
+              <TouchableHighlight
+                style={styles.buttonGreen}
+                onPress={() => {
+                  submitRating();
+                }}
+              >
+                <Text>Submit</Text>
+              </TouchableHighlight>
+            </View>
 
             {/* </View> */}
           </View>
@@ -796,17 +792,52 @@ export default function CampusMap() {
           pinColor="green"
           title="You are here"
         />
-        <MapView.Marker
-          coordinate={{
-            latitude: 25.358924,
-            longitude: 51.480265,
-          }}
-        >
-          <Image
-            source={require("../assets/images/1.png")}
-            style={{ width: 36, height: 28 }}
-          />
-        </MapView.Marker>
+        {ParkingLots &&
+          ParkingLots.map((ParkingLot, i) => (
+            <MapView.Marker
+              coordinate={{
+                latitude: ParkingLot.latitude,
+                longitude: ParkingLot.longitude,
+              }}
+            >
+              <Image
+                source={{ uri: ParkingLot.img }}
+                style={{ width: 40, height: 30 }}
+              />
+              {ratings.filter((r) => r.crew.fk === ParkingLot.id).length >
+                0 && (
+                <Rating
+                  imageSize={10}
+                  readonly
+                  fractions={1}
+                  startingValue={
+                    ratings
+                      .filter((r) => r.crew.fk === ParkingLot.id)
+                      .reduce(
+                        (previousScore, currentScore, index) =>
+                          previousScore + parseInt(currentScore.number),
+                        0
+                      ) /
+                    ratings.filter((r) => r.crew.fk === ParkingLot.id).length
+                  }
+                />
+              )}
+            </MapView.Marker>
+          ))}
+        {nearestBuildings &&
+          nearestBuildings.map((nearestBuilding) => (
+            <MapView.Marker
+              coordinate={{
+                latitude: parseFloat(nearestBuilding.latitude),
+                longitude: parseFloat(nearestBuilding.longitude),
+              }}
+            >
+              <Image
+                source={{ uri: nearestBuilding.img }}
+                style={{ width: 40, height: 30 }}
+              />
+            </MapView.Marker>
+          ))}
         <MapView.Marker
           coordinate={{
             latitude: 25.359997,
@@ -969,10 +1000,35 @@ export default function CampusMap() {
                   car.Parking &&
                   !car.Parking.id && (
                     <View>
-                      {Services && (
-                        <Text style={{ textAlign: "center" }}>
-                          Add Services:{" "}
-                        </Text>
+                      {Services && crew && (
+                        <View>
+                          <Text style={{ textAlign: "center" }}>
+                            Crew Rating
+                          </Text>
+                          {ratings.filter((r) => r.crew.id === crew.id).length >
+                            0 && (
+                            <Rating
+                              imageSize={20}
+                              readonly
+                              fractions="{1}"
+                              startingValue={
+                                ratings
+                                  .filter((r) => r.crew.id === crew.id)
+                                  .reduce(
+                                    (previousScore, currentScore, index) =>
+                                      previousScore +
+                                      parseInt(currentScore.number),
+                                    0
+                                  ) /
+                                ratings.filter((r) => r.crew.id === crew.id)
+                                  .length
+                              }
+                            />
+                          )}
+                          <Text style={{ textAlign: "center" }}>
+                            Add Services:{" "}
+                          </Text>
+                        </View>
                       )}
                       <View style={{ alignItems: "center" }}>
                         {

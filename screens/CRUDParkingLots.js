@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -20,7 +20,7 @@ console.disableYellowBox = true;
 //import { handleParkings } from "../functions";
 const handleParkingLot = firebase.functions().httpsCallable("handleParkingLot");
 
-const CRUDParkingLots =(props)=> {
+const CRUDParkingLots = (props) => {
   const [parkingLots, setParkingLot] = useState([]);
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
@@ -28,9 +28,9 @@ const CRUDParkingLots =(props)=> {
   const [id, setId] = React.useState("");
 
   useEffect(() => {
-    db.collection("ParkingLots").onSnapshot(querySnapshot => {
+    db.collection("ParkingLots").onSnapshot((querySnapshot) => {
       const parkingLots = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         parkingLots.push({ id: doc.id, ...doc.data() });
       });
       console.log(" Current parkingLots: ", parkingLots);
@@ -39,39 +39,43 @@ const CRUDParkingLots =(props)=> {
   }, []);
 
   const handleSend = async () => {
-
     if (id) {
       const response2 = await handleParkingLot({
-        parkingLot: { id, name, longitude,latitude },
-        operation: "update"
+        parkingLot: {
+          id,
+          name,
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+        },
+        operation: "update",
       });
-
-    }
- 
-    else {
+    } else {
       // call serverless function instead
       const response2 = await handleParkingLot({
-        parkingLot: {name, longitude,latitude },
-        operation: "add"
+        parkingLot: {
+          name,
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+        },
+        operation: "add",
       });
-
     }
     setName("");
-    setLongitude("");
-    setLatitude("");
+    setLongitude(0);
+    setLatitude(0);
     setId("");
   };
 
-  const handleEdit = parkingLot => {
+  const handleEdit = (parkingLot) => {
     setName(parkingLot.name);
     setLatitude(parkingLot.latitude);
     setLongitude(parkingLot.longitude);
     setId(parkingLot.id);
   };
-  const handleDelete = async parkingLot => {
+  const handleDelete = async (parkingLot) => {
     const response2 = await handleParkingLot({
       parkingLot: parkingLot,
-      operation: "delete"
+      operation: "delete",
     });
   };
   return (
@@ -100,30 +104,33 @@ const CRUDParkingLots =(props)=> {
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setLatitude}
-        placeholder= "latitude"
+        placeholder="latitude"
         //value={latitude}
         value={`${latitude}`}
       />
-       <TextInput
+      <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setLongitude}
         placeholder="longitude"
         //value={longitude}
-        value= {`${longitude}`}
+        value={`${longitude}`}
       />
       <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
-
+      <Button
+        color="green"
+        title="Cancel"
+        onPress={() => props.navigation.goBack()}
+      ></Button>
     </View>
   );
-}
+};
 
 CRUDParkingLots.navigationOptions = {
   headerTitle: (
     <View
       style={{
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -133,14 +140,14 @@ CRUDParkingLots.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         MyProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 2,
         }}
       ></View>
 
@@ -150,7 +157,7 @@ CRUDParkingLots.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -159,31 +166,29 @@ CRUDParkingLots.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 export default CRUDParkingLots;
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-     
-      //alignItems: 'center',
-      //justifyContent: "center",
-    
+    flex: 1,
+
+    //alignItems: 'center',
+    //justifyContent: "center",
   },
   picker: {
     width: 200,
-    backgroundColor: '#FFF0E0',
-    borderColor: 'black',
+    backgroundColor: "#FFF0E0",
+    borderColor: "black",
     borderWidth: 1,
   },
   pickerItem: {
-    color: 'red'
+    color: "red",
   },
-}); 
-
+});

@@ -21,7 +21,7 @@ exports.welcomeUser = functions.firestore
 // 2
 exports.sendMessage = functions.https.onCall(async (data, context) => {
   console.log("sendMessage data", data);
-  
+
   if (data.text === "") {
     console.log("empty message");
     return;
@@ -33,11 +33,9 @@ exports.sendMessage = functions.https.onCall(async (data, context) => {
 exports.handleServices = functions.https.onCall(async (data, context) => {
   if (data.operation === "add") {
     db.collection("Services").add(data.service);
-  }
-else if (data.operation === "delete") {
+  } else if (data.operation === "delete") {
     db.collection("Services").doc(data.service.id).delete();
-  } 
-  else {
+  } else {
     db.collection("Services").doc(data.service.id).update(data.service);
   }
 });
@@ -45,22 +43,16 @@ else if (data.operation === "delete") {
 exports.handleFAQ = functions.https.onCall(async (data, context) => {
   if (data.operation === "add") {
     db.collection("FAQs").add(data.faq);
-  }
-else if (data.operation === "delete") {
+  } else if (data.operation === "delete") {
     db.collection("FAQs").doc(data.faq.id).delete();
-  } 
-  else {
+  } else {
     db.collection("FAQs").doc(data.faq.id).update(data.faq);
   }
 });
 
 exports.handleRole = functions.https.onCall(async (data, context) => {
-  
-    db.collection("users").doc(data.user.id).update(data.user);
-  
+  db.collection("users").doc(data.user.id).update(data.user);
 });
-
-
 
 exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   console.log("service data", data);
@@ -76,20 +68,15 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   }
 });
 
-
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
   console.log("promotion data before", data.promotion.endDateTime);
   data.promotion.endDateTime = new Date(data.promotion.endDateTime);
   console.log("promotion data", data.promotion.endDateTime);
   if (data.operation === "add") {
     db.collection("Promotions").add(data.promotion);
-  }
-   else if 
-   (data.operation === "delete") {
+  } else if (data.operation === "delete") {
     db.collection("Promotions").doc(data.promotion.id).delete();
-  } 
-  else 
-   {
+  } else {
     db.collection("Promotions").doc(data.promotion.id).update(data.promotion);
   }
 });
@@ -206,6 +193,24 @@ exports.initUser = functions.https.onRequest(async (request, response) => {
   response.send("All done ");
 });
 
+// 4
+exports.handleRating = functions.https.onRequest(async (request, response) => {
+  console.log("request id: ", request.query.id);
+  console.log("request id: ", request.query.fk);
+  console.log("request id: ", request.query.name);
+
+  const result = await db.collection("Ratings").add({
+    number: request.query.number,
+    crew: {
+      id: request.query.id,
+      fk: request.query.fk,
+      name: request.query.name,
+    },
+  });
+
+  response.send("All done ");
+});
+
 exports.handleNearestBuilding = functions.https.onCall(
   async (data, context) => {
     console.log("NearestBuilding data", data);
@@ -228,17 +233,17 @@ exports.handleCRUDParkings = functions.https.onCall(async (data, context) => {
   // check for things not allowed
   // only if ok then add message
   if (data.operation === "add") {
-    db.collection("ParkingsLots")
+    db.collection("ParkingLots")
       .doc(data.parking.fk)
       .collection("Parkings")
-      .add(data.Parking);
+      .add(data.parking);
   } else if (data.operation === "delete") {
-    db.collection("ParkingsLots")
+    db.collection("ParkingLots")
       .doc(data.parking.fk)
       .collection("Parkings")
       .delete();
   } else {
-    db.collection("ParkingsLots")
+    db.collection("ParkingLots")
       .doc(data.parking.fk)
       .collection("Parkings")
       .doc(data.parking.id)
@@ -346,7 +351,9 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     // pTotal is temp variable used to store the total amount of the parking and services;
     //it equals the number of hours the user spent on the parking multiplied by the parking amount per an hour plus the total amount of all services requested by the user.
     let pTotal =
-      data.hours * car.Parking.amountperhour + car.Parking.TotalAmount;
+      data.role === "staff" ? data.hours * car.Parking.amountperhour : 0;
+
+    pTotal = pTotal + car.Parking.TotalAmount;
     // the totalAmount variable is used to store the total amount after discount if there is any; otherwise it equals to the ptotal variable
     let totalAmount =
       data.promotion && data.promotion.percent

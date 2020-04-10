@@ -16,8 +16,11 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableHighlight,
+  SafeAreaView,
+  Alert,
 } from "react-native";
-
+import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -35,7 +38,7 @@ import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function HomeScreen() {
   const [errorOnDelete, setErrorOnDelete] = React.useState(false);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");
   const [text, setText] = useState("");

@@ -66,13 +66,13 @@ const UserProfile = (props) => {
   }, []);
 
   const handleSave = async () => {
-    setView(false);
+    //setView(false);
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     // );
 
-    if (phoneNumber.length === 12) {
+    if (phoneNumber.length === 12 || phoneNumber.length === {}) {
       const updateUser = firebase.functions().httpsCallable("updateUser");
       const response2 = await updateUser({
         uid,
@@ -247,6 +247,21 @@ const UserProfile = (props) => {
                   justifyContent: "center",
                 }}
               >
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 1,
+                    textAlign: "center",
+                    borderColor: "blue",
+                    backgroundColor: "#d6fffc",
+                    width: "auto",
+                    margin: "3%",
+                    alignSelf: "center",
+                    padding: "3%",
+                  }}
+                  onPress={handleSave}
+                >
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     borderWidth: 1,

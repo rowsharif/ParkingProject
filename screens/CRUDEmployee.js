@@ -24,7 +24,7 @@ const handleEmployee = firebase.functions().httpsCallable("handleEmployee");
 const CRUDEmployees = (props) => {
   const [employees, setEmployees] = useState([]);
   const [crews, setCrews] = useState([]);
-  const [crew, setCrew] = useState({});
+  const [crew, setCrew] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
@@ -96,7 +96,7 @@ const CRUDEmployees = (props) => {
 
   const handleSend = async () => {
     if (id) {
-      if (crew.id === fk) {
+      if (crew === fk) {
         const response2 = await handleEmployee({
           employee: { id, type, name, identifier, fk, fkp },
           operation: "update",
@@ -107,14 +107,26 @@ const CRUDEmployees = (props) => {
           operation: "delete",
         });
         const response3 = await handleEmployee({
-          employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
+          employee: {
+            type,
+            name,
+            identifier,
+            fk: crew,
+            fkp: crews.filter((c) => c.id === crew)[0].fk,
+          },
           operation: "add",
         });
       }
     } else {
       // call serverless function instead
       const response2 = await handleEmployee({
-        employee: { type, name, identifier, fk: crew.id, fkp: crew.fk },
+        employee: {
+          type,
+          name,
+          identifier,
+          fk: crew,
+          fkp: crews.filter((c) => c.id === crew)[0].fk,
+        },
         operation: "add",
       });
     }
@@ -122,7 +134,7 @@ const CRUDEmployees = (props) => {
     setName("");
     setId("");
     setIdentifier("");
-    // setCrew("")
+    setCrew("");
   };
 
   const handleEdit = (employee) => {
@@ -133,7 +145,7 @@ const CRUDEmployees = (props) => {
     setFkp(employee.fkp);
     setId(employee.id);
     setCrew(crews.filter((c) => c.id === employee.fk)[0]);
-    // setCrew(employee.crews.name)
+    setCrew(employee.fk);
   };
   const handleDelete = async (employee) => {
     const response2 = await handleEmployee({
@@ -186,7 +198,7 @@ const CRUDEmployees = (props) => {
           onValueChange={(itemValue) => setCrew(itemValue)}
         >
           {crews.map((crew, i) => (
-            <Picker.Item label={crew.name} value={crew} />
+            <Picker.Item label={crew.name} value={crew.id} />
           ))}
         </Picker>
 

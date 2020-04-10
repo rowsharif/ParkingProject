@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View,
   Picker,
-
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -20,26 +19,28 @@ import "firebase/auth";
 import db from "../db.js";
 console.disableYellowBox = true;
 
-const handleCRUDParkings = firebase.functions().httpsCallable("handleCRUDParkings");
+const handleCRUDParkings = firebase
+  .functions()
+  .httpsCallable("handleCRUDParkings");
 
-const CRUDParkings =(props)=> {
+const CRUDParkings = (props) => {
   const [parkings, setParkings] = useState([]);
-  console.log("---dddd-",parkings)
+  console.log("---dddd-", parkings);
   const [longitude, setLongitude] = React.useState(0);
   const [latitude, setlatitude] = React.useState(0);
-  const [amountperhour, setAmountperhour] = React.useState("");
+  const [amountperhour, setAmountperhour] = React.useState(0);
   const [type, setType] = React.useState("");
   const [id, setId] = React.useState("");
-  const [ParkingLot,setParkingLot] = useState([]);
-  const [ParkingLots, setParkingLots] =useState([]);
+  const [ParkingLot, setParkingLot] = useState("");
+  const [ParkingLots, setParkingLots] = useState([]);
 
   // useEffect(() => {
   //   db.collection("Parkings").onSnapshot(querySnapshot => {
   //     const parkings = [];
   //     console.log("----",parkings)
-  //     querySnapshot.forEach(doc => { 
+  //     querySnapshot.forEach(doc => {
   //       parkings.push({ id: doc.id, ...doc.data() });
-       
+
   //     });
   //     console.log(" Current parkings: ", parkings);
   //     setParkings([...parkings]);
@@ -48,18 +49,18 @@ const CRUDParkings =(props)=> {
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const ParkingLots = [];
         let allParkings = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           ParkingLots.push({ id: doc.id, ...doc.data() });
           db.collection("ParkingLots")
             .doc(doc.id)
             .collection("Parkings")
-            .onSnapshot(querySnapshot => {
+            .onSnapshot((querySnapshot) => {
               const nparkings = [];
-              allParkings = allParkings.filter(p => p.fk !== doc.id);
-              querySnapshot.forEach(docP => {
+              allParkings = allParkings.filter((p) => p.fk !== doc.id);
+              querySnapshot.forEach((docP) => {
                 nparkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
               });
               allParkings = [...allParkings, ...nparkings];
@@ -68,40 +69,53 @@ const CRUDParkings =(props)=> {
         });
         setParkingLots([...ParkingLots]);
       });
-    },[]);
-
+  }, []);
 
   const handleSend = async () => {
     if (id) {
       const response2 = await handleCRUDParkings({
-        parking: { id, longitude, latitude,amountperhour,type },
-        operation: "update"
+        parking: {
+          id,
+          fk: ParkingLot,
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+          amountperhour: parseInt(amountperhour),
+          type,
+        },
+        operation: "update",
       });
     } else {
-      
       const response2 = await handleCRUDParkings({
-        parking: { longitude, latitude,amountperhour,type },
-        operation: "add"
+        parking: {
+          fk: ParkingLot,
+          longitude: parseInt(longitude),
+          latitude: parseInt(latitude),
+          amountperhour: parseInt(amountperhour),
+          type,
+        },
+        operation: "add",
       });
     }
-    setLongitude("");
-    setlatitude("");
-    setAmountperhour("");
+    setLongitude(0);
+    setlatitude(0);
+    setAmountperhour(0);
     setType("");
     setId("");
+    setParkingLot("");
   };
 
-  const handleEdit = parking => {
+  const handleEdit = (parking) => {
     setlatitude(parking.latitude);
     setLongitude(parking.longitude);
     setAmountperhour(parking.amountperhour);
     setType(parking.type);
     setId(parking.id);
+    setParkingLot(parking.fk);
   };
-  const handleDelete = async parking => {
+  const handleDelete = async (parking) => {
     const response2 = await handleCRUDParkings({
       parking: parking,
-      operation: "delete"
+      operation: "delete",
     });
   };
   return (
@@ -112,9 +126,10 @@ const CRUDParkings =(props)=> {
         keyboardShouldPersistTaps="always"
       >
         {parkings.map((parking, i) => (
-          <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
+          <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {parking.latitude} - {parking.longitude} - {parking.amountperhour} - {parking.type}
+              {parking.latitude} - {parking.longitude} - {parking.amountperhour}{" "}
+              - {parking.type}
             </Text>
             <Button title="Edit" onPress={() => handleEdit(parking)} />
             <Button title="X" onPress={() => handleDelete(parking)} />
@@ -133,7 +148,7 @@ const CRUDParkings =(props)=> {
         placeholder="longitude"
         value={longitude}
       /> */}
-       <TextInput
+      <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={setAmountperhour}
         placeholder="Amount per hour"
@@ -145,30 +160,45 @@ const CRUDParkings =(props)=> {
         placeholder="Type"
         value={type}
       />
-        <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={ParkingLot}
-          onValueChange={(itemValue) => setParkingLot(itemValue)}
-        >
-          {ParkingLots.map((ParkingLot, i) => (
-            <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-          ))}
-        </Picker>
-        
-      <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
+      <TextInput
+        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setlatitude}
+        placeholder="latitude"
+        value={latitude}
+      />
+      <TextInput
+        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        onChangeText={setLongitude}
+        placeholder="Longitude"
+        value={longitude}
+      />
+      <Picker
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={ParkingLot}
+        onValueChange={(itemValue) => setParkingLot(itemValue)}
+      >
+        {ParkingLots.map((ParkingLot, i) => (
+          <Picker.Item label={ParkingLot.name} value={ParkingLot.id} />
+        ))}
+      </Picker>
 
+      <Button title="Send" onPress={handleSend} />
+      <Button
+        color="green"
+        title="Cancel"
+        onPress={() => props.navigation.goBack()}
+      ></Button>
     </View>
   );
-}
+};
 
 CRUDParkings.navigationOptions = {
   headerTitle: (
     <View
       style={{
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
       }}
     >
       <Text
@@ -178,14 +208,14 @@ CRUDParkings.navigationOptions = {
           fontSize: 18,
           fontWeight: "700",
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         MyProfile
       </Text>
       <View
         style={{
-          flex: 2
+          flex: 2,
         }}
       ></View>
 
@@ -195,7 +225,7 @@ CRUDParkings.navigationOptions = {
           style={{
             width: 120,
             height: 50,
-            resizeMode: "contain"
+            resizeMode: "contain",
           }}
           source={require("../assets/images/logo.png")}
         />
@@ -204,30 +234,29 @@ CRUDParkings.navigationOptions = {
   ),
   headerStyle: {
     backgroundColor: "#276b9c",
-    height: 44
+    height: 44,
   },
   headerTintColor: "#fff",
   headerTitleStyle: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 export default CRUDParkings;
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-     
-      //alignItems: 'center',
-      //justifyContent: "center",
-    
+    flex: 1,
+
+    //alignItems: 'center',
+    //justifyContent: "center",
   },
   picker: {
     width: 200,
-    backgroundColor: '#FFF0E0',
-    borderColor: 'black',
+    backgroundColor: "#FFF0E0",
+    borderColor: "black",
     borderWidth: 1,
   },
   pickerItem: {
-    color: 'red'
+    color: "red",
   },
-}); 
+});

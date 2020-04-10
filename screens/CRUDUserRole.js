@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Picker
+  Picker,
 } from "react-native";
 
 import firebase from "firebase/app";
@@ -23,11 +23,9 @@ const handleRole = firebase.functions().httpsCallable("handleRole");
 
 const CRUDUserRole = (props) => {
   const [users, setusers] = useState([]);
-const [id,setId]=useState("")
-const [role,setRole]=useState("")
-const [eid,seteid]=useState("")
-
-  
+  const [id, setId] = useState("");
+  const [role, setRole] = useState("");
+  const [eid, seteid] = useState("");
 
   useEffect(() => {
     db.collection("users").onSnapshot((querySnapshot) => {
@@ -39,67 +37,68 @@ const [eid,seteid]=useState("")
     });
   }, []);
 
-
   const handleSend = async () => {
     if (id) {
       const response2 = await handleRole({
         user: {
           id,
-          role,eid
+          role,
+          eid,
         },
         operation: "update",
       });
-    } 
+    }
 
-   setId("");
-   setRole("");
+    setId("");
+    setRole("");
 
-seteid("")
+    seteid("");
   };
 
   const handleEdit = (user) => {
-    setId(user.id)
-   setRole(user.role)
-   seteid(user.eid)
-
+    setId(user.id);
+    setRole(user.role);
+    seteid(user.eid);
   };
   return (
     <ScrollView>
       {users.map((users, i) => (
-          <View key={i}style={{ paddingTop: 50, flexDirection: "row" }}>
-
-            <Text style={styles.getStartedText}>
-              {users.role} --- {users.eid}
-
-            </Text>
-            <Button title="Edit" onPress={() => handleEdit(users)} />
-
-          </View>
-        ))}
+        <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
+          <Text style={styles.getStartedText}>
+            {users.role} --- {users.eid}
+          </Text>
+          <Button title="Edit" onPress={() => handleEdit(users)} />
+        </View>
+      ))}
       <TextInput
         style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
         onChangeText={seteid}
-        placeholder= ""
+        placeholder="email"
         value={eid}
         editable={false}
         style={{
-            backgroundColor: "#C8C8C8",
+          backgroundColor: "#C8C8C8",
         }}
       />
-       <Picker
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-          selectedValue={role}
-          onValueChange={(itemValue) => setRole(itemValue)}
-        >
-            <Picker.Item label="employee" value="employee"  />
-            <Picker.Item label="admin" value="admin" />
-            <Picker.Item label="student" value="student"  />
-            <Picker.Item label="manager" value="manager"  />
-        </Picker>
-       
+      <Picker
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+        selectedValue={role}
+        onValueChange={(itemValue) => setRole(itemValue)}
+      >
+        <Picker.Item label="employee" value="employee" />
+        <Picker.Item label="admin" value="admin" />
+        <Picker.Item label="student" value="student" />
+        <Picker.Item label="staff" value="staff" />
+        <Picker.Item label="manager" value="manager" />
+      </Picker>
+
       <Button title="Send" onPress={handleSend} />
-      <Button  color="green" title="Cancel" onPress={() => props.navigation.goBack()} ></Button>
+      <Button
+        color="green"
+        title="Cancel"
+        onPress={() => props.navigation.goBack()}
+      ></Button>
     </ScrollView>
   );
 };

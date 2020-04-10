@@ -12,7 +12,6 @@ import {
   View,
   Picker,
 } from "react-native";
-import IOSPicker from 'react-native-ios-picker';
 
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -28,7 +27,7 @@ const CRUDCrew = (props) => {
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
   const [fkp, setFkp] = useState();
-  const [pname, setPname] = useState();
+  const [pname, setPname] = useState("");
   const [pnames, setPnames] = useState([]);
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const CRUDCrew = (props) => {
 
   const handleSend = async () => {
     if (id) {
-      if (fkp === pname.id) {
+      if (fkp === pname) {
         const response2 = await handleCrew({
           crew: { id, name, fkp },
           operation: "update",
@@ -77,27 +76,27 @@ const CRUDCrew = (props) => {
           operation: "delete",
         });
         const response3 = await handleCrew({
-          crew: { name, fkp: pname.id },
+          crew: { name, fkp: pname },
           operation: "add",
         });
       }
     } else {
       // call serverless function instead
       const response2 = await handleCrew({
-        crew: { name, fkp: pname.id },
+        crew: { name, fkp: pname },
         operation: "add",
       });
     }
 
     setName("");
-
+    setPname("");
     setId("");
   };
 
   const handleEdit = (crew) => {
     setName(crew.name);
     setFkp(crew.fkp);
-
+    setPname(crew.fkp);
     setId(crew.id);
   };
   //if the user choose to delete the crew the function will be called
@@ -129,30 +128,17 @@ const CRUDCrew = (props) => {
         placeholder="Name"
         value={name}
       />
-      {Platform.OS === "ios" ? 
-       <IOSPicker 
+
+      <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
         selectedValue={pname}
         onValueChange={(itemValue) => setPname(itemValue)}
       >
         {pnames.map((pname, i) => (
-          <Picker.Item label={pname.name} value={pname} />
-        ))}
-      </IOSPicker >
-      
-:
-     <Picker
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        selectedValue={pname}
-        onValueChange={(itemValue) => setPname(itemValue)}
-      >
-        {pnames.map((pname, i) => (
-          <Picker.Item label={pname.name} value={pname} />
+          <Picker.Item label={pname.name} value={pname.id} />
         ))}
       </Picker>
-}
       <Button title="Send" onPress={handleSend} />
       <Button
         color="green"

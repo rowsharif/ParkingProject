@@ -26,32 +26,32 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = (props) => {
-  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
-  const user = firebase.auth().currentUser;
+  // const user = firebase.auth().currentUser;
   const [progress, setProgress] = useState(0);
   const [showProgress, setshowProgress] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
   const [phonevalidate,setPhonevalidate]=useState(false);
   const [view,setView]=useState(false);
-
-
-
-  const askPermission = async () => {
-    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-    setHasCameraRollPermission(status === "granted");
-  };
+  const [user, setUser] = useState(); 
 
   useEffect(() => {
-
+    console.log("uid", firebase.auth().currentUser.uid);
     setuid(firebase.auth().currentUser.uid);
-    askPermission();
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
   }, []);
 
   const handleSet = () => {
@@ -61,13 +61,10 @@ const UserProfile = (props) => {
     setemail(user.email);
     setPhotoURL(user.photoURL);
     setUri(user.photoURL);
-    
   };
 
   useEffect(() => {
     handleSet();
-   
-    
   }, []);
 
   const handleSave = async () => {
@@ -79,7 +76,7 @@ const UserProfile = (props) => {
 
     if(phoneNumber.length===12){
       
-      const updateUser = firebase.functions().httpsCallable("updateUser");
+    const updateUser = firebase.functions().httpsCallable("updateUser");
     const response2 = await updateUser({
       uid,
       displayName,
@@ -101,14 +98,21 @@ const UserProfile = (props) => {
     else{
       setPhonevalidate(false)
       alert(
-        'Enter atleast 11 digits of phone number with the country code starting with a +',
+        "Enter atleast 11 digits of phone number with the country code starting with a +",
         [
-          {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
+          {
+            text: "Ask me later",
+            onPress: () => console.log("Ask me later pressed"),
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
         ],
         { cancelable: false }
-      )
+      );
     }
     // console.log("ppppppphhhhhhhh",phoneNumber.length)
     // console.log("uuuuuuuuu", phoneNumber);
@@ -151,7 +155,7 @@ const UserProfile = (props) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
 
@@ -216,9 +220,9 @@ const UserProfile = (props) => {
             <View style={{marginTop:5, justifyContent:"center"}}>
             {view ?
             <View style={{flexDirection:"row"}}>
-              <TouchableOpacity  style={{ marginRight:5}} onPress={handlePickImage} ><Text style={{color:"#276b9c"}}>Pick Image</Text></TouchableOpacity>
-              <Text>|</Text>
-              <TouchableOpacity  style={{ marginLeft:5}} onPress={handleUpload}><Text style={{color:"#276b9c"}}>Upload Image</Text></TouchableOpacity>
+              <TouchableOpacity  style={{}} onPress={handlePickImage} ><Text style={{color:"#276b9c"}}>Pick Image</Text></TouchableOpacity>
+              {/* <Text>|</Text>
+              <TouchableOpacity  style={{ marginLeft:5}} onPress={handleUpload}><Text style={{color:"#276b9c"}}>Upload Image</Text></TouchableOpacity> */}
             </View>  
             :          
             <TouchableOpacity  style={{ marginRight:2}} onPress={()=>setView(true)} ><Text style={{color:"#276b9c"}}>Edit</Text></TouchableOpacity>
@@ -301,6 +305,7 @@ UserProfile.navigationOptions = (props) => ({
           textAlign: "left",
           paddingLeft: "3%",
         }}
+        
       >
         UserProfile
       </Text>

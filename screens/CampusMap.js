@@ -34,7 +34,6 @@ import {
   FontAwesome5,
   FontAwesome5Brands,
 } from "@expo/vector-icons";
-import MapViewDirections from "react-native-maps-directions";
 
 export default function CampusMap() {
   const [nearestBuildings, setNearestBuildings] = useState([]);

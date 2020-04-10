@@ -5249,8 +5249,7 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-moment@^2.24.0:
-moment@^2.22.0, moment@^2.22.1:
+moment@^2.22.0, moment@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
@@ -6111,12 +6110,6 @@ react-native-collapse-view@1.0.0:
   integrity sha1-b3MKzrLs/uzG/4smW6BcSu5jou8=
   dependencies:
     prop-types "^15.5.10"
-react-native-date-picker@^2.7.9:
-  version "2.7.9"
-  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-2.7.9.tgz#f662d8741a3f78148eccf492d70a1740b035024b"
-  integrity sha512-9D8N6oT8ZU5/zHDz2c+Asco24ESvd8Y7SnxipAyLB0GmtRFfRSJ+mOFwaZaYpeqAoSFJnRJVvICnDQCCLAl1cw==
-  dependencies:
-    moment "^2.22.1"
 
 react-native-datepicker@^1.7.2:
   version "1.7.2"

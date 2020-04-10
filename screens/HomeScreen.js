@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const [PlateNumber, setPlateNumber] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [welcome, setWelcome] = useState(true);
+  const [errorOnDelete, setErrorOnDelete] = useState(false);
 
   const s = welcome.sort
   // useEffect(() => {

@@ -42,6 +42,18 @@ else if (data.operation === "delete") {
   }
 });
 
+exports.handleFAQ = functions.https.onCall(async (data, context) => {
+  if (data.operation === "add") {
+    db.collection("FAQs").add(data.faq);
+  }
+else if (data.operation === "delete") {
+    db.collection("FAQs").doc(data.faq.id).delete();
+  } 
+  else {
+    db.collection("FAQs").doc(data.faq.id).update(data.faq);
+  }
+});
+
 exports.handleRole = functions.https.onCall(async (data, context) => {
   
     db.collection("users").doc(data.user.id).update(data.user);

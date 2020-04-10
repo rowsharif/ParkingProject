@@ -466,18 +466,41 @@ export default function CampusMap() {
           key={rankings.id}
         >
           <View style={{ marginTop: 22 }}>
-  <View
+  {/* <View
     style={{
       margin: "20%",
       backgroundColor: "white",
       height: 230,
       color:"white"
     }}
-  >
+  > */}
     
     {rankings.map((ranking, i) => (
-          <View>
-            <Text style={styles.getStartedText}>Rank our service</Text>
+      
+          <View 
+          style={{
+            marginTop: 15,
+            backgroundColor: "#3c78a3",
+            margin: "15%",
+            //padding: "5%",
+             paddingTop: "1%",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 5,
+            ...Platform.select({
+              ios: {
+                paddingTop: 50,
+                margin: "25%",
+                minHeight: 300,
+                width: "60%",
+              },
+              android: {
+                minHeight: 227,
+              },
+            }),
+          }}
+        >
+            <Text style={styles.getStartedText}>Rate Our Crew</Text>
             <Text style={styles.getStartedText}>
               {ranking.number} - crew
               Name:{ranking.crewName}
@@ -507,7 +530,7 @@ export default function CampusMap() {
        
           
    
-  </View>
+  {/* </View> */}
 </View>
           
           </Modal>
@@ -1192,12 +1215,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingHorizontal: 4,
   },
-  getStartedText: {
-    fontSize: 24,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center",
-  },
+  // getStartedText: {
+  //   fontSize: 24,
+  //   color: "rgba(96,100,109, 1)",
+  //   lineHeight: 24,
+  //   textAlign: "center",
+  // },
   tabBarInfoContainer: {
     position: "absolute",
     bottom: 0,

@@ -479,6 +479,21 @@ const UserProfile = (props) => {
                   alignSelf: "center",
                   padding: "3%",
                 }}
+                onPress={() => props.navigation.navigate("FAQ")}
+              >
+                <Text style={styles.buttonText}>FAQ</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
                 onPress={() => props.navigation.navigate("CRUDMyProfile")}
               >
                 <Text style={styles.buttonText}>My Profile</Text>

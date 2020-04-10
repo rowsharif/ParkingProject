@@ -107,7 +107,7 @@ const UserProfile = (props) => {
         message: "You will see your changes in the next login",
         type: "success",
         backgroundColor: "#75213d",
-        duration: 2300,
+        duration: 2900,
       });
 
       setPhonevalidate(true);
@@ -261,11 +261,11 @@ const UserProfile = (props) => {
               <Text style={{fontWeight:"bold"}}>Email Address:</Text>
               {view?
               <TextInput
-              style={{borderColor:"gray",borderWidth:1,paddingLeft:5, backgroundColor:"white", height:40, justifyContent:"center", marginTop:5}}
+              style={{borderColor:"gray",borderWidth:1,paddingLeft:5, backgroundColor:"#DCDCDC", height:40, justifyContent:"center", marginTop:5}}
               onChangeText={setemail}
               placeholder="Email Address"
               value={email}
-              disabled
+              editable={false}
             />
               :
               <Text style={{height:40, justifyContent:"center", marginTop:5, fontSize:16}}>{email}</Text>

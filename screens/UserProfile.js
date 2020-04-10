@@ -21,27 +21,30 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const UserProfile = (props) => {
-  const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [phoneNumber, setphoneNumber] = useState("+974");
   const [email, setemail] = useState("");
   const [uri, setUri] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [uid, setuid] = useState();
-  const user = firebase.auth().currentUser;
   const [progress, setProgress] = useState(0);
   const [showProgress, setshowProgress] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
   const [phonevalidate, setPhonevalidate] = useState(false);
-  const askPermission = async () => {
-    const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-    setHasCameraRollPermission(status === "granted");
-  };
+  const [user, setUser] = useState();
 
   useEffect(() => {
+    console.log("uid", firebase.auth().currentUser.uid);
     setuid(firebase.auth().currentUser.uid);
-    askPermission();
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
   }, []);
 
   const handleSet = () => {
@@ -182,7 +185,7 @@ const UserProfile = (props) => {
             borderWidth: 1,
             fontSize: 24,
             margin: "2%",
-            backgroundColor:"#C8C8C8"
+            backgroundColor: "#C8C8C8",
             //backgroundColor: "#C8C8C8",
           }}
           editable={false}
@@ -279,183 +282,212 @@ const UserProfile = (props) => {
             >
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
-
-            {/* props.navigation.navigate is a prop that is used in a screen component to navigate between screens withing the toplevel stack. .navigate() function goes to another screen and figures out the action that is needed to take along  */}
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDServices")}
-            >
-              <Text style={styles.buttonText}>Handle Service</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDHistory")}
-            >
-              <Text style={styles.buttonText}>Handle History</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDMyProfile")}
-            >
-              <Text style={styles.buttonText}>My Profile</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDPromotion")}
-            >
-              <Text style={styles.buttonText}>Handle Promotion</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDParkings")}
-            >
-              <Text style={styles.buttonText}>Handle parking</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDParkingLots")}
-            >
-              <Text style={styles.buttonText}>Handle parking lot</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDNearestBuildings")}
-            >
-              <Text style={styles.buttonText}>Handle NearestBuildings</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDCrew")}
-            >
-              <Text style={styles.buttonText}>Handle Crew</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "3%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDEmployee")}
-            >
-              <Text style={styles.buttonText}>Handle Employee</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("EmployeeServices")}
-            >
-              <Text style={styles.buttonText}>EmployeeServices</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                textAlign: "center",
-                borderColor: "blue",
-                backgroundColor: "#d6fffc",
-                width: "auto",
-                margin: "1%",
-                alignSelf: "center",
-                padding: "3%",
-              }}
-              onPress={() => props.navigation.navigate("CRUDNewsletter")}
-            >
-              <Text style={styles.buttonText}>Handle Newsletter</Text>
-            </TouchableOpacity>
-
-            {/* </ScrollView> */}
           </View>
+
+          {user && user.role && user.role == "manager" ? (
+            <View
+              style={{
+                flexDirection: "row",
+                flex: 2,
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDServices")}
+              >
+                <Text style={styles.buttonText}>Handle Service</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDHistory")}
+              >
+                <Text style={styles.buttonText}>Handle History</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDPromotion")}
+              >
+                <Text style={styles.buttonText}>Handle Promotion</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDEmployee")}
+              >
+                <Text style={styles.buttonText}>Handle Employee</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "1%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("EmployeeServices")}
+              >
+                <Text style={styles.buttonText}>EmployeeServices</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDCrew")}
+              >
+                <Text style={styles.buttonText}>Handle Crew</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "1%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDNewsletter")}
+              >
+                <Text style={styles.buttonText}>Handle Newsletter</Text>
+              </TouchableOpacity>
+            </View>
+          ) : user && user.role && user.role == "student" ? (
+            <View
+              style={{
+                flexDirection: "row",
+                flex: 2,
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "3%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDMyProfile")}
+              >
+                <Text style={styles.buttonText}>My Profile</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                flex: 2,
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "1%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDParkings")}
+              >
+                <Text style={styles.buttonText}>Handle parking</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "1%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() => props.navigation.navigate("CRUDParkingLots")}
+              >
+                <Text style={styles.buttonText}>Handle parking lot</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  borderWidth: 1,
+                  textAlign: "center",
+                  borderColor: "blue",
+                  backgroundColor: "#d6fffc",
+                  width: "auto",
+                  margin: "1%",
+                  alignSelf: "center",
+                  padding: "3%",
+                }}
+                onPress={() =>
+                  props.navigation.navigate("CRUDNearestBuildings")
+                }
+              >
+                <Text style={styles.buttonText}>Handle NearestBuildings</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {/* </ScrollView> */}
         </ScrollView>
       </ImageBackground>
     </View>

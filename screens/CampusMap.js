@@ -15,6 +15,7 @@ import {
   View,
   Dimensions,
   Modal,
+  Picker,
 } from "react-native";
 //importing Animatable from react-native-animatable which is a declarative transitions and animations for React Native
 import * as Animatable from "react-native-animatable";
@@ -24,7 +25,7 @@ import "firebase/auth";
 import db from "../db.js";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
-import { CheckBox } from "react-native-elements";
+import { CheckBox, Badge } from "react-native-elements";
 import { Notifications } from "expo";
 import {
   Ionicons,
@@ -38,7 +39,7 @@ import MapViewDirections from "react-native-maps-directions";
 
 export default function CampusMap() {
   const [nearestBuildings, setNearestBuildings] = useState([]);
-  const [nearestBuilding, setNearestBuilding] = useState({});
+  const [nearestBuilding, setNearestBuilding] = useState({ name: "select" });
   //Parkings objects as an array to save all the parkings we get from the database to display them
   const [parkings, setParkings] = useState([]);
   //View or not the model that askes the user what service they want and what operation to perform (park, reserve, leave)
@@ -446,6 +447,13 @@ export default function CampusMap() {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
+    } else if (x === 3) {
+      setGoto({
+        latitude: nearestBuilding.ParkingLot.latitude,
+        longitude: nearestBuilding.ParkingLot.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
     }
     //  Otherwise go to the user location
     else {
@@ -486,9 +494,9 @@ export default function CampusMap() {
           <View style={{ marginTop: 22 }}>
             <View
               style={{
-                margin: "20%",
+                margin: "10%",
                 backgroundColor: "gray",
-                height: 230,
+                height: 440,
                 padding: 10,
               }}
             >
@@ -566,25 +574,39 @@ export default function CampusMap() {
                   <Text style={{ textAlign: "center" }}>
                     Go to the parkign lot next to building...{" "}
                   </Text>
-                  <Picker
-                    style={styles.picker}
-                    itemStyle={styles.pickerItem}
-                    selectedValue={ParkingLot}
-                    onValueChange={(itemValue) => setParkingLot(itemValue)}
-                  >
-                    {ParkingLots.map((ParkingLot, i) => (
-                      <Picker.Item label={ParkingLot.name} value={ParkingLot} />
-                    ))}
-                  </Picker>
-                  <TouchableHighlight
-                    style={styles.buttonHide}
-                    onPress={() => {
-                      setModalVisible2(false);
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      padding: 15,
+                      justifyContent: "center",
                     }}
                   >
-                    <Text style={{ textAlign: "center" }}>Go </Text>
-                  </TouchableHighlight>
+                    {nearestBuildings.map((nearestBuilding, i) => (
+                      <View
+                        key={i}
+                        style={{ width: "14%", height: 25, padding: 0 }}
+                      >
+                        <Badge
+                          containerStyle={{ position: "absolute" }}
+                          value={<Text>{nearestBuilding.number}</Text>}
+                          status="warning"
+                          onPress={() => setNearestBuilding(nearestBuilding)}
+                        />
+                      </View>
+                    ))}
+                  </View>
                 </View>
+                {nearestBuilding.ParkingLot && (
+                  <TouchableHighlight
+                    style={styles.buttonYellow}
+                    onPress={() => {
+                      handleGoto(3);
+                    }}
+                  >
+                    <Text>Go: {nearestBuilding.name}</Text>
+                  </TouchableHighlight>
+                )}
               </Animatable.View>
               <Animatable.View
                 animation="fadeInUp"

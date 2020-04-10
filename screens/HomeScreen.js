@@ -25,6 +25,7 @@ import db from "../db.js";
 import { Avatar } from "react-native-elements";
 import {
   Feather,
+  AntDesign,
   MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
@@ -35,7 +36,7 @@ import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function HomeScreen() {
   const [errorOnDelete, setErrorOnDelete] = React.useState(false);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
@@ -58,6 +59,17 @@ export default function HomeScreen() {
   //     setMessages([...messages]);
   //   });
   // }, []);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("users")
@@ -221,6 +233,7 @@ export default function HomeScreen() {
                     <Text>Name: {currentUser.displayName}</Text>
                     <Text>Email: {currentUser.email}</Text>
                     <Text>Phone No: {currentUser.phoneNumber}</Text>
+                    <Text>User Role: {user && user.role}</Text>
                   </View>
                 </View>
                 {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
@@ -512,7 +525,7 @@ HomeScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        Home
+        <AntDesign name="menu-fold" size={24} color="white" /> Home
       </Text>
       <View
         style={{

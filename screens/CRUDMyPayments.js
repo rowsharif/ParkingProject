@@ -60,7 +60,7 @@ const CRUDPayments = (props) => {
           <Text>Parking Lot - {payment.Parking.name}</Text>
           <Text>
             Date - {payment.DateTime.toDate().getDate()}-
-            {payment.DateTime.toDate().getMonth()}-
+            {payment.DateTime.toDate().getMonth() + 1}-
             {payment.DateTime.toDate().getFullYear()}
           </Text>
           <Text>

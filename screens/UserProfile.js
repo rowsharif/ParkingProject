@@ -69,12 +69,31 @@ const UserProfile = (props) => {
   }, []);
 
   const handleSave = async () => {
-    setView(false);
+    // setView(false);
     // const response2 = await fetch(
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     // );
+    if (phoneNumber.length === 0) {
+      setPhonevalidate(false);
 
+      alert(
+        "Enter atleast 12 digits of phone number with the country code starting with a +",
+        [
+          {
+            text: "Ask me later",
+            onPress: () => console.log("Ask me later pressed"),
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      );
+    }
     if (phoneNumber.length === 12) {
       const updateUser = firebase.functions().httpsCallable("updateUser");
       const response2 = await updateUser({
@@ -86,7 +105,7 @@ const UserProfile = (props) => {
       });
       showMessage({
         title: "Saved!",
-        message: "You will see changes in the next login",
+        message: "You will see your changes in the next login",
         type: "success",
         backgroundColor: "#75213d",
         duration: 2300,
@@ -96,7 +115,7 @@ const UserProfile = (props) => {
     } else {
       setPhonevalidate(false);
       alert(
-        "Enter atleast 11 digits of phone number with the country code starting with a +",
+        "Enter atleast 12 digits of phone number with the country code starting with a +",
         [
           {
             text: "Ask me later",

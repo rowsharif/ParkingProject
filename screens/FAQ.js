@@ -1,5 +1,5 @@
 //@refresh reset
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   Image,
   Platform,
@@ -22,10 +22,27 @@ console.disableYellowBox = true;
 const handleFAQ = firebase.functions().httpsCallable("handleFAQ");
 
 const FAQ = (props) => {
+  const [uid, setuid] = useState();
+
   const [faqs, setFaqs] = useState([]);
   const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");
   const [id, setId] = React.useState("");
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    console.log("uid", firebase.auth().currentUser.uid);
+    setuid(firebase.auth().currentUser.uid);
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("FAQs").onSnapshot((querySnapshot) => {
@@ -73,38 +90,47 @@ const FAQ = (props) => {
   };
   return (
     <View style={styles.container}>
+      {/* {user && user.role && user.role == "manager" ? ( */}
       {faqs.map((faq, i) => (
-        <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
-          <Text style={styles.getStartedText}>
-            {faq.question} -{faq.answer}
-          </Text>
-
-          <Button title="Edit" onPress={() => handleEdit(faq)} />
-
-          <Button title="X" onPress={() => handleDelete(faq)} />
+        <View key={i}>
+          <Text>Question- {faq.question} </Text>
+          <Text>Answer- {faq.answer}</Text>
         </View>
       ))}
+      {user && user.role && user.role == "manager" ? (
+        <View>
+          {faqs.map((faq, i) => (
+            <View key={i} style={{ paddingTop: 50, flexDirection: "row" }}>
+              <Button title="Edit" onPress={() => handleEdit(faq)} />
 
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setQuestion}
-        placeholder="Question"
-        value={question}
-      />
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={setAnswer}
-        placeholder="Answer"
-        value={answer}
-      />
+              <Button title="X" onPress={() => handleDelete(faq)} />
+            </View>
+          ))}
 
-      <Button title="Send" onPress={handleSend} />
+          <TextInput
+            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            onChangeText={setQuestion}
+            placeholder="Question"
+            value={question}
+          />
+          <TextInput
+            style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            onChangeText={setAnswer}
+            placeholder="Answer"
+            value={answer}
+          />
 
-      <Button
-        color="green"
-        title="Back"
-        onPress={() => props.navigation.goBack()}
-      ></Button>
+          <Button title="Send" onPress={handleSend} />
+
+          <Button title="Send" onPress={handleSend} />
+        </View>
+      ) : (
+        <Button
+          color="green"
+          title="Back"
+          onPress={() => props.navigation.goBack()}
+        ></Button>
+      )}
     </View>
   );
 };

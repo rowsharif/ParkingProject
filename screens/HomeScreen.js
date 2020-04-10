@@ -41,7 +41,6 @@ export default function HomeScreen() {
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
   const [id, setId] = useState("");
-
   const [Cars, setCars] = useState([]);
   const [Car, setCar] = useState({});
   const [PlateNumber, setPlateNumber] = useState("");

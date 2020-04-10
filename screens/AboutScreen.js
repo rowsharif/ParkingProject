@@ -60,8 +60,76 @@ function Guide() {
     >
      <Text style={styles.titleText} >Guide</Text>
      <ScrollView>
+       
          <View style={{flex:1, backgroundColor: "#bfbfbf", height:"100%", borderRadius: 5,margin:"4%"}}>
          
+        {/* <Text style={styles.head}>Normal Line Parking</Text> */}
+        <View style={styles.container2}>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Available parking</Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/yellow.png')} style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Reserved Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/red.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Parking is Full</Text>
+        </View>
+        
+        
+        
+      </View>
+      <View style={styles.container2}>
+        
+        
+<View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
+        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
+        <MaterialCommunityIcons
+        name="car-brake-parking"
+        size={30}
+        color="purple"
+        style={{ textAlign: 'center' }}/>
+        </View>
+          <Text style={styles.txt}>User Parked </Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
+        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
+        <MaterialCommunityIcons
+        name="registered-trademark"
+        size={30}
+        color="purple"
+        style={{ textAlign: 'center' }}/>
+        </View>
+          <Text style={styles.txt}>User Reserved</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/sat.png')}  style={{width:"70%",height:"40%", }}></Image>
+          <Text style={styles.txt}>Press long for satellite</Text>
+        </View>
+      </View>
+      <View style={styles.container2}>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "#7232fc",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Employee Parking</Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')} style={{width:"70%",height:"40%", borderColor: "#fc8a32",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Vip Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#bfbfbf",marginTop:15,margin:15 }, styles.vFormat]}>
+       
+        </View>
+        
+        
+        
+      </View>
       
 <Text style={styles.head} >Gold Line Parking</Text>
       <View style={styles.container2}>
@@ -102,54 +170,7 @@ function Guide() {
         
         
       </View>
-      <Text style={styles.head}>Normal Line Parking</Text>
-      <View style={styles.container2}>
-        
-        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
-        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
-          <Text style={styles.txt}>Available parking</Text>
-        </View>
-        
-        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
-        <Image source= {require('../assets/images/yellow.png')} style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3}}></Image>
-          <Text style={styles.txt}>Reserved Parking</Text>
-        </View>
-        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
-        <Image source= {require('../assets/images/red.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
-          <Text style={styles.txt}>Parking is Full</Text>
-        </View>
-        
-        
-      </View>
-      <View style={styles.container2}>
-        
-        
-<View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
-        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
-        <MaterialCommunityIcons
-        name="car-brake-parking"
-        size={30}
-        color="purple"
-        style={{ textAlign: 'center' }}/>
-        </View>
-          <Text style={styles.txt}>User Parked </Text>
-        </View>
-        
-        <View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
-        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
-        <MaterialCommunityIcons
-        name="registered-trademark"
-        size={30}
-        color="purple"
-        style={{ textAlign: 'center' }}/>
-        </View>
-          <Text style={styles.txt}>User Reserved</Text>
-        </View>
-        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
-        <Image source= {require('../assets/images/sat.png')}  style={{width:"70%",height:"40%", }}></Image>
-          <Text style={styles.txt}>Press longer for satellite</Text>
-        </View>
-      </View>
+    
     </View>
     </ScrollView>
       </ImageBackground>
@@ -165,7 +186,7 @@ function Payment() {
     style={{ width: "100%", height: "100%" }}
   >
     <ScrollView>
-    <Text style={styles.titleTexts}>Parking</Text>
+    <Text style={styles.titleTexts}>Payment</Text>
     <View style={styles.container3}>
       <View style={[{ backgroundColor: "#bfbfbf",marginTop:15,marginLeft:15,}, styles.vFormats]}>
       <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "gold",borderWidth: 3,}}></Image>
@@ -181,7 +202,12 @@ function Payment() {
       <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
         <Text style={styles.titleTexts}>Normal</Text>
         <Text style={styles.txts}>1QR/Hour</Text>
-      </View>   
+      </View> 
+      <View style={[{ backgroundColor: "#bfbfbf",marginTop:15,marginLeft:15,}, styles.vFormats]}>
+      <Image source= {require('../assets/images/em.png')}  style={{width:"75%",height:"40%",borderWidth: 3,}}></Image>
+        <Text style={styles.titleTexts}>Staff & Vip</Text>
+        <Text style={styles.txts}>Do not pay except for services</Text>
+      </View>  
     </View>
     <Text style={styles.titleTexts}>Services</Text>
     <View style={styles.container3}>

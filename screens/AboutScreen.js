@@ -1,12 +1,6 @@
 import React from "react";
 import { ExpoLinksView } from "@expo/samples";
-import {
-  Avatar,
-  Card,
-  ListItem,
-  Icon,
-  PricingCard,
-} from "react-native-elements";
+import { Avatar,Card, ListItem, Icon,PricingCard  } from 'react-native-elements'
 import {
   Image,
   Platform,
@@ -17,13 +11,11 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ImageBackground,
-} from "react-native";
+  ImageBackground,} from "react-native";
 import { createDrawerNavigator } from "react-navigation-drawer";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import {
   Ionicons,
-  AntDesign,
   FontAwesome,
   MaterialIcons,
   MaterialCommunityIcons,
@@ -40,21 +32,15 @@ function CNAQ_Parking_App() {
     drawerLabel: "Parking Project App",
   };
   return (
+  
+    
     <ImageBackground
       source={require("../assets/images/bg11.jpeg")}
       style={{ width: "100%", height: "100%" }}
     >
-      <View
-        style={{
-          backgroundColor: "#bfbfbf",
-          height: "75%",
-          borderRadius: 5,
-          marginTop: "15%",
-          marginBottom: "15%",
-          margin: "4%",
-        }}
-      >
-        <Text style={styles.titleText}>About Us</Text>
+       <View style={{ backgroundColor: "#bfbfbf", height:"75%", borderRadius: 5,marginTop:"15%",marginBottom:"15%",margin:"4%"}}>
+      
+        <Text style={styles.titleText} >About Us</Text>
         <ScrollView>
           <Text style={{ fontSize: 20, margin: "12%", textAlign: "justify" }}>
             CNA-Q Parking App is designed for the students and faculty members
@@ -536,9 +522,111 @@ function Guide() {
             </View>
           </View>
         </View>
-      </ScrollView>
-    </ImageBackground>
-  );
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/yellow.png')} style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Reserved Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/red.png')}  style={{width:"70%",height:"40%", borderColor: "black",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Parking is Full</Text>
+        </View>
+        
+        
+        
+      </View>
+      <View style={styles.container2}>
+        
+        
+<View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
+        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
+        <MaterialCommunityIcons
+        name="car-brake-parking"
+        size={30}
+        color="purple"
+        style={{ textAlign: 'center' }}/>
+        </View>
+          <Text style={styles.txt}>User Parked </Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",margin:15 }, styles.vFormat]}>
+        <View style={{backgroundColor: "white",width:"70%",height:"40%", }}>
+        <MaterialCommunityIcons
+        name="registered-trademark"
+        size={30}
+        color="purple"
+        style={{ textAlign: 'center' }}/>
+        </View>
+          <Text style={styles.txt}>User Reserved</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/sat.png')}  style={{width:"70%",height:"40%", }}></Image>
+          <Text style={styles.txt}>Press long for satellite</Text>
+        </View>
+      </View>
+      <View style={styles.container2}>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "#7232fc",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Employee Parking</Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')} style={{width:"70%",height:"40%", borderColor: "#fc8a32",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Vip Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#bfbfbf",marginTop:15,margin:15 }, styles.vFormat]}>
+       
+        </View>
+        
+        
+        
+      </View>
+      
+<Text style={styles.head} >Gold Line Parking</Text>
+      <View style={styles.container2}>
+    
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "gold",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Available parking</Text>
+        </View>
+       
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/yellow.png')} style={{width:"70%",height:"40%", borderColor: "gold",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Reserved Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/red.png')}  style={{width:"70%",height:"40%", borderColor: "gold",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Parking is Full</Text>
+        </View>
+        
+        
+      </View>
+<Text style={styles.head} >Sliver Line Parking</Text>
+      <View style={styles.container2}>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15,}, styles.vFormat]}>
+        <Image source= {require('../assets/images/green.png')}  style={{width:"70%",height:"40%", borderColor: "#bfbfbf",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Available parking</Text>
+        </View>
+        
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,marginLeft:15}, styles.vFormat]}>
+        <Image source= {require('../assets/images/yellow.png')} style={{width:"70%",height:"40%", borderColor: "#bfbfbf",borderWidth: 3}}></Image>
+          <Text style={styles.txt}>Reserved Parking</Text>
+        </View>
+        <View style={[{ backgroundColor: "#fffaf0",marginTop:15,margin:15 }, styles.vFormat]}>
+        <Image source= {require('../assets/images/red.png')}  style={{width:"70%",height:"40%", borderColor: "#bfbfbf",borderWidth: 3,}}></Image>
+          <Text style={styles.txt}>Parking is Full</Text>
+        </View>
+        
+        
+      </View>
+    
+    </View>
+    </ScrollView>
+      </ImageBackground>
+    );
 }
 function Payment() {
   const navigationOptions = {
@@ -781,7 +869,7 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        <AntDesign name="menu-fold" size={24} color="white" /> About
+        About
       </Text>
       <View
         style={{
@@ -820,67 +908,61 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 30,
     fontWeight: "bold",
-    textAlign: "center",
+    textAlign:"center", 
     paddingTop: 10,
     paddingLeft: 10,
   },
   titleTexts: {
     fontSize: 17,
     fontWeight: "bold",
-    textAlign: "center",
+    textAlign:"center", 
     paddingTop: 10,
     paddingLeft: 10,
   },
-  txts: {
-    fontFamily: "serif",
-    fontSize: 15,
-    color: "black",
-    textAlign: "center",
-  },
-  card: {
-    width: "10%",
-    height: "10%",
+  txts: { fontFamily: "serif", fontSize: 15, color: "black",textAlign:"center"},
+  card:{
+    width:"10%",
+    height:"10%"
   },
   container1: {
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "center"
   },
   container2: {
     justifyContent: "space-between",
     alignItems: "flex-start",
     flexDirection: "row",
+   
   },
-  txt: {
-    fontFamily: "serif",
-    fontSize: 15,
-    color: "black",
-    textAlign: "center",
-  },
+  txt: { fontFamily: "serif", fontSize: 15, color: "black",textAlign:"center"},
   vFormat: {
     width: 100,
     height: 100,
     justifyContent: "center",
     alignItems: "center",
+    
   },
   container3: {
     justifyContent: "center",
     alignItems: "flex-start",
     flexDirection: "row",
-    flexWrap: "wrap",
-    margin: 15,
+    flexWrap:"wrap",
+    margin:15
+   
   },
-
+  
   vFormats: {
     width: 160,
     height: 140,
     justifyContent: "center",
     alignItems: "center",
+    
   },
-  head: {
-    fontSize: 15,
-    textAlign: "center",
+  head:{
+    fontSize: 15, 
+    textAlign:"center", 
     paddingTop: 10,
     paddingLeft: 10,
     fontWeight: "bold",
-  },
+  }
 });

@@ -32,7 +32,9 @@ import {
   FontAwesome5Brands,
 } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
-
+import { Linking } from "expo";
+import firebase from "firebase/app";
+import "firebase/auth";
 console.disableYellowBox = true;
 
 function CNAQ_Parking_App() {
@@ -56,10 +58,25 @@ function CNAQ_Parking_App() {
       >
         <Text style={styles.titleText}>About Us</Text>
         <ScrollView>
-          <Text style={{ fontSize: 20, margin: "12%" }}>
+          <Text style={{ fontSize: 20, margin: "12%", textAlign: "justify" }}>
             CNA-Q Parking App is designed for the students and faculty members
             of CNA-Q by the group RANA, allowing useful functionality supporting
             the needs of people parking at CNA-Q.
+          </Text>
+          <Text
+            style={{
+              color: "blue",
+              fontSize: 14,
+              margin: "5%",
+              textAlign: "justify",
+            }}
+            onPress={() =>
+              Linking.openURL(
+                "https://www.cna-qatar.com/currentstudents/campusmapdirectory"
+              )
+            }
+          >
+            More About CNA-Q Campus
           </Text>
         </ScrollView>
       </View>
@@ -87,121 +104,22 @@ function Guide() {
             margin: "4%",
           }}
         >
-          <Text style={styles.head}>Gold Line Parking</Text>
+          {/* <Text style={styles.head}>Normal Line Parking</Text> */}
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/green.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "gold",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Available parking</Text>
-            </View>
-
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/yellow.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "gold",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Reserved Parking</Text>
-            </View>
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/red.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "gold",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Parking is Full</Text>
-            </View>
-          </View>
-          <Text style={styles.head}>Sliver Line Parking</Text>
-          <View style={styles.container2}>
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/green.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "#bfbfbf",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Available parking</Text>
-            </View>
-
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/yellow.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "#bfbfbf",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Reserved Parking</Text>
-            </View>
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
-                styles.vFormat,
-              ]}
-            >
-              <Image
-                source={require("../assets/images/red.png")}
-                style={{
-                  width: "70%",
-                  height: "40%",
-                  borderColor: "#bfbfbf",
-                  borderWidth: 3,
-                }}
-              ></Image>
-              <Text style={styles.txt}>Parking is Full</Text>
-            </View>
-          </View>
-          <Text style={styles.head}>Normal Line Parking</Text>
-          <View style={styles.container2}>
-            <View
-              style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -219,7 +137,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, marginLeft: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -236,7 +165,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -255,7 +195,18 @@ function Guide() {
           <View style={styles.container2}>
             <View
               style={[
-                { backgroundColor: "#fffaf0", margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -278,7 +229,18 @@ function Guide() {
 
             <View
               style={[
-                { backgroundColor: "#fffaf0", margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -300,7 +262,18 @@ function Guide() {
             </View>
             <View
               style={[
-                { backgroundColor: "#fffaf0", marginTop: 15, margin: 15 },
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginRight: 15,
+                    },
+                  }),
+                },
                 styles.vFormat,
               ]}
             >
@@ -308,7 +281,260 @@ function Guide() {
                 source={require("../assets/images/sat.png")}
                 style={{ width: "70%", height: "40%" }}
               ></Image>
-              <Text style={styles.txt}>Press longer for satellite</Text>
+              <Text style={styles.txt}>Press long for satellite</Text>
+            </View>
+          </View>
+          <View style={styles.container2}>
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/green.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "#7232fc",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Employee Parking</Text>
+            </View>
+
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/green.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "#fc8a32",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Vip Parking</Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: "#bfbfbf",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            ></View>
+          </View>
+
+          <Text style={styles.head}>Gold Line Parking</Text>
+          <View style={styles.container2}>
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/green.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "gold",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Available parking</Text>
+            </View>
+
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/yellow.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "gold",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Reserved Parking</Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginRight: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/red.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "gold",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Parking is Full</Text>
+            </View>
+          </View>
+          <Text style={styles.head}>Sliver Line Parking</Text>
+          <View style={styles.container2}>
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/green.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "#bfbfbf",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Available parking</Text>
+            </View>
+
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      marginLeft: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/yellow.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "#bfbfbf",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Reserved Parking</Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: "#fffaf0",
+                  ...Platform.select({
+                    ios: {
+                      margin: 7,
+                    },
+                    android: {
+                      marginTop: 15,
+                      margin: 15,
+                    },
+                  }),
+                },
+                styles.vFormat,
+              ]}
+            >
+              <Image
+                source={require("../assets/images/red.png")}
+                style={{
+                  width: "70%",
+                  height: "40%",
+                  borderColor: "#bfbfbf",
+                  borderWidth: 3,
+                }}
+              ></Image>
+              <Text style={styles.txt}>Parking is Full</Text>
             </View>
           </View>
         </View>
@@ -326,11 +552,22 @@ function Payment() {
       style={{ width: "100%", height: "100%" }}
     >
       <ScrollView>
-        <Text style={styles.titleTexts}>Parking</Text>
+        <Text style={styles.titleTexts}>Payment</Text>
         <View style={styles.container3}>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -348,7 +585,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -366,7 +614,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -382,12 +641,47 @@ function Payment() {
             <Text style={styles.titleTexts}>Normal</Text>
             <Text style={styles.txts}>1QR/Hour</Text>
           </View>
+          <View
+            style={[
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
+              styles.vFormats,
+            ]}
+          >
+            <Image
+              source={require("../assets/images/em.png")}
+              style={{ width: "75%", height: "40%", borderWidth: 3 }}
+            ></Image>
+            <Text style={styles.titleTexts}>Staff & Vip</Text>
+            <Text style={styles.txts}>Do not pay except for services</Text>
+          </View>
         </View>
         <Text style={styles.titleTexts}>Services</Text>
         <View style={styles.container3}>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -400,7 +694,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -413,7 +718,18 @@ function Payment() {
           </View>
           <View
             style={[
-              { backgroundColor: "#bfbfbf", marginTop: 15, marginLeft: 15 },
+              {
+                backgroundColor: "#bfbfbf",
+                ...Platform.select({
+                  ios: {
+                    margin: 7,
+                  },
+                  android: {
+                    marginTop: 15,
+                    margin: 15,
+                  },
+                }),
+              },
               styles.vFormats,
             ]}
           >
@@ -431,7 +747,7 @@ function Payment() {
 }
 const MyDrawerNavigator = createDrawerNavigator(
   {
-    CNAQ_Parking_App: {
+    About: {
       screen: CNAQ_Parking_App,
     },
     Guide: {
@@ -451,6 +767,7 @@ const MyDrawerNavigator = createDrawerNavigator(
               backgroundColor: "lightgray",
               alignItems: "center",
               justifyContent: "flex-end",
+              // marginTop: 350,
             }}
             onPress={() =>
               Alert.alert(
@@ -466,7 +783,8 @@ const MyDrawerNavigator = createDrawerNavigator(
                   {
                     text: "Confirm",
                     onPress: () => {
-                      props.navigation.navigate("Guide");
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
                     },
                   },
                 ],
@@ -474,7 +792,14 @@ const MyDrawerNavigator = createDrawerNavigator(
               )
             }
           >
-            <Text style={{ margin: 16, color: "#276b9c", fontSize: 15 }}>
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
               Logout
             </Text>
           </TouchableOpacity>

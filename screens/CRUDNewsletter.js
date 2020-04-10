@@ -122,14 +122,14 @@ const CRUDNewsletter = (props) => {
     if (id) {
       // console.log("updateeeeeeee");
       const response2 = await handleNewsletter({
-        newsletter: { id, header, body, image },
+        newsletter: { id, header, body, image, DateTime: new Date() },
         operation: "update",
       });
     } else {
       // call serverless function instead
       // console.log("add");
       const response2 = await handleNewsletter({
-        newsletter: { header, body, image },
+        newsletter: { header, body, image, DateTime: new Date() },
         operation: "add",
       });
       // console.log("resssssssssssssssssssssssssss",image);

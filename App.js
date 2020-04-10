@@ -20,7 +20,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -50,9 +50,7 @@ export default function App(props) {
   const [password2, setPassword2] = useState("");
   const [view, setView] = useState(true);
   const [passError, setPassError] = useState(false);
-  const [register, setRegister] = useState(true);
-
-
+  const [register, setRegister] = useState(false);
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged(setUser);
@@ -83,7 +81,7 @@ export default function App(props) {
     setPassword("");
     setPassword2("");
   };
-  
+
   // const checkPassword = (pass, type) => {
   //   console.log("pppppp", pass , type);
   //   if(type === 1) {
@@ -97,19 +95,16 @@ export default function App(props) {
   //     setPassError(true);
   //   }
   // };
-  
+
   useEffect(() => {
-    if(password === password2){
+    if (password === password2) {
       setPassError(false);
       setRegister(false);
     } else {
       setPassError(true);
       setRegister(true);
-
     }
   }, [password, password2]);
-
-  
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -122,85 +117,119 @@ export default function App(props) {
   } else if (!user) {
     return (
       <KeyboardAvoidingView
-      behavior={Platform.Os == "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.heading}>CNA-Q ParkingApp</Text>
-        <View style={styles.formView}>
-          
-          {view ?
-          <View>
-            <Text style={styles.heading}>Register</Text>          
-            <TextInput
-              style={{ height: 40, backgroundColor:"white", paddingLeft: 2, marginTop:3}}
-              onChangeText={setEmail}
-              placeholder="Email"
-              value={email}
-            />
-            <TextInput
-              style={{ height: 40, backgroundColor:"white", paddingLeft: 2, marginTop:3}}
-              onChangeText={setPassword}
-              // onChangeText={(text)=>checkPassword(text, 1)}
-              placeholder="Password"
-              secureTextEntry={true}
-              value={password}
-            />
-            <TextInput
-              style={{ height: 40, backgroundColor:"white", paddingLeft: 2, marginTop:3, marginBottom: 2}}
-              onChangeText={setPassword2}
-              // onChangeText={(text)=>checkPassword(text, 2)}
-              placeholder="Confirm Password"
-              secureTextEntry={true}
-              value={password2}
-            />
-            {/* <Button title="Register" onPress={handleRegister} /> */}
-            {passError && <Text style={{color:"#f76f6f"}}>
-                            * Password Does not match
-                          </Text>}
-            <TouchableOpacity 
-              onPress={handleRegister}
-              style={styles.button}
-              disabled={register}>
-              <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-            
-            <Text onPress={()=> setView(!view)} style={styles.bottomText}>Exisitng User? Login</Text>         
+        behavior={Platform.Os == "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.heading}>CNA-Q ParkingApp</Text>
+            <View style={styles.formView}>
+              {view ? (
+                <View>
+                  <Text style={styles.heading}>Register</Text>
+                  <TextInput
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      paddingLeft: 2,
+                      marginTop: 3,
+                    }}
+                    onChangeText={setEmail}
+                    placeholder="Email"
+                    value={email}
+                  />
+                  <TextInput
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      paddingLeft: 2,
+                      marginTop: 3,
+                    }}
+                    onChangeText={setPassword}
+                    // onChangeText={(text)=>checkPassword(text, 1)}
+                    placeholder="Password"
+                    secureTextEntry={true}
+                    value={password}
+                  />
+                  <TextInput
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      paddingLeft: 2,
+                      marginTop: 3,
+                      marginBottom: 2,
+                    }}
+                    onChangeText={setPassword2}
+                    // onChangeText={(text)=>checkPassword(text, 2)}
+                    placeholder="Confirm Password"
+                    secureTextEntry={true}
+                    value={password2}
+                  />
+                  {/* <Button title="Register" onPress={handleRegister} /> */}
+                  {passError && (
+                    <Text style={{ color: "#f76f6f" }}>
+                      * Password Does not match
+                    </Text>
+                  )}
+                  <TouchableOpacity
+                    onPress={handleRegister}
+                    style={styles.button}
+                    disabled={register}
+                  >
+                    <Text style={styles.buttonText}>Register</Text>
+                  </TouchableOpacity>
 
+                  <Text
+                    onPress={() => setView(!view)}
+                    style={styles.bottomText}
+                  >
+                    Exisitng User? Login
+                  </Text>
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.heading}>Login</Text>
+
+                  <TextInput
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      paddingLeft: 2,
+                      marginTop: 3,
+                    }}
+                    onChangeText={setEmail}
+                    placeholder="Email"
+                    value={email}
+                  />
+                  <TextInput
+                    style={{
+                      height: 40,
+                      backgroundColor: "white",
+                      paddingLeft: 2,
+                      marginTop: 3,
+                      marginBottom: 2,
+                    }}
+                    onChangeText={setPassword}
+                    placeholder="Password"
+                    secureTextEntry={true}
+                    value={password}
+                  />
+                  <TouchableOpacity onPress={handleLogin} style={styles.button}>
+                    <Text style={styles.buttonText}>Login</Text>
+                  </TouchableOpacity>
+                  {/* <Button title="Login" onPress={handleLogin} /> */}
+
+                  <Text
+                    onPress={() => setView(!view)}
+                    style={styles.bottomText}
+                  >
+                    New User? Register
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-          :
-          <View>  
-            <Text style={styles.heading}>Login</Text>         
-        
-            <TextInput
-              style={{ height: 40, backgroundColor:"white", paddingLeft: 2, marginTop:3}}
-              onChangeText={setEmail}
-              placeholder="Email"
-              value={email}
-            />
-            <TextInput
-              style={{ height: 40, backgroundColor:"white", paddingLeft: 2, marginTop:3, marginBottom: 2}}
-              onChangeText={setPassword}
-              placeholder="Password"
-              secureTextEntry={true}
-              value={password}
-            />
-            <TouchableOpacity 
-              onPress={handleLogin}
-              style={styles.button}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            {/* <Button title="Login" onPress={handleLogin} /> */}
-
-            <Text onPress={()=> setView(!view)} style={styles.bottomText}>New User? Register</Text>         
-
-          </View>
-          }
-        </View>
-        
-      </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     );
   } else {
@@ -208,7 +237,7 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === "ios" && <StatusBar barStyle="default" />}
         <AppNavigator />
-        <FlashMessage position="top" /> 
+        <FlashMessage position="top" />
       </View>
     );
   }
@@ -247,67 +276,65 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 30,
-    height:"100%",
-    width:"100%",
-    backgroundColor:"#276b9c",
-    justifyContent:"center",    
+    height: "100%",
+    width: "100%",
+    backgroundColor: "#276b9c",
+    justifyContent: "center",
   },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
     marginBottom: 20,
   },
-  formView:{
-    width:"100%"
+  formView: {
+    width: "100%",
   },
   heading: {
-    textAlign:"center",
+    textAlign: "center",
     fontSize: 30,
-    color:"white",
-    margin:20,
-    marginTop:0,
+    color: "white",
+    margin: 20,
+    marginTop: 0,
     ...Platform.select({
       ios: {
-        fontFamily:"GillSans-Light"
+        fontFamily: "GillSans-Light",
       },
-      android: {         
-        fontFamily:"sans-serif-light"
+      android: {
+        fontFamily: "sans-serif-light",
       },
-    })
+    }),
   },
   bottomText: {
-    color:"white",
-    textAlign:"center",
+    color: "white",
+    textAlign: "center",
     marginTop: 40,
     ...Platform.select({
       ios: {
-        fontFamily:"GillSans-Light"
+        fontFamily: "GillSans-Light",
       },
-      android: {         
-        fontFamily:"sans-serif-light"
+      android: {
+        fontFamily: "sans-serif-light",
       },
-    })
-
+    }),
   },
-  button:{
-    width:"100%",
-    height:40, 
-    justifyContent:"center", 
-    backgroundColor:"#649e6d", 
-    alignItems:"center",
-    marginTop:1
-    
-  }, 
-  buttonText:{    
-    color:"white", 
-    fontSize:18,
+  button: {
+    width: "100%",
+    height: 40,
+    justifyContent: "center",
+    backgroundColor: "#649e6d",
+    alignItems: "center",
+    marginTop: 1,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
     ...Platform.select({
       ios: {
-        fontFamily:"GillSans-Light"
+        fontFamily: "GillSans-Light",
       },
-      android: {         
-        fontFamily:"sans-serif-light"
+      android: {
+        fontFamily: "sans-serif-light",
       },
-    })
-  }
+    }),
+  },
 });

@@ -28,6 +28,7 @@ import db from "../db.js";
 import { Avatar } from "react-native-elements";
 import {
   Feather,
+  AntDesign,
   MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
@@ -35,20 +36,90 @@ import Message from "./Message.js";
 console.disableYellowBox = true;
 
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import FAQ from "./FAQ";
+import Promotion from "./CRUDPromotion";
+const MyDrawerNavigator = createDrawerNavigator(
+  {
+    Home: {
+      screen: HomeScreen,
+    },
+    Promotions: {
+      screen: Promotion,
+    },
+    FAQs: {
+      screen: FAQ,
+    },
+  },
+  {
+    contentComponent: (props) => (
+      <View style={{ flex: 1 }}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </View>
+    ),
+  }
+);
 
-export default function HomeScreen() {
+const AppContainer = createAppContainer(MyDrawerNavigator);
+
+export default function Home() {
+  return <AppContainer />;
+}
+
+function HomeScreen() {
   const [errorOnDelete, setErrorOnDelete] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
   const [id, setId] = useState("");
-
   const [Cars, setCars] = useState([]);
   const [Car, setCar] = useState({});
   const [PlateNumber, setPlateNumber] = useState("");
   const [currentUser, setCurrentUser] = useState({});
-  const [welcome, setWelcome] = useState(true);
+  const [welcome, setWelcome] = useState(false);
   // const [errorOnDelete, setErrorOnDelete] = useState(false);
 
   const s = welcome.sort;
@@ -62,6 +133,17 @@ export default function HomeScreen() {
   //     setMessages([...messages]);
   //   });
   // }, []);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("users")
@@ -225,6 +307,7 @@ export default function HomeScreen() {
                     <Text>Name: {currentUser.displayName}</Text>
                     <Text>Email: {currentUser.email}</Text>
                     <Text>Phone No: {currentUser.phoneNumber}</Text>
+                    <Text>User Role: {user && user.role}</Text>
                   </View>
                 </View>
                 {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
@@ -496,7 +579,55 @@ export default function HomeScreen() {
     </KeyboardAvoidingView>
   );
 }
+Home.navigationOptions = {
+  headerTitle: (
+    <View
+      style={{
+        flex: 2,
+        flexDirection: "row",
+      }}
+    >
+      <Text
+        style={{
+          flex: 2,
+          paddingTop: 10,
+          fontSize: 18,
+          fontWeight: "700",
+          color: "white",
+          textAlign: "left",
+          paddingLeft: "3%",
+        }}
+      >
+        <AntDesign name="menu-fold" size={24} color="white" /> Home
+      </Text>
+      <View
+        style={{
+          flex: 1,
+        }}
+      ></View>
 
+      <View style={{ alignSelf: "center", flex: 2 }}>
+        <Image
+          resizeMode="cover"
+          style={{
+            width: 120,
+            height: 50,
+            resizeMode: "contain",
+          }}
+          source={require("../assets/images/logo.png")}
+        />
+      </View>
+    </View>
+  ),
+  headerStyle: {
+    backgroundColor: "#276b9c",
+    height: 44,
+  },
+  headerTintColor: "#fff",
+  headerTitleStyle: {
+    fontWeight: "bold",
+  },
+};
 HomeScreen.navigationOptions = {
   headerTitle: (
     <View
@@ -516,7 +647,7 @@ HomeScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        Home
+        <AntDesign name="menu-fold" size={24} color="white" /> Home
       </Text>
       <View
         style={{

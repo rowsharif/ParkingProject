@@ -7,16 +7,27 @@ import {
   Button,
   ShadowPropTypesIOS,
   Image,
+  SafeAreaView,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import {
-  Ionicons,
-  FontAwesome,
-  MaterialIcons,
-  Feather,
-} from "@expo/vector-icons";
+
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { createDrawerNavigator } from "react-navigation-drawer";
+import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
+import {
+  Ionicons,
+  AntDesign,
+  FontAwesome,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+  FontAwesome5Brands,
+} from "@expo/vector-icons";
+
+import firebase from "firebase/app";
+import "firebase/auth";
 
 import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
@@ -114,56 +125,108 @@ const StackNavigator = createStackNavigator(
   }
 );
 
-const MyDrawerNavigator = createDrawerNavigator({
-  MyProfile: {
-    screen: UserProfile,
+const MyDrawerNavigator = createDrawerNavigator(
+  {
+    MyProfile: {
+      screen: UserProfile,
+    },
+    Services: {
+      screen: CRUDServices,
+    },
+    // UpdateUser: {
+    //   screen: UpdateUser,
+    // },
+    History: {
+      screen: CRUDHistory,
+    },
+    MyPayments: {
+      screen: CRUDMyPayments,
+    },
+    Payments: {
+      screen: CRUDPayments,
+    },
+    Parkings: {
+      screen: CRUDParkings,
+    },
+    ParkingLots: {
+      screen: CRUDParkingLots,
+    },
+    NearestBuildings: {
+      screen: CRUDNearestBuildings,
+    },
+    MyHistory: {
+      screen: CRUDMyProfile,
+    },
+    Promotion: {
+      screen: CRUDPromotion,
+    },
+    Crew: {
+      screen: CRUDCrew,
+    },
+    Employee: {
+      screen: CRUDEmployee,
+    },
+    Newsletter: {
+      screen: CRUDNewsletter,
+    },
+    EmployeeServices: {
+      screen: EmployeeServices,
+    },
+    FAQ: {
+      screen: FAQ,
+    },
   },
-  Services: {
-    screen: CRUDServices,
-  },
-  // UpdateUser: {
-  //   screen: UpdateUser,
-  // },
-  History: {
-    screen: CRUDHistory,
-  },
-  MyPayments: {
-    screen: CRUDMyPayments,
-  },
-  Payments: {
-    screen: CRUDPayments,
-  },
-  Parkings: {
-    screen: CRUDParkings,
-  },
-  ParkingLots: {
-    screen: CRUDParkingLots,
-  },
-  NearestBuildings: {
-    screen: CRUDNearestBuildings,
-  },
-  MyHistory: {
-    screen: CRUDMyProfile,
-  },
-  Promotion: {
-    screen: CRUDPromotion,
-  },
-  Crew: {
-    screen: CRUDCrew,
-  },
-  Employee: {
-    screen: CRUDEmployee,
-  },
-  Newsletter: {
-    screen: CRUDNewsletter,
-  },
-  EmployeeServices: {
-    screen: EmployeeServices,
-  },
-  FAQ: {
-    screen: FAQ,
-  },
-});
+  {
+    contentComponent: (props) => (
+      <ScrollView style={{}}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ScrollView>
+    ),
+  }
+);
 // createAppContainer is a function that is responsible to manage the app and link with the top level container components to take as a parameter (Maintabnavigation)
 const AppContainer = createAppContainer(StackNavigator);
 
@@ -193,7 +256,8 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        Settings
+        {" "}
+        <AntDesign name="menu-fold" size={24} color="white" /> Settings
       </Text>
       <View
         style={{

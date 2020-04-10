@@ -137,7 +137,7 @@ const CRUDhistories = (props) => {
               <View style={{ width: "80%", height: "100%" }}>
                 <Text>
                   Date : {history.DateTime.toDate().getDate()}-
-                  {history.DateTime.toDate().getMonth()}-
+                  {history.DateTime.toDate().getMonth() + 1}-
                   {history.DateTime.toDate().getFullYear()}
                 </Text>
                 <Text>

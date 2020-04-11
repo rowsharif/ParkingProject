@@ -25,20 +25,17 @@ console.disableYellowBox = true;
 const handleServices = firebase.functions().httpsCallable("handleServices");
 
 const CRUDServices = (props) => {
-  //////////usestate hook that allows to have state variables in a functional component.
-  //////////created an array of services and set it to empty array as an initial value
   const [services, setServices] = useState([]);
   const [price, setPrice] = React.useState(0);
-  ////created name component and set the initial value as an empty string
   const [name, setName] = React.useState("");
   const [id, setId] = React.useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [create, setCreate] = useState(false);
+  const [delete1, setDelete1] = useState(false);
 
-  ////////useEffect hook is used to perform an action to the components after rendering
+
   useEffect(() => {
-    //// The query below gets the Services collection from the firebase database
 
     db.collection("Services").onSnapshot((querySnapshot) => {
       //////services is an empty,temporary array within the query
@@ -55,26 +52,20 @@ const CRUDServices = (props) => {
     });
   }, []);
 
-  /////handleSend method calls the method from functions folder, index.js file(firebase function)
 
   const handleSend = async () => {
-    ///// it checks if there is an id sent,
 
     if (id) {
       const response2 = await handleServices({
         //// sends the service object
         service: { id, name, price },
-        ////and finally returns an update operation to check the update query from the method in the firebase function folder
         operation: "update",
       });
     }
-    ////else if there isnt any id sent
     else {
       const response2 = await handleServices({
-        //// creates a new service object
         service: { name, price },
 
-        ////and finally returns the add operation to check the add query from the method in the firebase function folder
         operation: "add",
       });
     }
@@ -82,26 +73,29 @@ const CRUDServices = (props) => {
     setPrice("");
     setId("");
   };
-  ///////handleEdit gets the object entered in the textinput and sends back the new name,price and id of the the new editted object to the useState
   const handleEdit = (service) => {
-    ///sets the original, before edit name value to the useState
     setName(service.name);
 
     setPrice(service.price);
 
-    ///sets the original, before edit id value to the useState
     setId(service.id);
   };
 
-  ////////handleDelete method gets the object and deletes the object using the firebase function created in index.js.
-  const handleDelete = async (service) => {
-    ///then call the handleServices method from the firebase functions folder, index.js. An await is used to wait to get a return from the database since it takes long time to get a return
-
+  const handleDelete = async () => {
     const response2 = await handleServices({
-      service: service,
-      ////and finally returns the delete operation to check the add query from the method in the firebase function folder
+      service: {id,name,price},
       operation: "delete",
     });
+    setName("");
+    setPrice("");
+    setId("");
+  };
+
+
+  const handleDeleteModal = (service) => {
+    handleDelete(service);
+    setDelete1(false);
+    setModalVisible(true);
   };
 
   const handleEditModal = (service) => {
@@ -124,7 +118,13 @@ const CRUDServices = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+          <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Services </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
+          
           <Modal
             animationType="fade"
             transparent={true}
@@ -249,8 +249,9 @@ const CRUDServices = (props) => {
                       justifyContent: "center",
                     }}
                   >
+                    
                     <TouchableOpacity
-                      onPress={() => handleDelete(service)}
+                      onPress={() => handleDelete()}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",

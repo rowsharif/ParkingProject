@@ -86,9 +86,9 @@ const CRUDParkings = (props) => {
         parking: {
           id,
           fk: ParkingLot,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-          amountperhour: parseInt(amountperhour),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+          amountperhour: parseFloat(amountperhour),
           type,
         },
         operation: "update",
@@ -97,9 +97,9 @@ const CRUDParkings = (props) => {
       const response2 = await handleCRUDParkings({
         parking: {
           fk: ParkingLot,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-          amountperhour: parseInt(amountperhour),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+          amountperhour: parseFloat(amountperhour),
           type,
         },
         operation: "add",
@@ -152,6 +152,11 @@ const CRUDParkings = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+          <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Parking  </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"
@@ -207,6 +212,7 @@ const CRUDParkings = (props) => {
                   selectedValue={ParkingLot}
                   onValueChange={(itemValue) => setParkingLot(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {ParkingLots.map((ParkingLot, i) => (
                     <Picker.Item
                       label={ParkingLot.name}
@@ -505,9 +511,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

@@ -114,7 +114,7 @@ const CRUDCrew = (props) => {
   const handleDelete = async (crew) => {
     //it sends the crew to delete as a parameter to the function and the operation as "delete"
     const response2 = await handleCrew({
-      crew: crew,
+      crew: {id, name, fkp},
       operation: "delete",
     });
   };
@@ -138,6 +138,11 @@ const CRUDCrew = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+           <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Crew </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"
@@ -212,6 +217,7 @@ const CRUDCrew = (props) => {
                   selectedValue={pname}
                   onValueChange={(itemValue) => setPname(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {pnames.map((pname, i) => (
                     <Picker.Item label={pname.name} value={pname.id} />
                   ))}
@@ -253,7 +259,7 @@ const CRUDCrew = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedCrew)}
+                      onPress={() => handleDelete()}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",
@@ -417,9 +423,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

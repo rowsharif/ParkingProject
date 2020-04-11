@@ -147,6 +147,11 @@ const CRUDPromotion = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+           <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Promotion </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"
@@ -323,7 +328,7 @@ const CRUDPromotion = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedPromotion)}
+                      onPress={() => handleDelete(promotion)}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",
@@ -396,7 +401,7 @@ const CRUDPromotion = (props) => {
                 {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}
                 <TouchableOpacity
                   // onPress={() => handleEditModal(promotion)}
-                  onPress={() => handleDelete(selectedPromotion)}
+                  onPress={() => handleDelete(promotion)}
                   style={{
                     backgroundColor: "#276b9c",
                     width: "100%",

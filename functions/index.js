@@ -69,9 +69,12 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
 });
 
 exports.handlePromotion = functions.https.onCall(async (data, context) => {
-  console.log("promotion data before", data.promotion.endDateTime);
-  data.promotion.endDateTime = new Date(data.promotion.endDateTime);
-  console.log("promotion data", data.promotion.endDateTime);
+  if (data.promotion.endDateTime) {
+    console.log("promotion data before", data.promotion.endDateTime);
+    data.promotion.endDateTime = new Date(data.promotion.endDateTime);
+    console.log("promotion data", data.promotion.endDateTime);
+  }
+
   if (data.operation === "add") {
     db.collection("Promotions").add(data.promotion);
   } else if (data.operation === "delete") {

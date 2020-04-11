@@ -6,6 +6,7 @@ import {
   ListItem,
   Icon,
   PricingCard,
+  Tooltip,
 } from "react-native-elements";
 import {
   Image,
@@ -79,6 +80,34 @@ function CNAQ_Parking_App() {
             More About CNA-Q Campus
           </Text>
         </ScrollView>
+      </View>
+      <View style={{ alignSelf: "center" }}>
+        <Tooltip
+          height={130}
+          width={300}
+          popover={
+            <View>
+              <Text>
+                <Text style={{ color: "#276b9c" }}>R</Text>owida Yousif -
+                60090962
+              </Text>
+              <Text>
+                <Text style={{ color: "#276b9c" }}>A</Text>watif Al-Busaidy -
+                60087183
+              </Text>
+              <Text>
+                <Text style={{ color: "#276b9c" }}>N</Text>iyamath Yusuf -
+                60091929
+              </Text>
+              <Text>
+                <Text style={{ color: "#276b9c" }}>A</Text>bdul Muksith Rizvi -
+                60092545
+              </Text>
+            </View>
+          }
+        >
+          <Text style={{ color: "#276b9c" }}>© RANA</Text>
+        </Tooltip>
       </View>
     </ImageBackground>
   );
@@ -736,7 +765,8 @@ function Payment() {
             <Image
               source={require("../assets/images/carp.png")}
               style={{ width: "70%", height: "40%" }}
-            ></Image>
+            />
+            {ios && <Text>fgtnj</Text>}
             <Text style={styles.titleTexts}>Petrol</Text>
             <Text style={styles.txts}>10QR</Text>
           </View>
@@ -886,7 +916,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   txts: {
-    fontFamily: "serif",
+    ...Platform.select({
+      ios: {},
+      android: {
+        fontFamily: "serif",
+      },
+    }),
     fontSize: 15,
     color: "black",
     textAlign: "center",
@@ -905,7 +940,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   txt: {
-    fontFamily: "serif",
+    ...Platform.select({
+      ios: {},
+      android: {
+        fontFamily: "serif",
+      },
+    }),
     fontSize: 15,
     color: "black",
     textAlign: "center",

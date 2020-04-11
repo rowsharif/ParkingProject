@@ -64,6 +64,7 @@ const CRUDNearestBuildings = (props) => {
   }, []);
 
   const handleSend = async () => {
+    
     if (id) {
       const response2 = await handleNearestBuilding({
         nearestBuilding: {
@@ -71,8 +72,8 @@ const CRUDNearestBuildings = (props) => {
           name,
           number,
           ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "update",
       });
@@ -83,12 +84,13 @@ const CRUDNearestBuildings = (props) => {
           name,
           number,
           ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-        },
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+        }, 
         operation: "add",
       });
-    }
+    
+   }
     setName("");
     setNumber("");
     setId("");
@@ -98,6 +100,7 @@ const CRUDNearestBuildings = (props) => {
   };
 
   const handleEdit = (nearestBuilding) => {
+   
     setName(nearestBuilding.name);
     setNumber(nearestBuilding.number);
     setId(nearestBuilding.id);
@@ -111,6 +114,12 @@ const CRUDNearestBuildings = (props) => {
       nearestBuilding: nearestBuilding,
       operation: "delete",
     });
+    setName("");
+    setNumber("");
+    setId("");
+    setParkingLot("");
+    setLongitude(0);
+    setLatitude(0);
   };
 
   const handleEditModal = (nearestBuilding) => {
@@ -135,6 +144,11 @@ const CRUDNearestBuildings = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+           <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Nearest Building </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"
@@ -228,6 +242,7 @@ const CRUDNearestBuildings = (props) => {
                   selectedValue={ParkingLot}
                   onValueChange={(itemValue) => setParkingLot(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {ParkingLots.map((ParkingLot, i) => (
                     <Picker.Item
                       label={ParkingLot.name}
@@ -489,9 +504,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

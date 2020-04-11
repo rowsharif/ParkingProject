@@ -116,6 +116,11 @@ const FAQ = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
+          <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> FAQ </Text>
           <Modal
             animationType="fade"
             transparent={true}
@@ -160,7 +165,7 @@ const FAQ = (props) => {
                 style={{ alignItems: "center", height: "100%", width: "100%" }}
               >
                 <View style={{ alignItems: "flex-start", width: "80%" }}>
-                  <Text style={{ textAlign: "left", fontWeight: "bold" }}>
+                  <Text style={{ textAlign: "justify", fontWeight: "bold" }}>
                     Question:
                   </Text>
                 </View>
@@ -179,7 +184,7 @@ const FAQ = (props) => {
                   value={question}
                 />
                 <View style={{ alignItems: "flex-start", width: "80%" }}>
-                  <Text style={{ textAlign: "left", fontWeight: "bold" }}>
+                  <Text style={{ textAlign: "justify", fontWeight: "bold" }}>
                     Answer:
                   </Text>
                 </View>
@@ -189,6 +194,7 @@ const FAQ = (props) => {
                     margin: 5,
                     width: 300,
                     height: 100,
+                    textAlign: "justify",
                     borderColor: "gray",
                     borderWidth: 1,
                     backgroundColor: "white",
@@ -291,11 +297,11 @@ const FAQ = (props) => {
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>Question:</Text>
-                  <Text style={{ width: "80%" }}> {faq.question}</Text>
+                  <Text style={{ width: "80%" }}>{faq.question}</Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>Answer:</Text>
-                  <Text style={{ width: "80%" }}> {faq.answer}</Text>
+                  <Text style={{ width: "80%" }}>{faq.answer}</Text>
                 </View>
               </View>
               {user && user.role && user.role == "manager" && (
@@ -416,6 +422,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 5,
     paddingLeft: 5,
+  },
+  titleText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,
   },
   pickerItem: {
     color: "red",

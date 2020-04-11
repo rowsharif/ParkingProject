@@ -53,8 +53,8 @@ const CRUDParkingLots = (props) => {
         parkingLot: {
           id,
           name,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "update",
       });
@@ -63,8 +63,8 @@ const CRUDParkingLots = (props) => {
       const response2 = await handleParkingLot({
         parkingLot: {
           name,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "add",
       });
@@ -111,6 +111,11 @@ const CRUDParkingLots = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+           <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Parking Lot </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"

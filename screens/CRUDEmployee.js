@@ -158,9 +158,9 @@ const CRUDEmployees = (props) => {
     setCrew(crews.filter((c) => c.id === employee.fk)[0]);
     setCrew(employee.fk);
   };
-  const handleDelete = async (employee) => {
+  const handleDelete = async () => {
     const response2 = await handleEmployee({
-      employee: employee,
+      employee: {id, type, name, identifier, fk, fkp},
       operation: "delete",
     });
   };
@@ -188,6 +188,11 @@ const CRUDEmployees = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
+        <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Employee </Text>
           <Modal
             animationType="fade"
             transparent={true}
@@ -280,6 +285,7 @@ const CRUDEmployees = (props) => {
                   selectedValue={crew}
                   onValueChange={(itemValue) => setCrew(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {crews.map((crew, i) => (
                     <Picker.Item label={crew.name} value={crew.id} />
                   ))}
@@ -296,6 +302,7 @@ const CRUDEmployees = (props) => {
                   selectedValue={type}
                   onValueChange={(itemValue) => setType(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {services.map((service, i) => (
                     <Picker.Item label={service.name} value={service.name} />
                   ))}
@@ -337,7 +344,7 @@ const CRUDEmployees = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedEmployee)}
+                      onPress={() => handleDelete()}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",
@@ -515,9 +522,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

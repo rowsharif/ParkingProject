@@ -766,7 +766,6 @@ function Payment() {
               source={require("../assets/images/carp.png")}
               style={{ width: "70%", height: "40%" }}
             />
-            {ios && <Text>fgtnj</Text>}
             <Text style={styles.titleTexts}>Petrol</Text>
             <Text style={styles.txts}>10QR</Text>
           </View>

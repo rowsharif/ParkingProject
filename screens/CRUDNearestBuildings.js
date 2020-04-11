@@ -242,6 +242,7 @@ const CRUDNearestBuildings = (props) => {
                   selectedValue={ParkingLot}
                   onValueChange={(itemValue) => setParkingLot(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {ParkingLots.map((ParkingLot, i) => (
                     <Picker.Item
                       label={ParkingLot.name}
@@ -503,9 +504,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

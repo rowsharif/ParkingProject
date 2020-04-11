@@ -86,6 +86,7 @@ const CRUDUserRole = (props) => {
         selectedValue={role}
         onValueChange={(itemValue) => setRole(itemValue)}
       >
+        <Picker.Item label={"select"} value={"select"} />
         <Picker.Item label="employee" value="employee" />
         <Picker.Item label="admin" value="admin" />
         <Picker.Item label="student" value="student" />
@@ -159,5 +160,24 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     justifyContent: "center",
+  },
+  picker: {
+    width: 300,
+    height: 40,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
+    margin: 5,
+    paddingLeft: 5,
+  },
+  pickerItem: {
+    color: "red",
   },
 });

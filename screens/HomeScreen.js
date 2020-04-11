@@ -45,6 +45,8 @@ export default function HomeScreen() {
   const [PlateNumber, setPlateNumber] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [welcome, setWelcome] = useState(true);
+  const [hours, setHours] = useState(0);
+  const [second, setSecond] = useState(0);
   // const [errorOnDelete, setErrorOnDelete] = useState(false);
 
   const s = welcome.sort;
@@ -70,9 +72,25 @@ export default function HomeScreen() {
         });
         console.log(" Current Cars: ", Cars);
         setCars([...Cars]);
+        setCar(Cars.filter((c) => c.current === true)[0]);
       });
     setCurrentUser(firebase.auth().currentUser);
   }, []);
+
+  const timer = () => {
+    setSecond(second + 1);
+    if (Car && Car.Parking && Car.Parking.DateTime) {
+      const hours = Math.floor(
+        Math.abs(
+          new Date().getTime() - Car.Parking.DateTime.toDate().getTime()
+        ) / 36e5
+      );
+      setHours(hours);
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => timer(), 10000);
+  }, [second]);
 
   const addCar = async () => {
     let car = db
@@ -95,29 +113,6 @@ export default function HomeScreen() {
         .delete();
       setCars(Cars.filter((c) => c.id != car.id));
     }
-  };
-
-  const handleSend = async () => {
-    const from = currentUser.uid;
-    if (id) {
-      db.collection("messages").doc(id).update({ from, to, text });
-    } else {
-      // call serverless function instead
-      const sendMessage = firebase.functions().httpsCallable("sendMessage");
-      const response2 = await sendMessage({ from, to, text });
-      console.log("sendMessage response", response2);
-
-      // db.collection("messages").add({ from, to, text });
-    }
-    setTo("");
-    setText("");
-    setId("");
-  };
-
-  const handleEdit = (message) => {
-    setTo(message.to);
-    setText(message.text);
-    setId(message.id);
   };
 
   const handleLogout = () => {
@@ -146,7 +141,6 @@ export default function HomeScreen() {
 
     console.log("Cars", Cars);
     setModalVisible(false);
-    setCar(c);
 
     showMessage({
       title: `Welcome!`,
@@ -221,6 +215,15 @@ export default function HomeScreen() {
                     <Text>Name: {currentUser.displayName}</Text>
                     <Text>Email: {currentUser.email}</Text>
                     <Text>Phone No: {currentUser.phoneNumber}</Text>
+                    <Text>User Role: {user && user.role}</Text>
+
+                    {Car && Car.Parking && Car.Parking.DateTime && (
+                      <Text>
+                        Parked at: {Car.Parking.DateTime.toDate().getHours()}:
+                        {Car.Parking.DateTime.toDate().getMinutes()}
+                      </Text>
+                    )}
+                    {hours > 0 && <Text>Hours spend in parking: {hours}</Text>}
                   </View>
                 </View>
                 {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
@@ -291,7 +294,7 @@ export default function HomeScreen() {
                       style={{
                         marginTop: 22,
                         ...Platform.select({
-                          ios: { marginTop: 45 },
+                          ios: { marginTop: 20 },
                           android: {},
                         }),
                       }}

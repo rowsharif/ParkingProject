@@ -25,7 +25,6 @@ import db from "../db.js";
 import { Avatar } from "react-native-elements";
 import {
   Feather,
-  AntDesign,
   MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
@@ -61,17 +60,6 @@ export default function HomeScreen() {
   //     setMessages([...messages]);
   //   });
   // }, []);
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    db.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        const user = { id: doc.id, ...doc.data() };
-        setUser(user);
-      });
-  }, []);
 
   useEffect(() => {
     db.collection("users")

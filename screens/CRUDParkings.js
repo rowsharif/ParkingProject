@@ -86,9 +86,9 @@ const CRUDParkings = (props) => {
         parking: {
           id,
           fk: ParkingLot,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-          amountperhour: parseInt(amountperhour),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+          amountperhour: parseFloat(amountperhour),
           type,
         },
         operation: "update",
@@ -97,9 +97,9 @@ const CRUDParkings = (props) => {
       const response2 = await handleCRUDParkings({
         parking: {
           fk: ParkingLot,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-          amountperhour: parseInt(amountperhour),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+          amountperhour: parseFloat(amountperhour),
           type,
         },
         operation: "add",

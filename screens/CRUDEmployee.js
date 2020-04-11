@@ -158,9 +158,9 @@ const CRUDEmployees = (props) => {
     setCrew(crews.filter((c) => c.id === employee.fk)[0]);
     setCrew(employee.fk);
   };
-  const handleDelete = async (employee) => {
+  const handleDelete = async () => {
     const response2 = await handleEmployee({
-      employee: employee,
+      employee: {id, type, name, identifier, fk, fkp},
       operation: "delete",
     });
   };
@@ -339,7 +339,7 @@ const CRUDEmployees = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedEmployee)}
+                      onPress={() => handleDelete()}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",

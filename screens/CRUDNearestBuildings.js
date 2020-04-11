@@ -64,6 +64,7 @@ const CRUDNearestBuildings = (props) => {
   }, []);
 
   const handleSend = async () => {
+    
     if (id) {
       const response2 = await handleNearestBuilding({
         nearestBuilding: {
@@ -71,8 +72,8 @@ const CRUDNearestBuildings = (props) => {
           name,
           number,
           ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "update",
       });
@@ -83,12 +84,13 @@ const CRUDNearestBuildings = (props) => {
           name,
           number,
           ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
-        },
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
+        }, 
         operation: "add",
       });
-    }
+    
+   }
     setName("");
     setNumber("");
     setId("");
@@ -98,6 +100,7 @@ const CRUDNearestBuildings = (props) => {
   };
 
   const handleEdit = (nearestBuilding) => {
+   
     setName(nearestBuilding.name);
     setNumber(nearestBuilding.number);
     setId(nearestBuilding.id);
@@ -111,6 +114,12 @@ const CRUDNearestBuildings = (props) => {
       nearestBuilding: nearestBuilding,
       operation: "delete",
     });
+    setName("");
+    setNumber("");
+    setId("");
+    setParkingLot("");
+    setLongitude(0);
+    setLatitude(0);
   };
 
   const handleEditModal = (nearestBuilding) => {

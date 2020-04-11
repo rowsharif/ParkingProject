@@ -53,8 +53,8 @@ const CRUDParkingLots = (props) => {
         parkingLot: {
           id,
           name,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "update",
       });
@@ -63,8 +63,8 @@ const CRUDParkingLots = (props) => {
       const response2 = await handleParkingLot({
         parkingLot: {
           name,
-          longitude: parseInt(longitude),
-          latitude: parseInt(latitude),
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude),
         },
         operation: "add",
       });

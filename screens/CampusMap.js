@@ -550,7 +550,7 @@ export default function CampusMap() {
                 padding: 10,
               }}
             >
-              {car.Parking && car.Parking.id ? (
+              {car && car.Parking && car.Parking.id ? (
                 <Animatable.View
                   animation="fadeInLeft"
                   iterationCount={1}
@@ -770,7 +770,8 @@ export default function CampusMap() {
                     source={require("../assets/images/green.png")}
                     style={{ width: 22, height: 14 }}
                   />
-                ) : car.Parking &&
+                ) : car &&
+                  car.Parking &&
                   car.Parking.id &&
                   car.Parking.id === parking.id ? (
                   <Animatable.View

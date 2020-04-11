@@ -280,6 +280,7 @@ const CRUDEmployees = (props) => {
                   selectedValue={crew}
                   onValueChange={(itemValue) => setCrew(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {crews.map((crew, i) => (
                     <Picker.Item label={crew.name} value={crew.id} />
                   ))}
@@ -296,6 +297,7 @@ const CRUDEmployees = (props) => {
                   selectedValue={type}
                   onValueChange={(itemValue) => setType(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {services.map((service, i) => (
                     <Picker.Item label={service.name} value={service.name} />
                   ))}
@@ -515,9 +517,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

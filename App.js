@@ -41,6 +41,7 @@ console.warn = (message) => {
     _console.warn(message);
   }
 };
+console.disableYellowBox = true;
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);

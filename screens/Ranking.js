@@ -16,16 +16,16 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../db.js";
-import { Rating, AirbnbRating } from 'react-native-ratings';
-
+import { Rating, AirbnbRating } from "react-native-ratings";
+console.disableYellowBox = true;
 
 const CRUDrankings = (props) => {
   const [rankings, setRankings] = useState([]);
   const [crews, setCrews] = useState([]);
   const [crew, setCrew] = useState({});
-  
-  const [number,setNumber]=useState()
-  
+
+  const [number, setNumber] = useState();
+
   useEffect(() => {
     db.collection("ParkingLots")
       .get()
@@ -66,42 +66,36 @@ const CRUDrankings = (props) => {
               });
               allCrews = [...allCrews, ...ncrews];
               setCrews([...allCrews]);
-              
+
               console.log("Crews", allCrews);
             });
         });
       });
   }, []);
 
-  const ratingCompleted=(rating) =>{
-    
-    console.log("Rating is: " + rating)
-  }
+  const ratingCompleted = (rating) => {
+    console.log("Rating is: " + rating);
+  };
   const handleSend = async () => {
-   
-      // call serverless function instead
-      const response2 = await handleEmployee({
-        employee: { number, fk: crew.id, fkp: crew.fk },
-        operation: "add",
-      });
-      };
+    // call serverless function instead
+    const response2 = await handleEmployee({
+      employee: { number, fk: crew.id, fkp: crew.fk },
+      operation: "add",
+    });
+  };
 
-  
-  
   return (
     <ScrollView>
       <View style={styles.container}>
         {rankings.map((ranking, i) => (
           <View style={{ paddingTop: 50, flexDirection: "row" }}>
             <Text style={styles.getStartedText}>
-              {ranking.number} - crew
-              Name:{ranking.crewName}
-            </Text>  
+              {ranking.number} - crew Name:{ranking.crewName}
+            </Text>
 
-<Text>{number}</Text>
+            <Text>{number}</Text>
 
-
-<AirbnbRating
+            <AirbnbRating
               count={5}
               reviews={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
               defaultRating="0"
@@ -109,12 +103,9 @@ const CRUDrankings = (props) => {
               size={20}
               onFinishRating={ratingCompleted}
             />
-
           </View>
         ))}
-       
-       
-    
+
         {/* <Button title="Send" onPress={handleSend} />
         <Button
           color="green"

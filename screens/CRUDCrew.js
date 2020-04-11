@@ -212,6 +212,7 @@ const CRUDCrew = (props) => {
                   selectedValue={pname}
                   onValueChange={(itemValue) => setPname(itemValue)}
                 >
+                  <Picker.Item label={"select"} value={"select"} />
                   {pnames.map((pname, i) => (
                     <Picker.Item label={pname.name} value={pname.id} />
                   ))}
@@ -417,9 +418,16 @@ const styles = StyleSheet.create({
   picker: {
     width: 300,
     height: 40,
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        marginBottom: "40%",
+      },
+      android: {
+        backgroundColor: "white",
+        borderColor: "gray",
+        borderWidth: 1,
+      },
+    }),
     margin: 5,
     paddingLeft: 5,
   },

@@ -11,13 +11,14 @@ import {
   Platform,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from "react-native";
+import { ProgressBar, Colors } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import { Avatar } from "react-native-elements";
+import { Avatar, Tooltip, Badge } from "react-native-elements";
 
 import "firebase/functions";
 import db from "../db";
@@ -37,9 +38,9 @@ const UserProfile = (props) => {
   const [showProgress, setshowProgress] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
   const [time, setTime] = useState(1);
-  const [phonevalidate,setPhonevalidate]=useState(false);
-  const [view,setView]=useState(false);
-  const [user, setUser] = useState(); 
+  const [phonevalidate, setPhonevalidate] = useState(false);
+  const [view, setView] = useState(false);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     console.log("uid", firebase.auth().currentUser.uid);
@@ -73,7 +74,7 @@ const UserProfile = (props) => {
     //   `https://us-central1-parkingapp-a7028.cloudfunctions.net/updateUser?uid=${uid}
     // &displayName${displayName}&photoURL${uri}&email${email}&phoneNumber${phoneNumber}`
     // );
-    if(phoneNumber.length===0){
+    if (phoneNumber.length === 0) {
       setPhonevalidate(false);
 
       alert(
@@ -93,7 +94,7 @@ const UserProfile = (props) => {
         { cancelable: false }
       );
     }
-    if ((phoneNumber.length === 12 )) {
+    if (phoneNumber.length === 12) {
       const updateUser = firebase.functions().httpsCallable("updateUser");
       const response2 = await updateUser({
         uid,
@@ -107,7 +108,7 @@ const UserProfile = (props) => {
         message: "You will see your changes in the next login",
         type: "success",
         backgroundColor: "#75213d",
-        duration: 2900,
+        duration: 2300,
       });
 
       setPhonevalidate(true);
@@ -132,8 +133,7 @@ const UserProfile = (props) => {
     }
     // console.log("ppppppphhhhhhhh",phoneNumber.length)
     // console.log("uuuuuuuuu", phoneNumber);
-    
-   
+
     // console.log("new displayName", firebase.auth().currentUser.displayName);
   };
 
@@ -193,112 +193,222 @@ const UserProfile = (props) => {
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/bg11.jpeg")}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <View style={{height:"100%", width:"100%", padding:"10%"}}>
-        <KeyboardAvoidingView
-      behavior={Platform.Os == "ios" ? "padding" : "position"}
-      
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{height:"100%", width:"100%", backgroundColor:"lightgray", marginTop:"2.5%"}}>
-            
-            <View style={{height:"48%", justifyContent:"center", alignItems:"center", padding:"2%"}}>
-            
-            <View>
-            {photoURL !== "" && (
-              <Avatar
-              rounded
-              source={{
-                uri: photoURL
-                  ? photoURL
-                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
-              }}
-              size="xlarge"
-            />
-            )}
-            {showProgress && (
-              <View style={{ margin: "2%" }}>
-                <ProgressBarAndroid
-                  styleAttr="Horizontal"
-                  indeterminate={false}
-                  progress={progress}
-                  animating={true}
-                  color="blue"
-                />
-              </View>
-            )}
-            </View>
-            <View style={{marginTop:5, justifyContent:"center"}}>
-            {view ?
-            <View style={{flexDirection:"row"}}>
-              <TouchableOpacity  style={{}} onPress={handlePickImage} ><Text style={{color:"#276b9c"}}>Pick Image</Text></TouchableOpacity>
-              {/* <Text>|</Text>
+        <View style={styles.container}>
+          <ImageBackground
+            source={require("../assets/images/bg11.jpeg")}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <View style={{ height: "100%", width: "100%", padding: "10%" }}>
+              <KeyboardAvoidingView
+                behavior={Platform.Os == "ios" ? "padding" : "position"}
+              >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                  <View
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      backgroundColor: "lightgray",
+                      marginTop: "2.5%",
+                    }}
+                  >
+                    <View
+                      style={{
+                        height: "48%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "2%",
+                      }}
+                    >
+                      <View>
+                        {photoURL !== "" && (
+                          <View>
+                            <Avatar
+                              rounded
+                              source={{
+                                uri: photoURL
+                                  ? photoURL
+                                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
+                              }}
+                              size="xlarge"
+                            />
+                            {(!photoURL || !displayName || !phoneNumber) && (
+                              <Tooltip
+                                popover={<Text>Complete your profile</Text>}
+                                width={190}
+                              >
+                                <Badge
+                                  status="error"
+                                  containerStyle={{
+                                    position: "absolute",
+                                    top: -140,
+                                    right: 110,
+                                  }}
+                                  value={<Text> </Text>}
+                                />
+                              </Tooltip>
+                            )}
+                          </View>
+                        )}
+                        {showProgress && (
+                          <View style={{ margin: "2%" }}>
+                            <ProgressBar
+                              styleAttr="Horizontal"
+                              indeterminate={false}
+                              progress={progress}
+                              animating={true}
+                              color="blue"
+                            />
+                          </View>
+                        )}
+                      </View>
+                      <View style={{ marginTop: 5, justifyContent: "center" }}>
+                        {view ? (
+                          <View style={{ flexDirection: "row" }}>
+                            <TouchableOpacity
+                              style={{}}
+                              onPress={handlePickImage}
+                            >
+                              <Text style={{ color: "#276b9c" }}>
+                                Pick Image
+                              </Text>
+                            </TouchableOpacity>
+                            {/* <Text>|</Text>
               <TouchableOpacity  style={{ marginLeft:5}} onPress={handleUpload}><Text style={{color:"#276b9c"}}>Upload Image</Text></TouchableOpacity> */}
-            </View>  
-            :          
-            <TouchableOpacity  style={{ marginRight:2}} onPress={()=>setView(true)} ><Text style={{color:"#276b9c"}}>Edit</Text></TouchableOpacity>
-            }
-            </View>            
-            </View>
-            
-            <View style={{ justifyContent:"center", paddingTop:0,padding:"5%", height:"45%", marginBottom:"6%"}}>
-              <Text style={{fontWeight:"bold"}}>Name:</Text>
-              {view ?
-                <TextInput
-                style={{borderColor:"gray",borderWidth:1,paddingLeft:5, backgroundColor:"white", height:40, justifyContent:"center", marginTop:5}}
-                onChangeText={setDisplayName}
-                placeholder="Name"
-                value={displayName}
-              />
-              : 
-              <Text style={{height:40, justifyContent:"center", marginTop:5, fontSize:16}}>{displayName}</Text>
-              }
-              <Text style={{fontWeight:"bold"}}>Email Address:</Text>
-              {view?
-              <TextInput
-              style={{borderColor:"gray",borderWidth:1,paddingLeft:5, backgroundColor:"#DCDCDC", height:40, justifyContent:"center", marginTop:5}}
-              onChangeText={setemail}
-              placeholder="Email Address"
-              value={email}
-              editable={false}
-            />
-              :
-              <Text style={{height:40, justifyContent:"center", marginTop:5, fontSize:16}}>{email}</Text>
-              }
-              <Text style={{fontWeight:"bold"}}>Phone Number:</Text>
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            style={{ marginRight: 2 }}
+                            onPress={() => setView(true)}
+                          >
+                            <Text style={{ color: "#276b9c" }}>Edit</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
 
-              {view?
-              <TextInput
-              style={{borderColor:"gray",borderWidth:1,paddingLeft:5, backgroundColor:"white", height:40, justifyContent:"center", marginTop:5}}
-              onChangeText={setphoneNumber}
-              placeholder="Phone number"
-              value={phoneNumber}
-        />
-              :
-              <Text style={{height:40, justifyContent:"center", marginTop:5, fontSize:16}}>{phoneNumber}</Text>
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        paddingTop: 0,
+                        padding: "5%",
+                        height: "45%",
+                        marginBottom: "6%",
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold" }}>Name:</Text>
+                      {view ? (
+                        <TextInput
+                          style={{
+                            borderColor: "gray",
+                            borderWidth: 1,
+                            paddingLeft: 5,
+                            backgroundColor: "white",
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                          }}
+                          onChangeText={setDisplayName}
+                          placeholder="Name"
+                          value={displayName}
+                        />
+                      ) : (
+                        <Text
+                          style={{
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                            fontSize: 16,
+                          }}
+                        >
+                          {displayName}
+                        </Text>
+                      )}
+                      <Text style={{ fontWeight: "bold" }}>Email Address:</Text>
+                      {view ? (
+                        <TextInput
+                          style={{
+                            borderColor: "gray",
+                            borderWidth: 1,
+                            paddingLeft: 5,
+                            backgroundColor: "#DCDCDC",
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                          }}
+                          editable={false}
+                          onChangeText={setemail}
+                          placeholder="Email Address"
+                          value={email}
+                          disabled
+                        />
+                      ) : (
+                        <Text
+                          style={{
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                            fontSize: 16,
+                          }}
+                        >
+                          {email}
+                        </Text>
+                      )}
+                      <Text style={{ fontWeight: "bold" }}>Phone Number:</Text>
 
-              }
+                      {view ? (
+                        <TextInput
+                          style={{
+                            borderColor: "gray",
+                            borderWidth: 1,
+                            paddingLeft: 5,
+                            backgroundColor: "white",
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                          }}
+                          onChangeText={setphoneNumber}
+                          placeholder="+97422223333"
+                          value={phoneNumber}
+                        />
+                      ) : (
+                        <Text
+                          style={{
+                            height: 40,
+                            justifyContent: "center",
+                            marginTop: 5,
+                            fontSize: 16,
+                          }}
+                        >
+                          {phoneNumber}
+                        </Text>
+                      )}
+                    </View>
+                    {view && (
+                      <View
+                        style={{ justifyContent: "flex-end", height: "10%" }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#276b9c",
+                            height: 40,
+                            justifyContent: "center",
+                          }}
+                          onPress={handleSave}
+                        >
+                          <Text style={{ textAlign: "center", color: "white" }}>
+                            Save
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                </TouchableWithoutFeedback>
+              </KeyboardAvoidingView>
             </View>
-            {view &&
-            <View style={{justifyContent:"flex-end", height:"10%"}}>
-              <TouchableOpacity  style={{backgroundColor:"#276b9c", height:40, justifyContent:"center"}}onPress={handleSave}><Text style={{textAlign:"center", color:"white"}}>Save</Text></TouchableOpacity>
-            </View>
-            }
-            
-          </View>
-          </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+            {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
+          </ImageBackground>
         </View>
-        {/* <ScrollView style={styles.container} keyboardShouldPersistTaps="always"> */}
-        
-      </ImageBackground>
-    </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
@@ -321,7 +431,6 @@ UserProfile.navigationOptions = (props) => ({
           textAlign: "left",
           paddingLeft: "3%",
         }}
-        
       >
         UserProfile
       </Text>

@@ -16,11 +16,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableHighlight,
-  SafeAreaView,
-  Alert,
 } from "react-native";
-import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
-import { createAppContainer, createSwitchNavigator } from "react-navigation";
+
 import { MonoText } from "../components/StyledText";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -36,81 +33,10 @@ import Message from "./Message.js";
 console.disableYellowBox = true;
 
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import FAQ from "./FAQ";
-import Promotion from "./CRUDPromotion";
-const MyDrawerNavigator = createDrawerNavigator(
-  {
-    Home: {
-      screen: HomeScreen,
-    },
-    Promotions: {
-      screen: Promotion,
-    },
-    FAQs: {
-      screen: FAQ,
-    },
-  },
-  {
-    contentComponent: (props) => (
-      <View style={{ flex: 1 }}>
-        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
-          <DrawerItems {...props} />
-          <TouchableOpacity
-            style={{
-              backgroundColor: "lightgray",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              // marginTop: 350,
-            }}
-            onPress={() =>
-              Alert.alert(
-                "Log out",
-                "Do you want to logout?",
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => {
-                      return null;
-                    },
-                  },
-                  {
-                    text: "Confirm",
-                    onPress: () => {
-                      // props.navigation.navigate("Home");
-                      firebase.auth().signOut();
-                    },
-                  },
-                ],
-                { cancelable: false }
-              )
-            }
-          >
-            <Text
-              style={{
-                margin: 16,
-                color: "#276b9c",
-                fontSize: 15,
-                fontWeight: "bold",
-              }}
-            >
-              Logout
-            </Text>
-          </TouchableOpacity>
-        </SafeAreaView>
-      </View>
-    ),
-  }
-);
 
-const AppContainer = createAppContainer(MyDrawerNavigator);
-
-export default function Home() {
-  return <AppContainer />;
-}
-
-function HomeScreen() {
+export default function HomeScreen() {
   const [errorOnDelete, setErrorOnDelete] = React.useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
@@ -119,7 +45,9 @@ function HomeScreen() {
   const [Car, setCar] = useState({});
   const [PlateNumber, setPlateNumber] = useState("");
   const [currentUser, setCurrentUser] = useState({});
-  const [welcome, setWelcome] = useState(false);
+  const [welcome, setWelcome] = useState(true);
+  const [hours, setHours] = useState(0);
+  const [second, setSecond] = useState(0);
   // const [errorOnDelete, setErrorOnDelete] = useState(false);
 
   const s = welcome.sort;
@@ -156,9 +84,25 @@ function HomeScreen() {
         });
         console.log(" Current Cars: ", Cars);
         setCars([...Cars]);
+        setCar(Cars.filter((c) => c.current === true)[0]);
       });
     setCurrentUser(firebase.auth().currentUser);
   }, []);
+
+  const timer = () => {
+    setSecond(second + 1);
+    if (Car && Car.Parking && Car.Parking.DateTime) {
+      const hours = Math.floor(
+        Math.abs(
+          new Date().getTime() - Car.Parking.DateTime.toDate().getTime()
+        ) / 36e5
+      );
+      setHours(hours);
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => timer(), 10000);
+  }, [second]);
 
   const addCar = async () => {
     let car = db
@@ -181,29 +125,6 @@ function HomeScreen() {
         .delete();
       setCars(Cars.filter((c) => c.id != car.id));
     }
-  };
-
-  const handleSend = async () => {
-    const from = currentUser.uid;
-    if (id) {
-      db.collection("messages").doc(id).update({ from, to, text });
-    } else {
-      // call serverless function instead
-      const sendMessage = firebase.functions().httpsCallable("sendMessage");
-      const response2 = await sendMessage({ from, to, text });
-      console.log("sendMessage response", response2);
-
-      // db.collection("messages").add({ from, to, text });
-    }
-    setTo("");
-    setText("");
-    setId("");
-  };
-
-  const handleEdit = (message) => {
-    setTo(message.to);
-    setText(message.text);
-    setId(message.id);
   };
 
   const handleLogout = () => {
@@ -232,7 +153,6 @@ function HomeScreen() {
 
     console.log("Cars", Cars);
     setModalVisible(false);
-    setCar(c);
 
     showMessage({
       title: `Welcome!`,
@@ -308,6 +228,14 @@ function HomeScreen() {
                     <Text>Email: {currentUser.email}</Text>
                     <Text>Phone No: {currentUser.phoneNumber}</Text>
                     <Text>User Role: {user && user.role}</Text>
+
+                    {Car && Car.Parking && Car.Parking.DateTime && (
+                      <Text>
+                        Parked at: {Car.Parking.DateTime.toDate().getHours()}:
+                        {Car.Parking.DateTime.toDate().getMinutes()}
+                      </Text>
+                    )}
+                    {hours > 0 && <Text>Hours spend in parking: {hours}</Text>}
                   </View>
                 </View>
                 {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
@@ -378,7 +306,7 @@ function HomeScreen() {
                       style={{
                         marginTop: 22,
                         ...Platform.select({
-                          ios: { marginTop: 45 },
+                          ios: { marginTop: 20 },
                           android: {},
                         }),
                       }}
@@ -579,55 +507,7 @@ function HomeScreen() {
     </KeyboardAvoidingView>
   );
 }
-Home.navigationOptions = {
-  headerTitle: (
-    <View
-      style={{
-        flex: 2,
-        flexDirection: "row",
-      }}
-    >
-      <Text
-        style={{
-          flex: 2,
-          paddingTop: 10,
-          fontSize: 18,
-          fontWeight: "700",
-          color: "white",
-          textAlign: "left",
-          paddingLeft: "3%",
-        }}
-      >
-        <AntDesign name="menu-fold" size={24} color="white" /> Home
-      </Text>
-      <View
-        style={{
-          flex: 1,
-        }}
-      ></View>
 
-      <View style={{ alignSelf: "center", flex: 2 }}>
-        <Image
-          resizeMode="cover"
-          style={{
-            width: 120,
-            height: 50,
-            resizeMode: "contain",
-          }}
-          source={require("../assets/images/logo.png")}
-        />
-      </View>
-    </View>
-  ),
-  headerStyle: {
-    backgroundColor: "#276b9c",
-    height: 44,
-  },
-  headerTintColor: "#fff",
-  headerTitleStyle: {
-    fontWeight: "bold",
-  },
-};
 HomeScreen.navigationOptions = {
   headerTitle: (
     <View
@@ -647,7 +527,7 @@ HomeScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        <AntDesign name="menu-fold" size={24} color="white" /> Home
+        Home
       </Text>
       <View
         style={{

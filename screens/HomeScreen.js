@@ -47,6 +47,17 @@ export default function HomeScreen() {
   const [welcome, setWelcome] = useState(true);
   const [hours, setHours] = useState(0);
   const [second, setSecond] = useState(0);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+      });
+  }, []);
   // const [errorOnDelete, setErrorOnDelete] = useState(false);
 
   const s = welcome.sort;

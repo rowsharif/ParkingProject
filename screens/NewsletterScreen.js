@@ -133,7 +133,7 @@ export default function NewsletterScreen() {
                 <Image
                   source={{ uri: news.image }}
                   resizeMode="contain"
-                  style={{ width: "40%", height: "40%" }}
+                  style={{ width: "90%", height: "40%" }}
                 />
                 {news.DateTime && (
                   <View>

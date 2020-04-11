@@ -110,7 +110,7 @@ const UserProfile = (props) => {
         backgroundColor: "#75213d",
         duration: 2300,
       });
-
+      setView(false);
       setPhonevalidate(true);
     } else {
       setPhonevalidate(false);
@@ -205,7 +205,7 @@ const UserProfile = (props) => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                   <View
                     style={{
-                      height: "100%",
+                      height: view ? "100%" : "93%",
                       width: "100%",
                       backgroundColor: "lightgray",
                       marginTop: "2.5%",
@@ -213,7 +213,7 @@ const UserProfile = (props) => {
                   >
                     <View
                       style={{
-                        height: "48%",
+                        height: view ? "41%" : "48%",
                         justifyContent: "center",
                         alignItems: "center",
                         padding: "2%",
@@ -291,8 +291,8 @@ const UserProfile = (props) => {
                         justifyContent: "center",
                         paddingTop: 0,
                         padding: "5%",
-                        height: "45%",
-                        marginBottom: "6%",
+                        height: "50%",
+                        margin: "0%",
                       }}
                     >
                       <Text style={{ fontWeight: "bold" }}>Name:</Text>
@@ -390,13 +390,25 @@ const UserProfile = (props) => {
                         <TouchableOpacity
                           style={{
                             backgroundColor: "#276b9c",
-                            height: 40,
+                            height: 35,
                             justifyContent: "center",
                           }}
                           onPress={handleSave}
                         >
                           <Text style={{ textAlign: "center", color: "white" }}>
                             Save
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: "#969696",
+                            height: 35,
+                            justifyContent: "center",
+                          }}
+                          onPress={() => setView(false)}
+                        >
+                          <Text style={{ textAlign: "center", color: "white" }}>
+                            Cancel
                           </Text>
                         </TouchableOpacity>
                       </View>

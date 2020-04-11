@@ -357,8 +357,8 @@ exports.handleParkings = functions.https.onCall(async (data, context) => {
     //it equals the number of hours the user spent on the parking multiplied by the parking amount per an hour plus the total amount of all services requested by the user.
     let pTotal =
       data.role === "staff" || data.role === "vip"
-        ? data.hours * car.Parking.amountperhour
-        : 0;
+        ? 0
+        : data.hours * car.Parking.amountperhour;
 
     pTotal = pTotal + car.Parking.TotalAmount;
     // the totalAmount variable is used to store the total amount after discount if there is any; otherwise it equals to the ptotal variable

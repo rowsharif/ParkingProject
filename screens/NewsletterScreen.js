@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import db from "../db.js";
+import "firebase/auth";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 console.disableYellowBox = true;

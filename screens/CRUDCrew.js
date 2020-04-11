@@ -114,7 +114,7 @@ const CRUDCrew = (props) => {
   const handleDelete = async (crew) => {
     //it sends the crew to delete as a parameter to the function and the operation as "delete"
     const response2 = await handleCrew({
-      crew: crew,
+      crew: {id, name, fkp},
       operation: "delete",
     });
   };
@@ -253,7 +253,7 @@ const CRUDCrew = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedCrew)}
+                      onPress={() => handleDelete()}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",

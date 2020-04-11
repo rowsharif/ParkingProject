@@ -323,7 +323,7 @@ const CRUDPromotion = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(selectedPromotion)}
+                      onPress={() => handleDelete(promotion)}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",
@@ -396,7 +396,7 @@ const CRUDPromotion = (props) => {
                 {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}
                 <TouchableOpacity
                   // onPress={() => handleEditModal(promotion)}
-                  onPress={() => handleDelete(selectedPromotion)}
+                  onPress={() => handleDelete(promotion)}
                   style={{
                     backgroundColor: "#276b9c",
                     width: "100%",

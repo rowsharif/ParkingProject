@@ -68,12 +68,14 @@ export default function NewsletterScreen() {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+        
         {/* 
             This react-native component which tranforms the screen to a scrollable screen. By default, ScrollView will
             allow scrolling vertically in a cloumn, whereas if you pass in the prop horizontal="true", the screen will
             be horizontally scrollable, where the ScrollView's childs are arranged horziontally in a row.
           */}
         <ScrollView style={{ flex: 1, padding: "5%" }}>
+       
           {/* 
             This react-native component allows you to show content above an existing screen easily. 
             The props in this component are:
@@ -81,6 +83,7 @@ export default function NewsletterScreen() {
               - transparent, this prop decides if the modal should render and fill the entire view or over a transparent background. When set to true, it will render above a transparent background.
               - visible, prop controls whether the modal is visible or not. In this example, it is set to the state variable modalVisible, which is either true or false.
            */}
+        
           <Modal
             animationType="fade"
             transparent={true}

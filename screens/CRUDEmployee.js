@@ -188,6 +188,11 @@ const CRUDEmployees = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
+        <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Employee </Text>
           <Modal
             animationType="fade"
             transparent={true}

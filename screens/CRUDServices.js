@@ -118,6 +118,11 @@ const CRUDServices = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
+          <Text style={{fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingTop: 10,
+    paddingLeft: 10,}}> Services </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           
           <Modal

@@ -47,14 +47,21 @@ const CRUDhistories = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-          <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> My History </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          My History{" "}
+        </Text>
         <View
           style={{
-            marginTop:15,
+            marginTop: 15,
             backgroundColor: "lightgray",
             justifyContent: "space-evenly",
             alignItems: "center",
@@ -112,12 +119,12 @@ const CRUDhistories = (props) => {
                 borderColor: "black",
                 borderTopWidth: 1,
                 backgroundColor: "lightgray",
-                padding: "3%",
+                padding: "1%",
                 flexDirection: "row",
               }}
             >
               <View style={{ width: "80%", height: "100%" }}>
-                <Text>
+                <Text style={{ PaddingBottom: 10 }}>
                   Total Amount -{" "}
                   {history.TotalAmount >= 0 ? history.TotalAmount : "_"}
                 </Text>

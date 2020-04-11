@@ -80,6 +80,7 @@ const FAQ = (props) => {
     setQuestion("");
     setAnswer("");
     setId("");
+    setModalVisible(false);
   };
   const handleEdit = (faq) => {
     setQuestion(faq.question);
@@ -94,6 +95,7 @@ const FAQ = (props) => {
       faq: faq,
       operation: "delete",
     });
+    setModalVisible(false);
   };
 
   const handleEditModal = (faq) => {
@@ -190,26 +192,32 @@ const FAQ = (props) => {
                   placeholder="Question"
                   value={question}
                 />
-                <View style={{ alignItems: "flex-start", width: "80%" }}>
-                  <Text style={{ textAlign: "justify", fontWeight: "bold" }}>
-                    Answer:
-                  </Text>
-                </View>
-                <TextInput
-                  style={{
-                    paddingLeft: 5,
-                    margin: 5,
-                    width: 300,
-                    height: 100,
-                    textAlign: "justify",
-                    borderColor: "gray",
-                    borderWidth: 1,
-                    backgroundColor: "white",
-                  }}
-                  onChangeText={setAnswer}
-                  placeholder="Answer"
-                  value={answer}
-                />
+                {user && user.role && user.role == "manager" && (
+                  <View>
+                    <View style={{ alignItems: "flex-start", width: "80%" }}>
+                      <Text
+                        style={{ textAlign: "justify", fontWeight: "bold" }}
+                      >
+                        Answer:
+                      </Text>
+                    </View>
+                    <TextInput
+                      style={{
+                        paddingLeft: 5,
+                        margin: 5,
+                        width: 300,
+                        height: 100,
+                        textAlign: "justify",
+                        borderColor: "gray",
+                        borderWidth: 1,
+                        backgroundColor: "white",
+                      }}
+                      onChangeText={setAnswer}
+                      placeholder="Answer"
+                      value={answer}
+                    />
+                  </View>
+                )}
 
                 {create ? (
                   <View
@@ -291,26 +299,70 @@ const FAQ = (props) => {
                 flexDirection: "row",
               }}
             >
-              <View
-                style={{
-                  width:
-                    user && user.role && user.role == "manager"
-                      ? "80%"
-                      : "100%",
-                  paddingLeft: 10,
-                  justifyContent: "center",
-                  minHeight: 100,
-                }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={{ fontWeight: "bold" }}>Question:</Text>
-                  <Text style={{ width: "80%" }}>{faq.question}</Text>
+              {(faq.answer ||
+                (user &&
+                  user.role &&
+                  user.role == "manager" &&
+                  !faq.answer)) && (
+                <View
+                  style={{
+                    width:
+                      user && user.role && user.role == "manager"
+                        ? "80%"
+                        : "100%",
+                    paddingLeft: 10,
+                    justifyContent: "center",
+                    minHeight: 100,
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontWeight: "bold" }}>Question: </Text>
+                    <Text
+                      style={{
+                        ...Platform.select({
+                          ios: {
+                            width: "71%",
+                            fontWeight: "100",
+                            paddingLeft: 5,
+                            fontSize: 14,
+                          },
+                          android: {
+                            width: "80%",
+                            fontWeight: "100",
+                            paddingLeft: 5,
+                            fontSize: 14,
+                          },
+                        }),
+                      }}
+                    >
+                      {faq.question}
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontWeight: "bold" }}>Answer: </Text>
+                    <Text
+                      style={{
+                        ...Platform.select({
+                          ios: {
+                            width: "75%",
+                            fontWeight: "200",
+                            paddingLeft: 15,
+                            fontSize: 14,
+                          },
+                          android: {
+                            width: "80%",
+                            fontWeight: "200",
+                            paddingLeft: 15,
+                            fontSize: 14,
+                          },
+                        }),
+                      }}
+                    >
+                      {faq.answer}
+                    </Text>
+                  </View>
                 </View>
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={{ fontWeight: "bold" }}>Answer:</Text>
-                  <Text style={{ width: "80%" }}>{faq.answer}</Text>
-                </View>
-              </View>
+              )}
               {user && user.role && user.role == "manager" && (
                 <View style={{ width: "20%", height: 120 }}>
                   {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}

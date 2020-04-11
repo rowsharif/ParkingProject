@@ -150,6 +150,7 @@ const CRUDhistories = (props) => {
               }}
             >
               <View style={{ width: "80%", height: "100%" }}>
+                <Text>Car Plate No. : {history.Car.PlateNumber}</Text>
                 <Text>
                   Date : {history.DateTime.toDate().getDate()}-
                   {history.DateTime.toDate().getMonth() + 1}-

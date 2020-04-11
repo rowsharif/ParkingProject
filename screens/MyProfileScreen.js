@@ -46,9 +46,9 @@ import CRUDNearestBuildings from "./CRUDNearestBuildings";
 import CRUDMyPayments from "./CRUDMyPayments";
 import CRUDPayments from "./CRUDPayments";
 import FAQ from "./FAQ";
+import CRUDUserRole from "./CRUDUserRole";
 console.disableYellowBox = true;
 
-import CRUDUserRole from "./CRUDUserRole";
 //import CRUDMyPayments from "./CRUDMyPayments"
 ////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
 ///////////////Below, are different screens that are used within the screens folder. The initial screen is set as the userprofile screen. The userprofile screen then calls the other screens
@@ -174,6 +174,9 @@ const MyDrawerNavigator = createDrawerNavigator(
     },
     FAQ: {
       screen: FAQ,
+    },
+    UserRole: {
+      screen: CRUDUserRole,
     },
   },
   {

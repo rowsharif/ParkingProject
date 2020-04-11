@@ -1,5 +1,5 @@
 //@refresh reset
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   Image,
   Platform,
@@ -25,6 +25,8 @@ console.disableYellowBox = true;
 const handleFAQ = firebase.functions().httpsCallable("handleFAQ");
 
 const FAQ = (props) => {
+  const [uid, setuid] = useState();
+
   const [faqs, setFaqs] = useState([]);
   const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");
@@ -33,6 +35,21 @@ const FAQ = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [create, setCreate] = useState(false);
   const [selectedFAQ, setSelectedFAQ] = useState();
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    console.log("uid", firebase.auth().currentUser.uid);
+    setuid(firebase.auth().currentUser.uid);
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+        console.log("USERS", user);
+      });
+  }, []);
 
   useEffect(() => {
     db.collection("FAQs").onSnapshot((querySnapshot) => {
@@ -263,37 +280,43 @@ const FAQ = (props) => {
             >
               <View
                 style={{
-                  width: "80%",
+                  width:
+                    user && user.role && user.role == "manager"
+                      ? "80%"
+                      : "100%",
                   paddingLeft: 10,
                   justifyContent: "center",
+                  minHeight: 100,
                 }}
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>Question:</Text>
-                  <Text> {faq.question}</Text>
+                  <Text style={{ width: "80%" }}> {faq.question}</Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>Answer:</Text>
-                  <Text style={{ width: "85%" }}> {faq.answer}</Text>
+                  <Text style={{ width: "80%" }}> {faq.answer}</Text>
                 </View>
               </View>
-              <View style={{ width: "20%", height: 120 }}>
-                {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}
-                <TouchableOpacity
-                  onPress={() => handleEditModal(faq)}
-                  style={{
-                    backgroundColor: "#276b9c",
-                    width: "100%",
-                    height: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderTopRightRadius: 5,
-                    borderBottomRightRadius: 5,
-                  }}
-                >
-                  <Text style={{ color: "white" }}>Edit</Text>
-                </TouchableOpacity>
-              </View>
+              {user && user.role && user.role == "manager" && (
+                <View style={{ width: "20%", height: 120 }}>
+                  {/* <Button title="Edit" onPress={() => handleEditModal(newsletter)} /> */}
+                  <TouchableOpacity
+                    onPress={() => handleEditModal(faq)}
+                    style={{
+                      backgroundColor: "#276b9c",
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderTopRightRadius: 5,
+                      borderBottomRightRadius: 5,
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           ))}
 

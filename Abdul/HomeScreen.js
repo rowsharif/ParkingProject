@@ -26,26 +26,41 @@ import { Avatar } from "react-native-elements";
 import {
   Feather,
   MaterialCommunityIcons,
-  FontAwesome5, 
+  FontAwesome5,
 } from "@expo/vector-icons";
 import Message from "./Message.js";
+console.disableYellowBox = true;
+
 import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function HomeScreen() {
+  const [errorOnDelete, setErrorOnDelete] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [messages, setMessages] = useState([]);
   const [to, setTo] = useState("");
   const [text, setText] = useState("");
   const [id, setId] = useState("");
-
   const [Cars, setCars] = useState([]);
   const [Car, setCar] = useState({});
   const [PlateNumber, setPlateNumber] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [welcome, setWelcome] = useState(true);
-  const [errorOnDelete, setErrorOnDelete] = useState(false);
+  const [hours, setHours] = useState(0);
+  const [second, setSecond] = useState(0);
+  const [user, setUser] = useState();
 
-  const s = welcome.sort
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+      });
+  }, []);
+  // const [errorOnDelete, setErrorOnDelete] = useState(false);
+
+  const s = welcome.sort;
   // useEffect(() => {
   //   db.collection("messages").onSnapshot(querySnapshot => {
   //     const messages = [];
@@ -68,9 +83,25 @@ export default function HomeScreen() {
         });
         console.log(" Current Cars: ", Cars);
         setCars([...Cars]);
+        setCar(Cars.filter((c) => c.current === true)[0]);
       });
     setCurrentUser(firebase.auth().currentUser);
   }, []);
+
+  const timer = () => {
+    setSecond(second + 1);
+    if (Car && Car.Parking && Car.Parking.DateTime) {
+      const hours = Math.floor(
+        Math.abs(
+          new Date().getTime() - Car.Parking.DateTime.toDate().getTime()
+        ) / 36e5
+      );
+      setHours(hours);
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => timer(), 10000);
+  }, [second]);
 
   const addCar = async () => {
     let car = db
@@ -93,29 +124,6 @@ export default function HomeScreen() {
         .delete();
       setCars(Cars.filter((c) => c.id != car.id));
     }
-  };
-
-  const handleSend = async () => {
-    const from = currentUser.uid;
-    if (id) {
-      db.collection("messages").doc(id).update({ from, to, text });
-    } else {
-      // call serverless function instead
-      const sendMessage = firebase.functions().httpsCallable("sendMessage");
-      const response2 = await sendMessage({ from, to, text });
-      console.log("sendMessage response", response2);
-
-      // db.collection("messages").add({ from, to, text });
-    }
-    setTo("");
-    setText("");
-    setId("");
-  };
-
-  const handleEdit = (message) => {
-    setTo(message.to);
-    setText(message.text);
-    setId(message.id);
   };
 
   const handleLogout = () => {
@@ -144,14 +152,15 @@ export default function HomeScreen() {
 
     console.log("Cars", Cars);
     setModalVisible(false);
-    setCar(c);
-    
+
     showMessage({
       title: `Welcome!`,
-      message:`Welcome ${currentUser.displayName}!`,
+      message: `Welcome ${
+        currentUser.displayName ? currentUser.displayName : "User"
+      }!`,
       type: "success",
-      backgroundColor:"#75213d",
-      duration:2300,
+      backgroundColor: "#75213d",
+      duration: 2300,
     });
   };
 
@@ -161,14 +170,14 @@ export default function HomeScreen() {
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={{height:"100%" }}>
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/bg11.jpeg")}
-        style={{ width: "100%", height: "100%" }}
-      > 
-      <View style={{ height:"100%"}}> 
-        {/* { welcome &&
+        <View style={{ height: "100%" }}>
+          <View style={styles.container}>
+            <ImageBackground
+              source={require("../assets/images/bg11.jpeg")}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <View style={{ height: "100%" }}>
+                {/* { welcome &&
           <View style={{backgroundColor:"#75213d", height:25, flexDirection:"row", alignItems:"center"}}>
           <Text style={{color:"white", textAlign:"center", width:"90%", paddingLeft:"7%"}}>
             Welcome {currentUser.displayName}!
@@ -178,236 +187,322 @@ export default function HomeScreen() {
           </View>         
           </View>  
         }    */}
-        {/* <Text style={{paddingTop:2, marginLeft:"5%", marginTop:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
+                {/* <Text style={{paddingTop:2, marginLeft:"5%", marginTop:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
           <MaterialCommunityIcons  name="account" size={25} color="black" />
         </Text> */}
-        <View style={{marginTop:"18%",backgroundColor:"lightgray", margin:"5%", height:"30%", flexDirection:"row"}}>          
-          <View style={{width:"30%", justifyContent:"center", alignItems:"center"}}>
-            <Avatar
-              rounded
-              source={{
-                uri: currentUser.photoURL
-                  ? currentUser.photoURL
-                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
-              }}
-              size="large"
-            />
-          </View>
-          <View style={{width:"70%", justifyContent:"center", marginLeft:10}}>
-            <Text>Name: {currentUser.displayName}</Text>
-            <Text>Email: {currentUser.email}</Text>
-            <Text>Phone No: {currentUser.phoneNumber}</Text>
-            
-          </View>   
-        </View>
-        {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
+                <View
+                  style={{
+                    marginTop: "18%",
+                    backgroundColor: "lightgray",
+                    margin: "5%",
+                    height: "30%",
+                    flexDirection: "row",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: "30%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Avatar
+                      rounded
+                      source={{
+                        uri: currentUser.photoURL
+                          ? currentUser.photoURL
+                          : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
+                      }}
+                      size="large"
+                    />
+                  </View>
+                  <View
+                    style={{
+                      width: "70%",
+                      justifyContent: "center",
+                      marginLeft: 10,
+                    }}
+                  >
+                    <Text>Name: {currentUser.displayName}</Text>
+                    <Text>Email: {currentUser.email}</Text>
+                    <Text>Phone No: {currentUser.phoneNumber}</Text>
+                    <Text>User Role: {user && user.role}</Text>
+
+                    {Car && Car.Parking && Car.Parking.DateTime && (
+                      <Text>
+                        Parked at: {Car.Parking.DateTime.toDate().getHours()}:
+                        {Car.Parking.DateTime.toDate().getMinutes()}
+                      </Text>
+                    )}
+                    {hours > 0 && <Text>Hours spend in parking: {hours}</Text>}
+                  </View>
+                </View>
+                {/* <Text style={{paddingTop:2, marginLeft:"5%", backgroundColor:"lightgray", width:"20%", fontSize:18, textAlign:"center", borderTopRightRadius:5, borderTopLeftRadius:5, borderBottomWidth:1}}>
           <FontAwesome5  name="car-side" size={25} color="black" />
         </Text> */}
-        <View style={{backgroundColor:"lightgray", margin:"5%", height:"30%"}}>
-          <View style={{flexDirection:"row", height:"80%"}}>
-            <View style={{width:"30%", height:"100%", justifyContent:"center", alignItems:"center"}}>
-              <Avatar
-                rounded
-                source={require("../assets/images/caricon.png")}
-                size="large"
-              />
-            </View>
-            <View style={{width:"70%",height:"100%", justifyContent:"center", alignItems:"flex-start", paddingLeft:20}}>
-                <Text style={{ fontSize: 17}}>Plate No: {Car && Car.PlateNumber}</Text>
-            </View>
-          </View>
-          
-          <View style={{height:"20%", alignItems:"center"}}>
-            <TouchableOpacity
-              style={{backgroundColor:"#276b9c", width:"100%", height:"150%", justifyContent:"center"}}
-              onPress={() => setModalVisible(true)}
-            >
-              <Text style={styles.buttonText}>Change Car</Text>
-            </TouchableOpacity>
-          </View>
-          
-        </View>
-        
-        
-        <View style={{ marginTop: 0 }}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            // onRequestClose={() => {
-            //   setModalVisible(false);
-            // }}
-          >
-            
-            <View style={{ marginTop: 22, ...Platform.select({ios: {marginTop:45},android: {},})}}>
-            <View
-                style={{
-                  marginTop: 22,
-                  backgroundColor: "white",
-
-                  width: "100%",
-                  height: "98%",
-                }}
-              >
-            <KeyboardAvoidingView
-                  behavior={Platform.Os == "ios" ? "padding" : "position"}
-                  style={styles.container}
+                <View
+                  style={{
+                    backgroundColor: "lightgray",
+                    margin: "5%",
+                    height: "30%",
+                  }}
                 >
-             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ImageBackground
-                  source={require("../assets/images/bg11.jpeg")}
-                  style={{ width: "100%", height: "100%" }}
-                >
-                  
-                  <View style={{ padding: 10 }}>
-                    <View style={{ padding: 10 }}>
-                      <View style={{ marginTop: 0 }}>
-                        <Modal
-                          animationType="fade"
-                          transparent={true}
-                          visible={errorOnDelete}
-                        >
-                          <View
-                            style={{
-                              marginTop: 22,
-                              backgroundColor: "#3c78a3",
-                              margin: "15%",
-                              padding: "8%",
-                              // paddingTop: "1%",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderRadius: 5,
-                              ...Platform.select({
-                                ios: {
-                                  marginTop: "28%",
-                                  paddingTop: 50,
-                                  margin: "10%",
-                                  minHeight: 300,
-                                  width: "80%",
-                                },
-                                android: {
-                                  minHeight: 200,
-                                },
-                              }),
-                            }}
-                          >
-                            <Text>
-                              The car is parked (or has a reserved parking) and
-                              cannot be deleted!
-                            </Text>
-                            <Text
-                              style={{
-                                marginBottom: 30,
-                                marginTop: 30,
-                                padding: 5,
-                                borderColor: "red",
-                                borderWidth: 2,
-                              }}
-                            >
-                              Please leave the parking or cancle the reservation
-                              and try again.
-                            </Text>
-                            <TouchableHighlight
-                              style={styles.buttonHide}
-                              onPress={() => {
-                                setErrorOnDelete(!errorOnDelete);
-                              }}
-                            >
-                              <Text style={{ textAlign: "center" }}>
-                                Cancel{" "}
-                              </Text>
-                            </TouchableHighlight>
-                          </View>
-                        </Modal>
-                      </View>
-                      <Text
-                        style={{
-                          paddingTop: 10,
-                          fontSize: 18,
-                          
-                        }}
-                      >
-                        Choose Your Car
+                  <View style={{ flexDirection: "row", height: "80%" }}>
+                    <View
+                      style={{
+                        width: "30%",
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Avatar
+                        rounded
+                        source={require("../assets/images/caricon.png")}
+                        size="large"
+                      />
+                    </View>
+                    <View
+                      style={{
+                        width: "70%",
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "flex-start",
+                        paddingLeft: 20,
+                      }}
+                    >
+                      <Text style={{ fontSize: 17 }}>
+                        Plate No: {Car && Car.PlateNumber}
                       </Text>
-                      <View style={{ height:150, marginTop:10}}>
-                      {Cars &&
-                        Cars.length > 0 &&
-                        Cars.map((car, i) => (
-                          <View key={i} style={{flexDirection:"row", margin:3}}>
-                            <TouchableOpacity
-                              style={styles.button}
-                              onPress={() => handleCar(car)}
-                            >
-                              <Text style={styles.buttonText}>
-                                Plate No: {car.PlateNumber}
-                              </Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                              style={styles.buttonRemove}
-                              onPress={() => deleteCar(car)}
-                            >
-                              <Text style={styles.buttonRemoveText}>
-                                Remove
-                              </Text>
-                            </TouchableOpacity>
-                            {/* <Button title="X" onPress={() => deleteCar(car)} /> */}
-                          </View>
-                        ))}
-                      </View>
-                      {Cars.length < 2 && (
-                        <View style={{ paddingTop: "30%" }}>
-                          <Text style={{
-                          fontSize: 18,                                                    
-                          }}>
-                            Add a Car (Max. 2)
-                          </Text>
-                          <TextInput
-                            style={{
-                              height: 40,
-                              borderColor: "gray",
-                              borderWidth: 1,
-                              paddingLeft: 5,
-                              backgroundColor:"white",
-                              marginTop:10
-                            }}
-                            onChangeText={setPlateNumber}
-                            placeholder=" PlateNumber"
-                            value={PlateNumber}
-                          />
-                          <TouchableOpacity
-                              style={{backgroundColor:"#519c5a", height:40, justifyContent:"center", marginTop:5}}
-                              onPress={addCar}                            >
-                              <Text style={styles.buttonRemoveText}>
-                                Add
-                              </Text>
-                            </TouchableOpacity>
-                          {/* <Button title="Add" onPress={addCar} /> */}
-                        </View>
-                      )}
                     </View>
                   </View>
-                </ImageBackground>
-                </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
+
+                  <View style={{ height: "20%", alignItems: "center" }}>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "#276b9c",
+                        width: "100%",
+                        height: "150%",
+                        justifyContent: "center",
+                      }}
+                      onPress={() => setModalVisible(true)}
+                    >
+                      <Text style={styles.buttonText}>Change Car</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={{ marginTop: 0 }}>
+                  <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    // onRequestClose={() => {
+                    //   setModalVisible(false);
+                    // }}
+                  >
+                    <View
+                      style={{
+                        marginTop: 22,
+                        ...Platform.select({
+                          ios: { marginTop: 20 },
+                          android: {},
+                        }),
+                      }}
+                    >
+                      <View
+                        style={{
+                          marginTop: 22,
+                          backgroundColor: "white",
+
+                          width: "100%",
+                          height: "98%",
+                        }}
+                      >
+                        <KeyboardAvoidingView
+                          behavior={
+                            Platform.Os == "ios" ? "padding" : "position"
+                          }
+                          style={styles.container}
+                        >
+                          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                            <ImageBackground
+                              source={require("../assets/images/bg11.jpeg")}
+                              style={{ width: "100%", height: "100%" }}
+                            >
+                              <View style={{ padding: 10 }}>
+                                <View style={{ padding: 10 }}>
+                                  <View style={{ marginTop: 0 }}>
+                                    <Modal
+                                      animationType="fade"
+                                      transparent={true}
+                                      visible={errorOnDelete}
+                                    >
+                                      <View
+                                        style={{
+                                          marginTop: 22,
+                                          backgroundColor: "#3c78a3",
+                                          margin: "15%",
+                                          padding: "8%",
+                                          // paddingTop: "1%",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          borderRadius: 5,
+                                          ...Platform.select({
+                                            ios: {
+                                              marginTop: "28%",
+                                              paddingTop: 50,
+                                              margin: "10%",
+                                              minHeight: 300,
+                                              width: "80%",
+                                            },
+                                            android: {
+                                              minHeight: 200,
+                                            },
+                                          }),
+                                        }}
+                                      >
+                                        <Text>
+                                          The car is parked (or has a reserved
+                                          parking) and cannot be deleted!
+                                        </Text>
+                                        <Text
+                                          style={{
+                                            marginBottom: 30,
+                                            marginTop: 30,
+                                            padding: 5,
+                                            borderColor: "red",
+                                            borderWidth: 2,
+                                          }}
+                                        >
+                                          Please leave the parking or cancle the
+                                          reservation and try again.
+                                        </Text>
+                                        <TouchableHighlight
+                                          style={styles.buttonHide}
+                                          onPress={() => {
+                                            setErrorOnDelete(!errorOnDelete);
+                                          }}
+                                        >
+                                          <Text style={{ textAlign: "center" }}>
+                                            Cancel{" "}
+                                          </Text>
+                                        </TouchableHighlight>
+                                      </View>
+                                    </Modal>
+                                  </View>
+                                  <Text
+                                    style={{
+                                      paddingTop: 10,
+                                      fontSize: 18,
+                                    }}
+                                  >
+                                    Choose Your Car
+                                  </Text>
+                                  <View style={{ height: 150, marginTop: 10 }}>
+                                    {Cars &&
+                                      Cars.length > 0 &&
+                                      Cars.map((car, i) => (
+                                        <View
+                                          key={i}
+                                          style={{
+                                            flexDirection: "row",
+                                            margin: 3,
+                                          }}
+                                        >
+                                          <TouchableOpacity
+                                            style={styles.button}
+                                            onPress={() => handleCar(car)}
+                                          >
+                                            <Text style={styles.buttonText}>
+                                              Plate No: {car.PlateNumber}
+                                            </Text>
+                                          </TouchableOpacity>
+
+                                          <TouchableOpacity
+                                            style={styles.buttonRemove}
+                                            onPress={() => deleteCar(car)}
+                                          >
+                                            <Text
+                                              style={styles.buttonRemoveText}
+                                            >
+                                              Remove
+                                            </Text>
+                                          </TouchableOpacity>
+                                          {/* <Button title="X" onPress={() => deleteCar(car)} /> */}
+                                        </View>
+                                      ))}
+                                  </View>
+                                  {Cars.length < 2 && (
+                                    <View style={{ paddingTop: "30%" }}>
+                                      <Text
+                                        style={{
+                                          fontSize: 18,
+                                        }}
+                                      >
+                                        Add a Car (Max. 2)
+                                      </Text>
+                                      <TextInput
+                                        style={{
+                                          height: 40,
+                                          borderColor: "gray",
+                                          borderWidth: 1,
+                                          paddingLeft: 5,
+                                          backgroundColor: "white",
+                                          marginTop: 10,
+                                        }}
+                                        onChangeText={setPlateNumber}
+                                        placeholder=" PlateNumber"
+                                        value={PlateNumber}
+                                      />
+                                      <TouchableOpacity
+                                        style={{
+                                          backgroundColor: "#519c5a",
+                                          height: 40,
+                                          justifyContent: "center",
+                                          marginTop: 5,
+                                        }}
+                                        onPress={addCar}
+                                      >
+                                        <Text style={styles.buttonRemoveText}>
+                                          Add
+                                        </Text>
+                                      </TouchableOpacity>
+                                      {/* <Button title="Add" onPress={addCar} /> */}
+                                    </View>
+                                  )}
+                                </View>
+                              </View>
+                            </ImageBackground>
+                          </TouchableWithoutFeedback>
+                        </KeyboardAvoidingView>
+                      </View>
+                    </View>
+                  </Modal>
+                </View>
               </View>
-            </View>
-            
-          </Modal>
-        </View>
-        </View> 
-      </ImageBackground>
-    </View>
-    <View style={{justifyContent:"flex-end"}}>
-          {/* <Button title="Logout" onPress={handleLogout} /> */}
-          <TouchableOpacity
-              style={{backgroundColor:"lightgray", width:"100%", height:40, justifyContent:"center"}}
-              onPress={handleLogout}            >
-              <Text style={{color:"#276b9c", textAlign:"center", fontSize:15}}>Logout</Text>
+            </ImageBackground>
+          </View>
+          <View style={{ justifyContent: "flex-end" }}>
+            {/* <Button title="Logout" onPress={handleLogout} /> */}
+            <TouchableOpacity
+              style={{
+                backgroundColor: "lightgray",
+                width: "100%",
+                height: 40,
+                justifyContent: "center",
+              }}
+              onPress={handleLogout}
+            >
+              <Text
+                style={{ color: "#276b9c", textAlign: "center", fontSize: 15 }}
+              >
+                Logout
+              </Text>
             </TouchableOpacity>
-    </View>
-    </View>
-    </TouchableWithoutFeedback>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
@@ -428,7 +523,7 @@ HomeScreen.navigationOptions = {
           fontWeight: "700",
           color: "white",
           textAlign: "left",
-          paddingLeft:"3%"
+          paddingLeft: "3%",
         }}
       >
         Home
@@ -466,7 +561,7 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     fontSize: 15,
-    color:"white"
+    color: "white",
   },
   button: {
     // borderWidth: 1,
@@ -477,24 +572,23 @@ const styles = StyleSheet.create({
     height: 50,
     marginRight: "1%",
     alignSelf: "center",
-    borderTopLeftRadius:5,
-    borderBottomLeftRadius:5,
-    justifyContent:"center"
-    
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    justifyContent: "center",
   },
   buttonRemoveText: {
     textAlign: "center",
     // fontSize: 18,
-    color:"white"
+    color: "white",
   },
-  buttonRemove: {    
-    width:"20%",
-    height:50,
+  buttonRemove: {
+    width: "20%",
+    height: 50,
     // margin:"1%",
     backgroundColor: "#ba3838",
-    borderTopRightRadius:5,
-    borderBottomRightRadius:5,
-    justifyContent:"center"
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    justifyContent: "center",
   },
   container: {
     flex: 1,

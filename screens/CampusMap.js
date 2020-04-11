@@ -622,7 +622,7 @@ export default function CampusMap() {
                   }}
                 >
                   <Text style={{ textAlign: "center", color: "white" }}>
-                    Go to the parkign lot next to building...{" "}
+                    Go to the parking lot next to building...{" "}
                   </Text>
                   <View
                     style={{

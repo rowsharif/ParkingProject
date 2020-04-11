@@ -193,56 +193,6 @@ const UserProfile = (props) => {
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/images/bg11.jpeg")}
-        style={{ width: "100%", height: "100%" }}
-      >
-          <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> My Profile </Text>
-        <View style={{height:"100%", width:"100%", padding:"10%"}}>
-        <KeyboardAvoidingView
-      behavior={Platform.Os == "ios" ? "padding" : "position"}
-      
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{height:"100%", width:"100%", backgroundColor:"lightgray", marginTop:"2.5%"}}>
-            
-            <View style={{height:"48%", justifyContent:"center", alignItems:"center", padding:"2%"}}>
-            
-            <View>
-            {photoURL !== "" && (
-              <Avatar
-              rounded
-              source={{
-                uri: photoURL
-                  ? photoURL
-                  : "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png",
-              }}
-              size="xlarge"
-            />
-            )}
-            {showProgress && (
-              <View style={{ margin: "2%" }}>
-                <ProgressBarAndroid
-                  styleAttr="Horizontal"
-                  indeterminate={false}
-                  progress={progress}
-                  animating={true}
-                  color="blue"
-                />
-              </View>
-            )}
-            </View>
-            <View style={{marginTop:5, justifyContent:"center"}}>
-            {view ?
-            <View style={{flexDirection:"row"}}>
-              <TouchableOpacity  style={{}} onPress={handlePickImage} ><Text style={{color:"#276b9c"}}>Pick Image</Text></TouchableOpacity>
-              {/* <Text>|</Text>
         <View style={styles.container}>
           <ImageBackground
             source={require("../assets/images/bg11.jpeg")}

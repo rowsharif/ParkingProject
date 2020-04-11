@@ -242,6 +242,9 @@ const MyDrawerNavigatorStudent = createDrawerNavigator(
     MyHistory: {
       screen: CRUDMyProfile,
     },
+    FAQ: {
+      screen: FAQ,
+    },
   },
   {
     contentComponent: (props) => (
@@ -449,6 +452,9 @@ const MyDrawerNavigatorManager = createDrawerNavigator(
     },
     Newsletter: {
       screen: CRUDNewsletter,
+    },
+    FAQ: {
+      screen: FAQ,
     },
   },
   {

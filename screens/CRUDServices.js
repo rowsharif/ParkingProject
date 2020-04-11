@@ -34,9 +34,7 @@ const CRUDServices = (props) => {
   const [create, setCreate] = useState(false);
   const [delete1, setDelete1] = useState(false);
 
-
   useEffect(() => {
-
     db.collection("Services").onSnapshot((querySnapshot) => {
       //////services is an empty,temporary array within the query
 
@@ -52,17 +50,14 @@ const CRUDServices = (props) => {
     });
   }, []);
 
-
   const handleSend = async () => {
-
     if (id) {
       const response2 = await handleServices({
         //// sends the service object
         service: { id, name, price },
         operation: "update",
       });
-    }
-    else {
+    } else {
       const response2 = await handleServices({
         service: { name, price },
 
@@ -72,6 +67,7 @@ const CRUDServices = (props) => {
     setName("");
     setPrice("");
     setId("");
+    setModalVisible(false);
   };
   const handleEdit = (service) => {
     setName(service.name);
@@ -83,14 +79,14 @@ const CRUDServices = (props) => {
 
   const handleDelete = async () => {
     const response2 = await handleServices({
-      service: {id,name,price},
+      service: { id, name, price },
       operation: "delete",
     });
     setName("");
     setPrice("");
     setId("");
+    setModalVisible(false);
   };
-
 
   const handleDeleteModal = (service) => {
     handleDelete(service);
@@ -118,13 +114,19 @@ const CRUDServices = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-          <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Services </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Services{" "}
+        </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
-          
           <Modal
             animationType="fade"
             transparent={true}
@@ -249,7 +251,6 @@ const CRUDServices = (props) => {
                       justifyContent: "center",
                     }}
                   >
-                    
                     <TouchableOpacity
                       onPress={() => handleDelete()}
                       style={{

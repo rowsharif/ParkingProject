@@ -104,14 +104,21 @@ const EmployeeServices = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-         <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Employee Service </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Employee Service{" "}
+        </Text>
         <View
           style={{
-            marginTop:20,
+            marginTop: 20,
             backgroundColor: "lightgray",
             justifyContent: "space-evenly",
             alignItems: "center",

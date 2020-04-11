@@ -41,15 +41,22 @@ const CRUDhistories = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-          <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> History </Text>
-          
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          History{" "}
+        </Text>
+
         <View
           style={{
-            marginTop:15,
+            marginTop: 15,
             backgroundColor: "lightgray",
             justifyContent: "space-evenly",
             alignItems: "center",
@@ -113,7 +120,7 @@ const CRUDhistories = (props) => {
             >
               {histories.length}
             </Text>
-            
+
             <Text
               style={{
                 textAlign: "center",
@@ -138,7 +145,7 @@ const CRUDhistories = (props) => {
                 borderColor: "black",
                 borderTopWidth: 1,
                 backgroundColor: "lightgray",
-                padding: "3%",
+                padding: "1%",
                 flexDirection: "row",
               }}
             >
@@ -172,13 +179,13 @@ const CRUDhistories = (props) => {
                   style={{
                     textAlign: "center",
                     paddingRight: "10%",
-                    paddingTop: "30%",
+                    // paddingTop: "10%",
                   }}
                 >
                   {history.Duration >= 0 ? null : (
                     <Octicons
                       name="primitive-dot"
-                      size={30}
+                      size={27}
                       color="#75213d"
                       // onPress={() => setModalVisible(false)}
                     />

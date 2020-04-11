@@ -64,7 +64,6 @@ const CRUDNearestBuildings = (props) => {
   }, []);
 
   const handleSend = async () => {
-    
     if (id) {
       const response2 = await handleNearestBuilding({
         nearestBuilding: {
@@ -86,21 +85,20 @@ const CRUDNearestBuildings = (props) => {
           ParkingLot: ParkingLots.filter((p) => p.id === ParkingLot)[0],
           longitude: parseFloat(longitude),
           latitude: parseFloat(latitude),
-        }, 
+        },
         operation: "add",
       });
-    
-   }
+    }
     setName("");
     setNumber("");
     setId("");
     setParkingLot("");
     setLongitude(0);
     setLatitude(0);
+    setModalVisible(false);
   };
 
   const handleEdit = (nearestBuilding) => {
-   
     setName(nearestBuilding.name);
     setNumber(nearestBuilding.number);
     setId(nearestBuilding.id);
@@ -120,6 +118,7 @@ const CRUDNearestBuildings = (props) => {
     setParkingLot("");
     setLongitude(0);
     setLatitude(0);
+    setModalVisible(false);
   };
 
   const handleEditModal = (nearestBuilding) => {
@@ -144,11 +143,18 @@ const CRUDNearestBuildings = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-           <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Nearest Building </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Nearest Building{" "}
+        </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"

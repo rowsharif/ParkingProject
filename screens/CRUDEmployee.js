@@ -146,6 +146,7 @@ const CRUDEmployees = (props) => {
     setId("");
     setIdentifier("");
     setCrew("");
+    setModalVisible(false);
   };
 
   const handleEdit = (employee) => {
@@ -160,9 +161,10 @@ const CRUDEmployees = (props) => {
   };
   const handleDelete = async () => {
     const response2 = await handleEmployee({
-      employee: {id, type, name, identifier, fk, fkp},
+      employee: { id, type, name, identifier, fk, fkp },
       operation: "delete",
     });
+    setModalVisible(false);
   };
 
   const handleEditModal = (employee) => {
@@ -188,11 +190,18 @@ const CRUDEmployees = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
-        <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Employee </Text>
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: "bold",
+              textAlign: "center",
+              paddingTop: 10,
+              paddingLeft: 10,
+            }}
+          >
+            {" "}
+            Employee{" "}
+          </Text>
           <Modal
             animationType="fade"
             transparent={true}

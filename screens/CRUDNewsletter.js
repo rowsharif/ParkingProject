@@ -182,11 +182,18 @@ const CRUDNewsletter = (props) => {
         style={{ width: "100%", height: "100%" }}
       >
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
-        <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Newsletter </Text>
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: "bold",
+              textAlign: "center",
+              paddingTop: 10,
+              paddingLeft: 10,
+            }}
+          >
+            {" "}
+            Newsletter{" "}
+          </Text>
           <Modal
             animationType="fade"
             transparent={true}
@@ -263,10 +270,14 @@ const CRUDNewsletter = (props) => {
                     borderColor: "gray",
                     borderWidth: 1,
                     backgroundColor: "white",
+                    overflow: "scroll",
                   }}
                   onChangeText={setBody}
                   placeholder="Body"
                   value={body}
+                  textAlignVertical={"top"}
+                  textBreakStrategy={"highQuality"}
+                  multiline={true}
                 />
                 <View style={{ alignItems: "flex-start", width: "80%" }}>
                   <Text style={{ textAlign: "left", fontWeight: "bold" }}>
@@ -436,9 +447,10 @@ const CRUDNewsletter = (props) => {
                 justifyContent: "center",
                 margin: 10,
                 flexDirection: "row",
+                height: 150,
               }}
             >
-              <View style={{ width: "80%", paddingTop: 5 }}>
+              <View style={{ width: "80%", paddingTop: 5, height: 150 }}>
                 <View
                   style={{
                     flexDirection: "row",
@@ -457,8 +469,8 @@ const CRUDNewsletter = (props) => {
                 </View>
 
                 <View style={{ paddingTop: 10, flexDirection: "row" }}>
-                  <View style={{ width: "80%", paddingLeft: 20 }}>
-                    <Text>{newsletter.body}</Text>
+                  <View style={{ width: "90%", paddingLeft: 20 }}>
+                    <Text style={{ height: "75%" }}>{newsletter.body}</Text>
                   </View>
 
                   {/* <Button title="X" onPress={() => handleDelete(newsletter)} /> */}

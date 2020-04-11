@@ -73,6 +73,7 @@ const CRUDParkingLots = (props) => {
     setLongitude(0);
     setLatitude(0);
     setId("");
+    setModalVisible(false);
   };
 
   const handleEdit = (parkingLot) => {
@@ -89,6 +90,7 @@ const CRUDParkingLots = (props) => {
       parkingLot: parkingLot,
       operation: "delete",
     });
+    setModalVisible(false);
   };
 
   const handleEditModal = (parkingLot) => {
@@ -111,11 +113,18 @@ const CRUDParkingLots = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-           <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Parking Lot </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Parking Lot{" "}
+        </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"

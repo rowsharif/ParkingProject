@@ -28,6 +28,7 @@ import {
 
 import firebase from "firebase/app";
 import "firebase/auth";
+import db from "../db.js";
 
 import UserProfile from "./UserProfile";
 import CreateUser from "./CreateUser";
@@ -48,6 +49,8 @@ import CRUDPayments from "./CRUDPayments";
 import FAQ from "./FAQ";
 import CRUDUserRole from "./CRUDUserRole";
 console.disableYellowBox = true;
+
+// {user && user.role}
 
 //import CRUDMyPayments from "./CRUDMyPayments"
 ////////stackNavigator is a transition between screens wherein each screen is placed ontop of the stack
@@ -133,9 +136,6 @@ const MyDrawerNavigator = createDrawerNavigator(
     Services: {
       screen: CRUDServices,
     },
-    // UpdateUser: {
-    //   screen: UpdateUser,
-    // },
     History: {
       screen: CRUDHistory,
     },
@@ -230,14 +230,309 @@ const MyDrawerNavigator = createDrawerNavigator(
     ),
   }
 );
+
+const MyDrawerNavigatorStudent = createDrawerNavigator(
+  {
+    MyProfile: {
+      screen: UserProfile,
+    },
+    MyPayments: {
+      screen: CRUDMyPayments,
+    },
+    MyHistory: {
+      screen: CRUDMyProfile,
+    },
+  },
+  {
+    contentComponent: (props) => (
+      <ScrollView style={{}}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ScrollView>
+    ),
+  }
+);
+const MyDrawerNavigatorEmployee = createDrawerNavigator(
+  {
+    MyProfile: {
+      screen: UserProfile,
+    },
+    EmployeeServices: {
+      screen: EmployeeServices,
+    },
+  },
+  {
+    contentComponent: (props) => (
+      <ScrollView style={{}}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ScrollView>
+    ),
+  }
+);
+
+const MyDrawerNavigatorAdmin = createDrawerNavigator(
+  {
+    MyProfile: {
+      screen: UserProfile,
+    },
+    Parkings: {
+      screen: CRUDParkings,
+    },
+    ParkingLots: {
+      screen: CRUDParkingLots,
+    },
+    NearestBuildings: {
+      screen: CRUDNearestBuildings,
+    },
+  },
+  {
+    contentComponent: (props) => (
+      <ScrollView style={{}}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ScrollView>
+    ),
+  }
+);
+const MyDrawerNavigatorManager = createDrawerNavigator(
+  {
+    MyProfile: {
+      screen: UserProfile,
+    },
+    Payments: {
+      screen: CRUDPayments,
+    },
+    Services: {
+      screen: CRUDServices,
+    },
+    UserRole: {
+      screen: CRUDUserRole,
+    },
+    History: {
+      screen: CRUDHistory,
+    },
+    Promotion: {
+      screen: CRUDPromotion,
+    },
+    Employee: {
+      screen: CRUDEmployee,
+    },
+    Crew: {
+      screen: CRUDCrew,
+    },
+    Newsletter: {
+      screen: CRUDNewsletter,
+    },
+  },
+  {
+    contentComponent: (props) => (
+      <ScrollView style={{}}>
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItems {...props} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: "lightgray",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              // marginTop: 350,
+            }}
+            onPress={() =>
+              Alert.alert(
+                "Log out",
+                "Do you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      return null;
+                    },
+                  },
+                  {
+                    text: "Confirm",
+                    onPress: () => {
+                      // props.navigation.navigate("Home");
+                      firebase.auth().signOut();
+                    },
+                  },
+                ],
+                { cancelable: false }
+              )
+            }
+          >
+            <Text
+              style={{
+                margin: 16,
+                color: "#276b9c",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ScrollView>
+    ),
+  }
+);
 // createAppContainer is a function that is responsible to manage the app and link with the top level container components to take as a parameter (Maintabnavigation)
 const AppContainer = createAppContainer(StackNavigator);
 
 const AppContainer2 = createAppContainer(MyDrawerNavigator);
-
+const AppContainerStudent = createAppContainer(MyDrawerNavigatorStudent);
+const AppContainerEmployee = createAppContainer(MyDrawerNavigatorEmployee);
+const AppContainerAdmin = createAppContainer(MyDrawerNavigatorAdmin);
+const AppContainerManager = createAppContainer(MyDrawerNavigatorManager);
 export default function MyProfileScreen() {
-  return <AppContainer2 />;
-  // return <CRUDNewsletter />
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    db.collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((doc) => {
+        const user = { id: doc.id, ...doc.data() };
+        setUser(user);
+      });
+  }, []);
+
+  return user.role === "manager" ? (
+    <AppContainerManager />
+  ) : user.role === "admin" ? (
+    <AppContainerAdmin />
+  ) : user.role === "employee" ? (
+    <AppContainerEmployee />
+  ) : (
+    <AppContainerStudent />
+  );
+  // return <AppContainer2 />;
 }
 
 MyProfileScreen.navigationOptions = {

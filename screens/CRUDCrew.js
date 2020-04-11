@@ -102,6 +102,7 @@ const CRUDCrew = (props) => {
     setName("");
     setPname("");
     setId("");
+    setModalVisible(false);
   };
 
   const handleEdit = (crew) => {
@@ -114,9 +115,10 @@ const CRUDCrew = (props) => {
   const handleDelete = async (crew) => {
     //it sends the crew to delete as a parameter to the function and the operation as "delete"
     const response2 = await handleCrew({
-      crew: {id, name, fkp},
+      crew: { id, name, fkp },
       operation: "delete",
     });
+    setModalVisible(false);
   };
   const handleEditModal = (crew) => {
     handleEdit(crew);
@@ -138,11 +140,18 @@ const CRUDCrew = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-           <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Crew </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Crew{" "}
+        </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"

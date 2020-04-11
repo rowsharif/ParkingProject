@@ -61,6 +61,7 @@ const CRUDUserRole = (props) => {
     setRole("");
 
     seteid("");
+    setModalVisible(false);
   };
 
   const handleEdit = (user) => {

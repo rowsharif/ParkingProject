@@ -111,11 +111,18 @@ const CRUDParkingLots = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-           <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Parking Lot </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Parking Lot{" "}
+        </Text>
         <ScrollView style={{ marginLeft: "5%", marginRight: "5%" }}>
           <Modal
             animationType="fade"
@@ -170,7 +177,14 @@ const CRUDParkingLots = (props) => {
                     style={{
                       paddingLeft: 5,
                       margin: 5,
-                      width: 300,
+                      ...Platform.select({
+                        ios: {
+                          width: 260,
+                        },
+                        android: {
+                          width: 300,
+                        },
+                      }),
                       height: 40,
                       borderColor: "gray",
                       borderWidth: 1,
@@ -190,7 +204,14 @@ const CRUDParkingLots = (props) => {
                     style={{
                       paddingLeft: 5,
                       margin: 5,
-                      width: 300,
+                      ...Platform.select({
+                        ios: {
+                          width: 260,
+                        },
+                        android: {
+                          width: 300,
+                        },
+                      }),
                       height: 40,
                       borderColor: "gray",
                       borderWidth: 1,
@@ -209,7 +230,14 @@ const CRUDParkingLots = (props) => {
                     style={{
                       paddingLeft: 5,
                       margin: 5,
-                      width: 300,
+                      ...Platform.select({
+                        ios: {
+                          width: 260,
+                        },
+                        android: {
+                          width: 300,
+                        },
+                      }),
                       height: 40,
                       borderColor: "gray",
                       borderWidth: 1,
@@ -239,6 +267,12 @@ const CRUDParkingLots = (props) => {
                           alignItems: "center",
                           borderRadius: 5,
                           margin: 5,
+                          ...Platform.select({
+                            ios: {
+                              height: "100%",
+                            },
+                            android: {},
+                          }),
                         }}
                       >
                         <Text style={{ fontWeight: "bold" }}>Create</Text>
@@ -264,6 +298,12 @@ const CRUDParkingLots = (props) => {
                           alignItems: "center",
                           borderRadius: 5,
                           margin: 5,
+                          ...Platform.select({
+                            ios: {
+                              height: "100%",
+                            },
+                            android: {},
+                          }),
                         }}
                       >
                         <Text style={{ fontWeight: "bold" }}>Delete</Text>
@@ -279,6 +319,12 @@ const CRUDParkingLots = (props) => {
                           alignItems: "center",
                           borderRadius: 5,
                           margin: 5,
+                          ...Platform.select({
+                            ios: {
+                              height: "100%",
+                            },
+                            android: {},
+                          }),
                         }}
                       >
                         <Text style={{ fontWeight: "bold" }}>Save</Text>

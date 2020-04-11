@@ -104,14 +104,21 @@ const EmployeeServices = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-         <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> Employee Service </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Employee Service{" "}
+        </Text>
         <View
           style={{
-            marginTop:20,
+            marginTop: 20,
             backgroundColor: "lightgray",
             justifyContent: "space-evenly",
             alignItems: "center",
@@ -121,8 +128,15 @@ const EmployeeServices = (props) => {
             flexDirection: "row",
             paddingTop: "3%",
             paddingBottom: "2%",
+            flexWrap: "wrap",
           }}
         >
+          <View style={{ width: "50%", paddingLeft: 25 }}>
+            <Text>Name: {employee.name}</Text>
+          </View>
+          <View style={{ width: "50%", paddingLeft: 10 }}>
+            <Text>Service:{employee.type}</Text>
+          </View>
           <TouchableOpacity
             style={{
               width: "40%",
@@ -202,13 +216,22 @@ const EmployeeServices = (props) => {
                     borderColor: "black",
                     borderTopWidth: 1,
                     backgroundColor: "lightgray",
-                    padding: "3%",
+                    padding: "1%",
                     flexDirection: "row",
                   }}
                 >
                   <View style={{ width: "80%", height: "100%" }}>
                     <Text>Car Plate: {service.Car}</Text>
                     <Text>Service: {service.ServiceName}</Text>
+                    <Text>
+                      Date : {service.DateTime.toDate().getDate()}-
+                      {service.DateTime.toDate().getMonth() + 1}-
+                      {service.DateTime.toDate().getFullYear()}
+                    </Text>
+                    <Text>
+                      Time : {service.DateTime.toDate().getHours()}:
+                      {service.DateTime.toDate().getMinutes()}
+                    </Text>
                   </View>
                 </View>
               ))
@@ -221,13 +244,22 @@ const EmployeeServices = (props) => {
                         borderColor: "black",
                         borderTopWidth: 1,
                         backgroundColor: "lightgray",
-                        padding: "3%",
+                        padding: "1%",
                         flexDirection: "row",
                       }}
                     >
                       <View style={{ width: "100%", height: "100%" }}>
                         <Text>Car Plate: {service.Car}</Text>
                         <Text>Service: {service.ServiceName}</Text>
+                        <Text>
+                          Date : {service.DateTime.toDate().getDate()}-
+                          {service.DateTime.toDate().getMonth() + 1}-
+                          {service.DateTime.toDate().getFullYear()}
+                        </Text>
+                        <Text>
+                          Time : {service.DateTime.toDate().getHours()}:
+                          {service.DateTime.toDate().getMinutes()}
+                        </Text>
                         <View>
                           <TouchableOpacity
                             style={{

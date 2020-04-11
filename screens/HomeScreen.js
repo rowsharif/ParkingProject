@@ -305,7 +305,7 @@ export default function HomeScreen() {
                       style={{
                         marginTop: 22,
                         ...Platform.select({
-                          ios: { marginTop: 20 },
+                          ios: { marginTop: 66 },
                           android: {},
                         }),
                       }}

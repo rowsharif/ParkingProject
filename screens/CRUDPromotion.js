@@ -94,9 +94,10 @@ const CRUDPromotion = (props) => {
       });
     } else {
       // call serverless function instead
+      console.log("endDateTime", endDateTime);
       const response2 = await handlePromotion({
         promotion: {
-          percent,
+          percent: parseFloat(percent),
           code,
           endDateTime,
         },
@@ -393,7 +394,10 @@ const CRUDPromotion = (props) => {
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>Discount:</Text>
-                  <Text style={{ width: "85%" }}> {promotion.percent}%</Text>
+                  <Text style={{ width: "85%" }}>
+                    {" "}
+                    {promotion.percent * 100}%
+                  </Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <Text style={{ fontWeight: "bold" }}>End Date:</Text>

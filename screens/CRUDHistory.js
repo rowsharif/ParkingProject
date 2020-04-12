@@ -145,7 +145,7 @@ const CRUDhistories = (props) => {
                 borderColor: "black",
                 borderTopWidth: 1,
                 backgroundColor: "lightgray",
-                padding: "1%",
+                padding: "0%",
                 flexDirection: "row",
               }}
             >

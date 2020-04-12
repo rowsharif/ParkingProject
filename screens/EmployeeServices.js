@@ -156,7 +156,7 @@ const EmployeeServices = (props) => {
                 color: "white",
               }}
             >
-              {services.length}
+              {services.filter((s) => s.ServiceName === employee.type).length}
             </Text>
             <Text
               style={{

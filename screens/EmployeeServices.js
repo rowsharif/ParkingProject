@@ -52,6 +52,7 @@ const EmployeeServices = (props) => {
                       ) {
                         Employee = {
                           id: docE.id,
+                          cname: docP.data().name,
                           ...docE.data(),
                         };
                         setEmployee(Employee);
@@ -131,11 +132,14 @@ const EmployeeServices = (props) => {
             flexWrap: "wrap",
           }}
         >
-          <View style={{ width: "50%", paddingLeft: 25 }}>
+          <View style={{ width: "33%", paddingLeft: 2 }}>
             <Text>Name: {employee.name}</Text>
           </View>
-          <View style={{ width: "50%", paddingLeft: 10 }}>
+          <View style={{ width: "39%", paddingLeft: 2 }}>
             <Text>Service:{employee.type}</Text>
+          </View>
+          <View style={{ width: "25%", paddingLeft: 2 }}>
+            <Text>Crew:{employee.cname}</Text>
           </View>
           <TouchableOpacity
             style={{

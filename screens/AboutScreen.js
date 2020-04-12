@@ -8,6 +8,7 @@ import {
   PricingCard,
   Tooltip,
 } from "react-native-elements";
+
 import {
   Image,
   Platform,
@@ -26,6 +27,7 @@ import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import {
   Ionicons,
+  AntDesign,
   FontAwesome,
   MaterialIcons,
   MaterialCommunityIcons,
@@ -57,7 +59,7 @@ function CNAQ_Parking_App() {
           margin: "4%",
         }}
       >
-        <Text style={styles.titleText}>About Us</Text>
+      <Text style={styles.titleText}>About Us</Text>
         <ScrollView>
           <Text style={{ fontSize: 20, margin: "12%", textAlign: "justify" }}>
             CNA-Q Parking App is designed for the students and faculty members
@@ -864,7 +866,8 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        About
+        {" "}
+        <AntDesign name="menu-fold" size={24} color="white" /> About
       </Text>
       <View
         style={{

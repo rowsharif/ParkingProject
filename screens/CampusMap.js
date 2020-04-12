@@ -238,60 +238,60 @@ export default function CampusMap() {
 
   useEffect(() => {
     //the below code is not used in this stage; it gets all the pakings from all ParkingLots
-    db.collection("ParkingLots")
-      .get()
-      .then((querySnapshot) => {
-        const ParkingLots = [];
-        let allParkings = [];
-        querySnapshot.forEach((doc) => {
-          ParkingLots.push({ id: doc.id, ...doc.data() });
-          db.collection("ParkingLots")
-            .doc(doc.id)
-            .collection("Parkings")
-            .onSnapshot((querySnapshot) => {
-              const nparkings = [];
-              allParkings = allParkings.filter((p) => p.fk !== doc.id);
-              querySnapshot.forEach((docP) => {
-                nparkings.push({
-                  fk: doc.id,
-                  name: doc.data().name,
-                  id: docP.id,
-                  ...docP.data(),
-                });
-              });
-              allParkings = [...allParkings, ...nparkings];
-              setParkings([...allParkings]);
-            });
-        });
-        setParkingLots([...ParkingLots]);
-      });
-
     // db.collection("ParkingLots")
-    //   .doc("kECljqmSifLwfkpX6qPy")
-    //   .collection("Parkings")
-    //   .onSnapshot((querySnapshot) => {
-    //     const parkings = [];
-    //     querySnapshot.forEach((docP) => {
-    //       parkings.push({
-    //         fk: "kECljqmSifLwfkpX6qPy",
-    //         name: "C-6",
-    //         id: docP.id,
-    //         ...docP.data(),
-    //       });
+    //   .get()
+    //   .then((querySnapshot) => {
+    //     const ParkingLots = [];
+    //     let allParkings = [];
+    //     querySnapshot.forEach((doc) => {
+    //       ParkingLots.push({ id: doc.id, ...doc.data() });
+    //       db.collection("ParkingLots")
+    //         .doc(doc.id)
+    //         .collection("Parkings")
+    //         .onSnapshot((querySnapshot) => {
+    //           const nparkings = [];
+    //           allParkings = allParkings.filter((p) => p.fk !== doc.id);
+    //           querySnapshot.forEach((docP) => {
+    //             nparkings.push({
+    //               fk: doc.id,
+    //               name: doc.data().name,
+    //               id: docP.id,
+    //               ...docP.data(),
+    //             });
+    //           });
+    //           allParkings = [...allParkings, ...nparkings];
+    //           setParkings([...allParkings]);
+    //         });
     //     });
-    //     setParkings([...parkings]);
+    //     setParkingLots([...ParkingLots]);
     //   });
-    // db.collection("ParkingLots").onSnapshot((querySnapshot) => {
-    //   const ParkingLots = [];
-    //   querySnapshot.forEach((doc) => {
-    //     ParkingLots.push({
-    //       id: doc.id,
-    //       ...doc.data(),
-    //     });
-    //   });
-    //   console.log(" Current ParkingLots: ", ParkingLots);
-    //   setParkingLots([...ParkingLots]);
-    // });
+
+    db.collection("ParkingLots")
+      .doc("kECljqmSifLwfkpX6qPy")
+      .collection("Parkings")
+      .onSnapshot((querySnapshot) => {
+        const parkings = [];
+        querySnapshot.forEach((docP) => {
+          parkings.push({
+            fk: "kECljqmSifLwfkpX6qPy",
+            name: "C-6",
+            id: docP.id,
+            ...docP.data(),
+          });
+        });
+        setParkings([...parkings]);
+      });
+    db.collection("ParkingLots").onSnapshot((querySnapshot) => {
+      const ParkingLots = [];
+      querySnapshot.forEach((doc) => {
+        ParkingLots.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      console.log(" Current ParkingLots: ", ParkingLots);
+      setParkingLots([...ParkingLots]);
+    });
   }, []);
 
   const markerClick = (parking) => {

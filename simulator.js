@@ -22,39 +22,39 @@ let Parkings = [];
 
 const init = async () => {
   // // do once only, not a listener
-  // const querySnapshot = await db
-  //   .collection("ParkingLots")
-  //   .get()
-  //   .then(querySnapshot => {
-  //     querySnapshot.forEach(doc => {
-  //       db.collection("ParkingLots")
-  //         .doc(doc.id)
-  //         .collection("Parkings")
-  //         .onSnapshot(querySnapshot => {
-  //           Parkings = Parkings.filter(p => p.fk !== doc.id);
-  //           querySnapshot.forEach(docP => {
-  //             Parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
-  //           });
-  //         });
-  //     });
-  //   });
-
   const querySnapshot = await db
     .collection("ParkingLots")
-    .doc("kECljqmSifLwfkpX6qPy")
-    .collection("Parkings")
-    .onSnapshot(querySnapshot => {
-      Parkings = [];
-      querySnapshot.forEach(docP => {
-        Parkings.push({
-          fk: "kECljqmSifLwfkpX6qPy",
-          id: docP.id,
-          ...docP.data()
-        });
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        db.collection("ParkingLots")
+          .doc(doc.id)
+          .collection("Parkings")
+          .onSnapshot((querySnapshot) => {
+            Parkings = Parkings.filter((p) => p.fk !== doc.id);
+            querySnapshot.forEach((docP) => {
+              Parkings.push({ fk: doc.id, id: docP.id, ...docP.data() });
+            });
+          });
       });
     });
 
-  console.log("done init: ", Parkings);
+  // const querySnapshot = await db
+  //   .collection("ParkingLots")
+  //   .doc("kECljqmSifLwfkpX6qPy")
+  //   .collection("Parkings")
+  //   .onSnapshot(querySnapshot => {
+  //     Parkings = [];
+  //     querySnapshot.forEach(docP => {
+  //       Parkings.push({
+  //         fk: "kECljqmSifLwfkpX6qPy",
+  //         id: docP.id,
+  //         ...docP.data()
+  //       });
+  //     });
+  //   });
+
+  // console.log("done init: ", Parkings);
 };
 
 const simulate = async () => {

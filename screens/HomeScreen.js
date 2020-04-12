@@ -195,7 +195,7 @@ export default function HomeScreen() {
                     marginTop: "18%",
                     backgroundColor: "lightgray",
                     margin: "5%",
-                    height: "30%",
+                    height: "35%",
                     flexDirection: "row",
                   }}
                 >
@@ -228,12 +228,15 @@ export default function HomeScreen() {
                     <Text>Phone No: {currentUser.phoneNumber}</Text>
                     <Text>User Role: {user && user.role}</Text>
 
-                    {Car && Car.Parking && Car.Parking.DateTime && (
-                      <Text>
-                        Parked at: {Car.Parking.DateTime.toDate().getHours()}:
-                        {Car.Parking.DateTime.toDate().getMinutes()}
-                      </Text>
-                    )}
+                    {Car &&
+                      Car.Parking &&
+                      Car.Parking.status !== 1 &&
+                      Car.Parking.DateTime && (
+                        <Text>
+                          Parked at: {Car.Parking.DateTime.toDate().getHours()}:
+                          {Car.Parking.DateTime.toDate().getMinutes()}
+                        </Text>
+                      )}
                     {hours > 0 && <Text>Hours spend in parking: {hours}</Text>}
                   </View>
                 </View>

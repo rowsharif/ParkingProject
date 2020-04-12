@@ -193,8 +193,8 @@ export default function CampusMap() {
       );
       let pTotal =
         user.role === "staff" || user.role === "vip"
-          ? hours * car.Parking.amountperhour
-          : 0;
+          ? 0
+          : hours * car.Parking.amountperhour;
 
       pTotal = pTotal + car.Parking.TotalAmount;
 
@@ -240,19 +240,24 @@ export default function CampusMap() {
     //the below code is not used in this stage; it gets all the pakings from all ParkingLots
     // db.collection("ParkingLots")
     //   .get()
-    //   .then(querySnapshot => {
+    //   .then((querySnapshot) => {
     //     const ParkingLots = [];
     //     let allParkings = [];
-    //     querySnapshot.forEach(doc => {
+    //     querySnapshot.forEach((doc) => {
     //       ParkingLots.push({ id: doc.id, ...doc.data() });
     //       db.collection("ParkingLots")
     //         .doc(doc.id)
     //         .collection("Parkings")
-    //         .onSnapshot(querySnapshot => {
+    //         .onSnapshot((querySnapshot) => {
     //           const nparkings = [];
-    //           allParkings = allParkings.filter(p => p.fk !== doc.id);
-    //           querySnapshot.forEach(docP => {
-    //             nparkings.push({ fk: doc.id, name: doc.data().name, id: docP.id, ...docP.data() });
+    //           allParkings = allParkings.filter((p) => p.fk !== doc.id);
+    //           querySnapshot.forEach((docP) => {
+    //             nparkings.push({
+    //               fk: doc.id,
+    //               name: doc.data().name,
+    //               id: docP.id,
+    //               ...docP.data(),
+    //             });
     //           });
     //           allParkings = [...allParkings, ...nparkings];
     //           setParkings([...allParkings]);
@@ -734,6 +739,7 @@ export default function CampusMap() {
                             ? "#FFD700"
                             : "#ffffff",
                         borderWidth: 2,
+                        backgroundColor: "white",
                       }
                     : //7232fc purble
                       {

@@ -38,6 +38,7 @@ import * as Animatable from "react-native-animatable";
 import { Linking } from "expo";
 import firebase from "firebase/app";
 import "firebase/auth";
+
 console.disableYellowBox = true;
 
 function CNAQ_Parking_App() {
@@ -866,8 +867,8 @@ MyProfileScreen.navigationOptions = {
           paddingLeft: "3%",
         }}
       >
-        {" "}
-        <AntDesign name="menu-fold" size={24} color="white" /> About
+        <AntDesign name="menu-fold" size={24} color="white" />
+        About
       </Text>
       <View
         style={{

@@ -235,6 +235,7 @@ const UserProfile = (props) => {
                               <Tooltip
                                 popover={<Text>Complete your profile</Text>}
                                 width={190}
+                                toggleOnPress
                               >
                                 <Badge
                                   status="error"
@@ -385,13 +386,20 @@ const UserProfile = (props) => {
                     </View>
                     {view && (
                       <View
-                        style={{ justifyContent: "flex-end", height: "10%" }}
+                        style={{
+                          justifyContent: "center",
+                          height: "10%",
+                          flexDirection: "row",
+                          width: "100%",
+                        }}
                       >
                         <TouchableOpacity
                           style={{
                             backgroundColor: "#276b9c",
                             height: 35,
                             justifyContent: "center",
+                            width: 100,
+                            marginRight: 2,
                           }}
                           onPress={handleSave}
                         >
@@ -404,6 +412,8 @@ const UserProfile = (props) => {
                             backgroundColor: "#969696",
                             height: 35,
                             justifyContent: "center",
+                            width: 100,
+                            marginLeft: 2,
                           }}
                           onPress={() => setView(false)}
                         >

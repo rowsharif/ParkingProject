@@ -58,14 +58,21 @@ const CRUDPayments = (props) => {
         source={require("../assets/images/bg11.jpeg")}
         style={{ width: "100%", height: "100%" }}
       >
-          <Text style={{fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: 10,
-    paddingLeft: 10,}}> My Payment </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            textAlign: "center",
+            paddingTop: 10,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          My Payment{" "}
+        </Text>
         <View
           style={{
-            marginTop:15,
+            marginTop: 15,
             backgroundColor: "lightgray",
             justifyContent: "space-evenly",
             alignItems: "center",
@@ -167,7 +174,11 @@ const CRUDPayments = (props) => {
                             color: "gray",
                           }}
                         >
-                          {payment.TotalAmount / (1 - payment.promotion / 100)}
+                          {Math.round(
+                            (payment.TotalAmount /
+                              (1 - payment.promotion / 100)) *
+                              100
+                          ) / 100}
                         </Text>
                       )}
                     </Text>

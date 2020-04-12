@@ -88,6 +88,7 @@ const FAQ = (props) => {
     setAnswer(faq.answer);
 
     setId(faq.id);
+    setSelectedFAQ(faq);
   };
 
   const handleDelete = async (faq) => {
@@ -255,7 +256,7 @@ const FAQ = (props) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() => handleDelete(setSelectedFAQ)}
+                      onPress={() => handleDelete(selectedFAQ)}
                       style={{
                         width: "30%",
                         backgroundColor: "#eb5a50",

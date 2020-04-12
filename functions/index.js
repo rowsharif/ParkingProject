@@ -64,7 +64,7 @@ exports.handleParkingLot = functions.https.onCall(async (data, context) => {
   } else {
     db.collection("ParkingLots")
       .doc(data.parkingLot.id)
-      .update(data.parkingLots);
+      .update(data.parkingLot);
   }
 });
 
